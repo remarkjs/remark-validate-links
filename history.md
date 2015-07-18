@@ -5,5 +5,5 @@ mdast:
 
 <!--lint disable no-multiple-toplevel-headings-->
 
-0.0.0 / 2015-07-16
+0.1.0 / 2015-07-18
 ==================
