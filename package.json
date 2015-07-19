@@ -14,6 +14,7 @@
   "dependencies": {
     "github-url-to-object": "^1.5.2",
     "mdast-slug": "^0.1.1",
+    "mdast-util-definitions": "^0.1.0",
     "mdast-util-visit": "^0.1.1",
     "urljoin": "^0.1.5"
   },
