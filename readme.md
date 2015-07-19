@@ -1,7 +1,7 @@
 # mdast-validate-links [![Build Status](https://img.shields.io/travis/wooorm/mdast-validate-links.svg?style=flat)](https://travis-ci.org/wooorm/mdast-validate-links) [![Coverage Status](https://img.shields.io/coveralls/wooorm/mdast-validate-links.svg?style=flat)](https://coveralls.io/r/wooorm/mdast-validate-links?branch=master)
 
 > Currently, this only works with the current beta version of
-> **mdast**: [0.27.0-rc.1](https://github.com/wooorm/mdast/blob/5f3d914fd0a59fd42bd1a2852ba17e1d1f6360db/history.md).
+> **mdast**: [0.27.0-rc.2](https://github.com/wooorm/mdast/blob/5f3d914fd0a59fd42bd1a2852ba17e1d1f6360db/history.md).
 
 [**mdast**](https://github.com/wooorm/mdast) plug-in to validate if links to
 headings and files in markdown point to existing things.
@@ -52,7 +52,7 @@ So does this: [README](readme.md#installation).
 Then, to run **mdast-validate-links** on `example.md` and `readme.md`:
 
 ```bash
-mdast -u mdast-slug -u mdast-validate-links example.md readme.md
+mdast -u mdast-slug -u mdast-validate-links example.md
 #
 # Yields:
 #
@@ -61,8 +61,6 @@ mdast -u mdast-slug -u mdast-validate-links example.md readme.md
 #   5:27  warning  Link to unknown heading in `readme.md`: `foo`
 #
 # ✖ 2 problems (0 errors, 2 warnings)
-#
-# readme.md: done.
 ```
 
 ## Programmatic

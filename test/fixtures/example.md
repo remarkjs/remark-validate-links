@@ -14,6 +14,8 @@ And this [link](./examples/example.md).
 
 And this [link](examples/example.md).
 
+This is a valid external [file](../index.js).
+
 This is an invalid relative file [link](https://github.com/wooorm/test/blob/master/examples/world.md).
 
 So is this [link](https://github.com/wooorm/test/blob/foo-bar/examples/world.md).

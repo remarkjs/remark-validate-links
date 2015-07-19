@@ -8,6 +8,7 @@ var url = require('url');
 var fs = require('fs');
 var path = require('path');
 var visit = require('mdast-util-visit');
+var definitions = require('mdast-util-definitions');
 var gh = require('github-url-to-object');
 var urljoin = require('urljoin');
 
@@ -19,109 +20,68 @@ var exists = fs.existsSync;
 var parse = url.parse;
 
 /**
- * Factory to store all markdown files, and headings.
+ * Get the `pathname` of `uri`, if applicable.
  *
- * @example
- *   var gather = gatherFactory();
- *   var file = new File('# foo');
- *
- *   gather(file).done() // {}
- *
- * @return {Function}
+ * @todo Externalise.
+ * @param {string} uri - Reference.
+ * @return {string?} - Pathname.
  */
-function gatherFactory() {
-    var cache = {};
-    var hasHeadings = false;
-    var hasSlugs = false;
-
-    /**
-     * Access found files and headings.
-     *
-     * @return {Object.<string, boolean>} - Map of
-     *   file-paths, with `true` as their value.
-     * @throws {Error} - When headings are found, but no
-     *   heading has a slug.
-     */
-    function done() {
-        if (hasHeadings && !hasSlugs) {
-            throw new Error(
-                'Missing slugs. Use for example `mdast-slug` to generate ' +
-                'heading IDs'
-            );
-        }
-
-        return cache;
-    }
-
-    /**
-     * Find headings in `file`.
-     *
-     * @property {Function} done - Access found links.
-     * @param {File} file - Virtual file.
-     * @returns {Function} - Itself.
-     */
-    function gather(file) {
-        var filePath = file.filePath();
-
-        cache[filePath] = true;
-
-        /*
-         * Ignore files without AST or filename.
-         */
-
-        if (filePath && file.ast) {
-            visit(file.ast, 'heading', function (node) {
-                var id = node.attributes && node.attributes.id;
-
-                hasHeadings = true;
-
-                if (id) {
-                    cache[filePath + '#' + id] = hasSlugs = true;
-                }
-            });
-        }
-
-        return gather;
-    }
-
-    gather.done = done;
-
-    return gather;
+function getPathname(uri) {
+    return parse(uri).pathname;
 }
 
 /**
- * Resolve a single `file`.
+ * Get the `hash` of `uri`, if applicable.
  *
- * @example
- *   var file = new File('[](foo.md)')
- *
- *   resolve(file, {
- *     'foo.md': true
- *   }, {});
- *   // no warnings.
+ * @todo Externalise.
+ * @param {string} uri - Reference.
+ * @return {string?} - Hash.
+ */
+function getHash(uri) {
+    var hash = parse(uri).hash;
+
+    return hash ? hash.slice(1) : null;
+}
+
+/**
+ * Utilitity to warn `warning` for each node in `nodes`,
+ * on `file`.
  *
  * @param {File} file - Virtual file.
- * @param {Object} cache - Found links.
- * @param {Object} project - GitHub project, if applicable.
+ * @param {Array.<Node>} nodes - Offending nodes.
+ * @param {string} warning - Message.
  */
-function resolve(file, cache, project) {
+function warnAll(file, nodes, warning) {
+    nodes.forEach(function (node) {
+        file.warn(warning, node);
+    });
+}
+
+/**
+ * Gather references: a map of file-paths references
+ * to be one or more nodes.
+ *
+ * @example
+ *   gatherReferences(new File(), {});
+ *
+ * @param {File} file - Set of virtual files.
+ * @param {Object.<string, string>} project - GitHub
+ *   project, with a `user` and `repo` property
+ *   (optional).
+ * @return {Object.<string, Array.<Node>>} exposed - Map of
+ *   file-paths (and anchors) which are referenced.
+ */
+function gatherReferences(file, project) {
+    var cache = {};
     var filePath = file.filePath();
     var directory = file.directory;
     var ast = file.ast;
-    var definitions = {};
+    var getDefinition = definitions(ast);
     var prefix = '';
 
     if (project.user && project.repo) {
         prefix = '/' + project.user + '/' + project.repo + '/blob/';
     }
-
-    /*
-     * Store link definitions.
-     */
-
-    visit(ast, 'definition', function (node) {
-        definitions[node.identifier.toUpperCase()] = node;
-    });
 
     /**
      * Handle new links.
@@ -143,17 +103,16 @@ function resolve(file, cache, project) {
         var link = node.href;
         var definition;
         var index;
+        var uri;
         var pathname;
         var hash;
-        var uri;
-        var warning;
 
         /*
          * Handle link-references.
          */
 
         if (node.identifier) {
-            definition = definitions[node.identifier.toUpperCase()];
+            definition = getDefinition(node.identifier);
             link = definition && definition.link;
         }
 
@@ -229,60 +188,157 @@ function resolve(file, cache, project) {
             hash = link.slice(index + 1);
         }
 
-        if (cache[pathname] !== true) {
-            /*
-             * Ignore actually existing, but not to mdast
-             * visible files (unless the link has a hash).
-             */
-
-            if (!exists(pathname) || hash) {
-                warning = 'Link to unknown file: `' + pathname + '`';
-            }
-        } else if (cache[link] !== true) {
-            warning = 'Link to unknown heading';
-
-            if (pathname !== filePath) {
-                warning += ' in `' + pathname + '`';
-            }
-
-            warning += ': `' + hash + '`';
+        if (!cache[pathname]) {
+            cache[pathname] = [];
         }
 
-        if (warning) {
-            file.warn(warning, node);
+        cache[pathname].push(node);
+
+        if (hash) {
+            if (!cache[link]) {
+                cache[link] = [];
+            }
+
+            cache[link].push(node);
         }
     }
 
     visit(ast, 'link', onlink);
     visit(ast, 'linkReference', onlink);
+
+    return cache;
 }
 
 /**
- * Resolve all files in `set`.
+ * Factory to store all markdown files, and headings.
  *
  * @example
- *   var set = new FileSet();
- *   set.add(new File('[](foo.md)'));
+ *   var gather = gatherExposedFactory();
+ *   var file = new File('# foo');
  *
- *   resolveAll(set, {
- *     'foo.md': true
- *   }, {});
- *   // no warnings.
+ *   gather(file).done() // {}
  *
- * @param {FileSet} set - Virtual file-set.
- * @param {Object} cache - Found links.
- * @param {Object} project - GitHub project, if applicable.
+ * @return {Function}
  */
-function resolveAll(set, cache, project) {
-    set.valueOf().forEach(function (file) {
+function gatherExposedFactory() {
+    var cache = {};
+    var hasHeadings = false;
+    var hasSlugs = false;
+
+    /**
+     * Access found files and headings.
+     *
+     * @return {Object.<string, boolean>} - Map of
+     *   file-paths, with `true` as their value.
+     * @throws {Error} - When headings are found, but no
+     *   heading has a slug.
+     */
+    function done() {
+        if (hasHeadings && !hasSlugs) {
+            throw new Error(
+                'Missing slugs. Use for example `mdast-slug` to generate ' +
+                'heading IDs'
+            );
+        }
+
+        return cache;
+    }
+
+    /**
+     * Find headings in `file`.
+     *
+     * @property {Function} done - Access found links.
+     * @param {File} file - Virtual file.
+     * @returns {Function} - Itself.
+     */
+    function gather(file) {
+        var filePath = file.filePath();
+
         /*
-         * Ignore failed files.
+         * Ignore files without AST or filename.
          */
 
-        if (!file.hasFailed()) {
-            resolve(file, cache, project);
+        if (filePath && file.ast) {
+            cache[filePath] = true;
+
+            visit(file.ast, 'heading', function (node) {
+                var id = node.attributes && node.attributes.id;
+
+                hasHeadings = true;
+
+                if (id) {
+                    cache[filePath + '#' + id] = hasSlugs = true;
+                }
+            });
         }
-    });
+
+        return gather;
+    }
+
+    gather.done = done;
+
+    return gather;
+}
+
+/**
+ * Check if `file` references headings or files not in
+ * `exposed`. If `project` is given, normalizes GitHub blob
+ * URLs.
+ *
+ * @example
+ *   validate({'example.md': true}, new File());
+ *
+ * @param {Object.<string, boolean?>} exposed - Map of
+ *   file-paths (and anchors) which can be references to.
+ * @param {File} file - Set of virtual files.
+ * @param {Object.<string, string>} project - GitHub
+ *   project, with a `user` and `repo` property
+ *   (optional).
+ */
+function validate(exposed, file, project) {
+    var references = file.ast ? gatherReferences(file, project) : {};
+    var filePath = file.filePath();
+    var reference;
+    var nodes;
+    var real;
+    var hash;
+    var pathname;
+    var warning;
+
+    for (reference in references) {
+        nodes = references[reference];
+        real = exposed[reference];
+        hash = getHash(reference);
+
+        /*
+         * Check if files without `hash` can be linked to.
+         * Because there’s no need to inspect those files
+         * for headings they are not added to mdast. This
+         * is especially useful because they might be
+         * non-markdown files. Here we check if they exist.
+         */
+
+        if ((real === undefined || real === null) && !hash) {
+            real = references[reference] = exists(reference);
+        }
+
+        if (!real) {
+            if (hash) {
+                pathname = getPathname(reference);
+                warning = 'Link to unknown heading';
+
+                if (pathname !== filePath) {
+                    warning += ' in `' + pathname + '`';
+                }
+
+                warning += ': `' + hash + '`';
+            } else {
+                warning = 'Link to unknown file: `' + reference + '`';
+            }
+
+            warnAll(file, nodes, warning);
+        }
+    }
 }
 
 /**
@@ -311,11 +367,16 @@ function completerFactory(project) {
      * @param {function(err?)} done - Callback.
      */
     function completer(set, done) {
-        var gather = gatherFactory();
+        var gatherExposed = gatherExposedFactory();
+        var exposed;
 
-        set.valueOf().forEach(gather);
+        set.valueOf().forEach(gatherExposed);
 
-        resolveAll(set, gather.done(), project);
+        exposed = gatherExposed.done();
+
+        set.valueOf().forEach(function (file) {
+            validate(exposed, file, project);
+        });
 
         done();
     }
@@ -323,6 +384,54 @@ function completerFactory(project) {
     completer.pluginId = 'mdast-validate-links';
 
     return completer;
+}
+
+/**
+ * Factory to create a transformer based on the given
+ * project and set.
+ *
+ * @example
+ *   transformerFactory({}, new FileSet());
+ *
+ * @param {Object.<string, string>} project - GitHub
+ *   project, with a `user` and `repo` property
+ *   (optional).
+ * @param {FileSet} fileSet - Set of virtual files.
+ * @return {function(ast, file)}
+ */
+function transformerFactory(project, fileSet) {
+    /**
+     * Transformer. Adds references files to the set.
+     *
+     * @example
+     *   transformer({}, new File());
+     *
+     * @param {*} ast - Node.
+     * @param {File} file - Virtual file.
+     */
+    function transformer(ast, file) {
+        var references = gatherReferences(file, project);
+        var links = [];
+        var current = getPathname(file.filePath());
+        var link;
+        var pathname;
+
+        for (link in references) {
+            pathname = getPathname(link);
+
+            if (
+                pathname !== current &&
+                getHash(link) &&
+                links.indexOf(pathname) === -1
+            ) {
+                links.push(pathname);
+
+                fileSet.add(pathname);
+            }
+        }
+    }
+
+    return transformer;
 }
 
 /**
@@ -334,11 +443,11 @@ function completerFactory(project) {
  *
  * @param {MDAST} mdast - Processor.
  * @param {Object?} options - Settings.
- * @param {FileSet?} set - Virtual file-set.
- * @throws {Error} - When `set` is not given (when not on
+ * @param {FileSet?} fileSet - Virtual file-set.
+ * @throws {Error} - When `fileSet` is not given (when not on
  *   the CLI).
  */
-function attacher(mdast, options, set) {
+function attacher(mdast, options, fileSet) {
     var repo = (options || {}).repository;
     var pack;
 
@@ -346,7 +455,7 @@ function attacher(mdast, options, set) {
      * Throw when not on the CLI.
      */
 
-    if (!set) {
+    if (!fileSet) {
         throw new Error('mdast-validate-links only works on the CLI');
     }
 
@@ -367,14 +476,18 @@ function attacher(mdast, options, set) {
 
     repo = repo ? gh(repo) : {};
 
+    repo = {
+        'user': repo.user,
+        'repo': repo.repo
+    };
+
     /*
      * Attach a `completer`.
      */
 
-    set.use(completerFactory({
-        'user': repo.user,
-        'repo': repo.repo
-    }));
+    fileSet.use(completerFactory(repo));
+
+    return transformerFactory(repo, fileSet);
 }
 
 /*

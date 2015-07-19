@@ -18,8 +18,8 @@ var links = require('..');
  */
 
 var std = {
-    'out': '',
-    'err': ''
+    'out': [],
+    'err': []
 };
 
 /**
@@ -33,7 +33,7 @@ function queue(type) {
      * Store a bound type.
      */
     return function () {
-        std[type] += [].slice.call(arguments).join('');
+        std[type].push([].slice.call(arguments).join(''));
     };
 }
 
@@ -54,15 +54,15 @@ function intercept() {
      */
     return function () {
         var current = {
-            'out': std.out.trim(),
-            'err': std.err.trim()
+            'out': std.out.join('\n').trim(),
+            'err': std.err.join('\n').trim()
         };
 
         stopOut();
         stopErr();
 
-        std.out = '';
-        std.err = '';
+        std.out = [];
+        std.err = [];
 
         return current;
     };
@@ -95,16 +95,16 @@ describe('mdast-validate-links', function () {
             'color': false,
             'detectRC': false,
             'detectIgnore': false,
-            'plugins': ['./index.js']
+            'plugins': [
+                '../../../index.js'
+            ]
         }, function (err) {
             var res = stop();
 
-            assert.equal(res.out, '');
-
             assert.equal(res.err, [
-                'example.md',
-                '  0:0  error  Missing slugs. Use for example ' +
-                    '`mdast-slug` to generate heading IDs',
+                'example.md: done.',
+                '  0:0  error  Missing slugs. Use for example `mdast-slug` ' +
+                    'to generate heading IDs',
                 '',
                 '✖ 1 problem (1 error, 0 warnings)'
             ].join('\n'));
@@ -121,22 +121,26 @@ describe('mdast-validate-links', function () {
             'color': false,
             'detectRC': false,
             'detectIgnore': false,
-            'plugins': ['slug', './index.js']
+            'plugins': [
+                '../../../node_modules/mdast-slug',
+                '../../../index.js'
+            ]
         }, function (err) {
             var res = stop();
 
             assert.equal(res.out, '');
 
             assert.equal(res.err, [
-                'definitions.md',
-                '  5:12  warning  Link to unknown heading: `world`',
-                '',
-                '✖ 1 problem (0 errors, 1 warning)',
-                '',
-                'FOOOO',
+                'FOOOO: done.',
                 '  0:0  error  No such file or directory',
                 '',
-                '✖ 1 problem (1 error, 0 warnings)'
+                '✖ 1 problem (1 error, 0 warnings)',
+                '',
+                '',
+                'definitions.md: done.',
+                '  5:12  warning  Link to unknown heading: `world`',
+                '',
+                '✖ 1 problem (0 errors, 1 warning)'
             ].join('\n'));
 
             done(err);
@@ -151,25 +155,28 @@ describe('mdast-validate-links', function () {
             'color': false,
             'detectRC': false,
             'detectIgnore': false,
-            'plugins': ['slug', './index.js']
+            'plugins': [
+                '../../../node_modules/mdast-slug',
+                '../../../index.js'
+            ]
         }, function (err) {
             var res = stop();
 
             assert.equal(res.err, [
-                'example.md',
+                'example.md: done.',
                 '   5:37  warning  Link to unknown heading: `world`',
-                '  21:10  warning  Link to unknown file: `examples/world.md`',
                 '  23:10  warning  Link to unknown file: `examples/world.md`',
-                '  27:8   warning  Link to unknown file: ' +
-                    '`examples/example.md`',
-                '  29:8   warning  Link to unknown file: ' +
-                    '`examples/example.md`',
-                '  35:10  warning  Link to unknown file: ' +
-                    '`examples/example.md`',
-                '  37:10  warning  Link to unknown file: ' +
-                    '`examples/example.md`',
-                '  43:10  warning  Link to unknown file: `examples/world.md`',
+                '  25:10  warning  Link to unknown file: `examples/world.md`',
                 '  45:10  warning  Link to unknown file: `examples/world.md`',
+                '  47:10  warning  Link to unknown file: `examples/world.md`',
+                '  37:10  warning  Link to unknown heading in ' +
+                    '`examples/example.md`: `world`',
+                '  39:10  warning  Link to unknown heading in ' +
+                    '`examples/example.md`: `world`',
+                '  45:10  warning  Link to unknown heading in ' +
+                    '`examples/world.md`: `hello`',
+                '  47:10  warning  Link to unknown heading in ' +
+                    '`examples/world.md`: `hello`',
                 '',
                 '✖ 9 problems (0 errors, 9 warnings)'
             ].join('\n'));
@@ -189,34 +196,44 @@ describe('mdast-validate-links', function () {
             'color': false,
             'detectRC': false,
             'detectIgnore': false,
-            'plugins': ['slug', './index.js']
+                'plugins': [
+                    '../../../node_modules/mdast-slug',
+                    '../../../index.js'
+                ]
         }, function (err) {
             var res = stop();
 
             assert.equal(res.out, '');
 
             assert.equal(res.err, [
-                'example.md',
+                'example.md: done.',
                 '   5:37  warning  Link to unknown heading: `world`',
-                '  21:10  warning  Link to unknown file: `examples/world.md`',
                 '  23:10  warning  Link to unknown file: `examples/world.md`',
-                '  35:10  warning  Link to unknown heading in ' +
-                    '`examples/example.md`: `world`',
+                '  25:10  warning  Link to unknown file: `examples/world.md`',
+                '  45:10  warning  Link to unknown file: `examples/world.md`',
+                '  47:10  warning  Link to unknown file: `examples/world.md`',
                 '  37:10  warning  Link to unknown heading in ' +
                     '`examples/example.md`: `world`',
-                '  43:10  warning  Link to unknown file: `examples/world.md`',
-                '  45:10  warning  Link to unknown file: `examples/world.md`',
+                '  39:10  warning  Link to unknown heading in ' +
+                    '`examples/example.md`: `world`',
+                '  45:10  warning  Link to unknown heading in ' +
+                    '`examples/world.md`: `hello`',
+                '  47:10  warning  Link to unknown heading in ' +
+                    '`examples/world.md`: `hello`',
                 '',
-                '✖ 7 problems (0 errors, 7 warnings)',
+                '✖ 9 problems (0 errors, 9 warnings)',
                 '',
-                'examples/example.md',
+                '',
+                'examples/example.md: done.',
                 '   5:37  warning  Link to unknown heading: `world`',
                 '  19:10  warning  Link to unknown file: `world.md`',
+                '  35:10  warning  Link to unknown file: `world.md`',
                 '  29:10  warning  Link to unknown heading in ' +
                     '`example.md`: `world`',
-                '  35:10  warning  Link to unknown file: `world.md`',
+                '  35:10  warning  Link to unknown heading in ' +
+                    '`world.md`: `hello`',
                 '',
-                '✖ 4 problems (0 errors, 4 warnings)'
+                '✖ 5 problems (0 errors, 5 warnings)'
             ].join('\n'));
 
             done(err);
@@ -231,12 +248,15 @@ describe('mdast-validate-links', function () {
             'color': false,
             'detectRC': false,
             'detectIgnore': false,
-            'plugins': ['slug', './index.js']
+                'plugins': [
+                    '../../../node_modules/mdast-slug',
+                    '../../../index.js'
+                ]
         }, function (err) {
             var res = stop();
 
             assert.equal(res.err, [
-                'definitions.md',
+                'definitions.md: done.',
                 '  5:12  warning  Link to unknown heading: `world`',
                 '',
                 '✖ 1 problem (0 errors, 1 warning)'
@@ -258,8 +278,8 @@ describe('mdast-validate-links', function () {
             'detectRC': false,
             'detectIgnore': false,
             'plugins': {
-                'slug': null,
-                './index.js': {
+                '../../../node_modules/mdast-slug': null,
+                '../../../index.js': {
                     'repository': 'wooorm/test'
                 }
             }
@@ -269,43 +289,58 @@ describe('mdast-validate-links', function () {
             assert.equal(res.out, '');
 
             assert.equal(res.err, [
-                'example.md',
+                'example.md: done.',
                 '   5:37  warning  Link to unknown heading: `world`',
-                '  17:34  warning  Link to unknown file: `examples/world.md`',
-                '  19:12  warning  Link to unknown file: `examples/world.md`',
-                '  21:10  warning  Link to unknown file: `examples/world.md`',
+                '  19:34  warning  Link to unknown file: `examples/world.md`',
+                '  21:12  warning  Link to unknown file: `examples/world.md`',
                 '  23:10  warning  Link to unknown file: `examples/world.md`',
-                '  35:10  warning  Link to unknown heading in ' +
-                    '`examples/example.md`: `world`',
+                '  25:10  warning  Link to unknown file: `examples/world.md`',
+                '  45:10  warning  Link to unknown file: `examples/world.md`',
+                '  47:10  warning  Link to unknown file: `examples/world.md`',
+                '  49:10  warning  Link to unknown file: `examples/world.md`',
+                '  51:10  warning  Link to unknown file: `examples/world.md`',
                 '  37:10  warning  Link to unknown heading in ' +
                     '`examples/example.md`: `world`',
                 '  39:10  warning  Link to unknown heading in ' +
                     '`examples/example.md`: `world`',
                 '  41:10  warning  Link to unknown heading in ' +
                     '`examples/example.md`: `world`',
-                '  43:10  warning  Link to unknown file: `examples/world.md`',
-                '  45:10  warning  Link to unknown file: `examples/world.md`',
-                '  47:10  warning  Link to unknown file: `examples/world.md`',
-                '  49:10  warning  Link to unknown file: `examples/world.md`',
+                '  43:10  warning  Link to unknown heading in ' +
+                    '`examples/example.md`: `world`',
+                '  45:10  warning  Link to unknown heading in ' +
+                    '`examples/world.md`: `hello`',
+                '  47:10  warning  Link to unknown heading in ' +
+                    '`examples/world.md`: `hello`',
+                '  49:10  warning  Link to unknown heading in ' +
+                    '`examples/world.md`: `hello`',
+                '  51:10  warning  Link to unknown heading in ' +
+                    '`examples/world.md`: `hello`',
                 '',
-                '✖ 13 problems (0 errors, 13 warnings)',
+                '✖ 17 problems (0 errors, 17 warnings)',
                 '',
-                'examples/example.md',
+                '',
+                'examples/example.md: done.',
                 '   5:37  warning  Link to unknown heading: `world`',
                 '  15:34  warning  Link to unknown file: `world.md`',
                 '  17:12  warning  Link to unknown file: `world.md`',
                 '  19:10  warning  Link to unknown file: `world.md`',
+                '  35:10  warning  Link to unknown file: `world.md`',
+                '  37:10  warning  Link to unknown file: `world.md`',
+                '  39:10  warning  Link to unknown file: `world.md`',
                 '  29:10  warning  Link to unknown heading in ' +
                     '`example.md`: `world`',
                 '  31:10  warning  Link to unknown heading in ' +
                     '`example.md`: `world`',
                 '  33:10  warning  Link to unknown heading in ' +
                     '`example.md`: `world`',
-                '  35:10  warning  Link to unknown file: `world.md`',
-                '  37:10  warning  Link to unknown file: `world.md`',
-                '  39:10  warning  Link to unknown file: `world.md`',
+                '  35:10  warning  Link to unknown heading in ' +
+                    '`world.md`: `hello`',
+                '  37:10  warning  Link to unknown heading in ' +
+                    '`world.md`: `hello`',
+                '  39:10  warning  Link to unknown heading in ' +
+                    '`world.md`: `hello`',
                 '',
-                '✖ 10 problems (0 errors, 10 warnings)'
+                '✖ 13 problems (0 errors, 13 warnings)'
             ].join('\n'));
 
             done(err);
@@ -327,55 +362,68 @@ describe('mdast-validate-links', function () {
             'color': false,
             'detectRC': false,
             'detectIgnore': false,
-            'plugins': [
-                '../../../node_modules/mdast-slug',
-                '../../../index.js'
-            ]
+                'plugins': [
+                    '../../../node_modules/mdast-slug',
+                    '../../../index.js'
+                ]
         }, function (err) {
             var res = stop();
 
             fs.unlinkSync('./package.json');
 
-            assert.equal(res.out, '');
-
             assert.equal(res.err, [
-                'example.md',
+                'example.md: done.',
                 '   5:37  warning  Link to unknown heading: `world`',
-                '  17:34  warning  Link to unknown file: `examples/world.md`',
-                '  19:12  warning  Link to unknown file: `examples/world.md`',
-                '  21:10  warning  Link to unknown file: `examples/world.md`',
+                '  19:34  warning  Link to unknown file: `examples/world.md`',
+                '  21:12  warning  Link to unknown file: `examples/world.md`',
                 '  23:10  warning  Link to unknown file: `examples/world.md`',
-                '  35:10  warning  Link to unknown heading in ' +
-                    '`examples/example.md`: `world`',
+                '  25:10  warning  Link to unknown file: `examples/world.md`',
+                '  45:10  warning  Link to unknown file: `examples/world.md`',
+                '  47:10  warning  Link to unknown file: `examples/world.md`',
+                '  49:10  warning  Link to unknown file: `examples/world.md`',
+                '  51:10  warning  Link to unknown file: `examples/world.md`',
                 '  37:10  warning  Link to unknown heading in ' +
                     '`examples/example.md`: `world`',
                 '  39:10  warning  Link to unknown heading in ' +
                     '`examples/example.md`: `world`',
                 '  41:10  warning  Link to unknown heading in ' +
                     '`examples/example.md`: `world`',
-                '  43:10  warning  Link to unknown file: `examples/world.md`',
-                '  45:10  warning  Link to unknown file: `examples/world.md`',
-                '  47:10  warning  Link to unknown file: `examples/world.md`',
-                '  49:10  warning  Link to unknown file: `examples/world.md`',
+                '  43:10  warning  Link to unknown heading in ' +
+                    '`examples/example.md`: `world`',
+                '  45:10  warning  Link to unknown heading in ' +
+                    '`examples/world.md`: `hello`',
+                '  47:10  warning  Link to unknown heading in ' +
+                    '`examples/world.md`: `hello`',
+                '  49:10  warning  Link to unknown heading in ' +
+                    '`examples/world.md`: `hello`',
+                '  51:10  warning  Link to unknown heading in ' +
+                    '`examples/world.md`: `hello`',
                 '',
-                '✖ 13 problems (0 errors, 13 warnings)',
+                '✖ 17 problems (0 errors, 17 warnings)',
                 '',
-                'examples/example.md',
+                '',
+                'examples/example.md: done.',
                 '   5:37  warning  Link to unknown heading: `world`',
                 '  15:34  warning  Link to unknown file: `world.md`',
                 '  17:12  warning  Link to unknown file: `world.md`',
                 '  19:10  warning  Link to unknown file: `world.md`',
+                '  35:10  warning  Link to unknown file: `world.md`',
+                '  37:10  warning  Link to unknown file: `world.md`',
+                '  39:10  warning  Link to unknown file: `world.md`',
                 '  29:10  warning  Link to unknown heading in ' +
                     '`example.md`: `world`',
                 '  31:10  warning  Link to unknown heading in ' +
                     '`example.md`: `world`',
                 '  33:10  warning  Link to unknown heading in ' +
                     '`example.md`: `world`',
-                '  35:10  warning  Link to unknown file: `world.md`',
-                '  37:10  warning  Link to unknown file: `world.md`',
-                '  39:10  warning  Link to unknown file: `world.md`',
+                '  35:10  warning  Link to unknown heading in ' +
+                    '`world.md`: `hello`',
+                '  37:10  warning  Link to unknown heading in ' +
+                    '`world.md`: `hello`',
+                '  39:10  warning  Link to unknown heading in ' +
+                    '`world.md`: `hello`',
                 '',
-                '✖ 10 problems (0 errors, 10 warnings)'
+                '✖ 13 problems (0 errors, 13 warnings)'
             ].join('\n'));
 
             done(err);
