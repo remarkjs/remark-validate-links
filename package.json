@@ -1,6 +1,6 @@
 {
   "name": "mdast-validate-links",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Validate links to headings and files in markdown",
   "license": "MIT",
   "keywords": [

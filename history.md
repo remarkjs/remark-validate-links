@@ -5,6 +5,11 @@ mdast:
 
 <!--lint disable no-multiple-toplevel-headings-->
 
+0.3.0 / 2015-07-26
+==================
+
+*   Add suggestions for similar references on failure (ddabfe2)
+
 0.2.1 / 2015-07-19
 ==================
 
