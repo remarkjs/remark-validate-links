@@ -16,6 +16,7 @@
     "mdast-slug": "^0.1.1",
     "mdast-util-definitions": "^0.1.0",
     "mdast-util-visit": "^0.1.1",
+    "propose": "0.0.5",
     "urljoin": "^0.1.5"
   },
   "repository": {

@@ -7,6 +7,7 @@
 var url = require('url');
 var fs = require('fs');
 var path = require('path');
+var propose = require('propose');
 var visit = require('mdast-util-visit');
 var definitions = require('mdast-util-definitions');
 var gh = require('github-url-to-object');
@@ -43,6 +44,34 @@ function getHash(uri) {
     return hash ? hash.slice(1) : null;
 }
 
+function getClosest(pathname, references) {
+    var hash = getHash(pathname);
+    var base = getPathname(pathname);
+    var dictionary = [];
+    var reference;
+    var subhash;
+    var subbase;
+
+    for (reference in references) {
+        subbase = getPathname(reference);
+        subhash = getHash(reference);
+
+        if (getPathname(reference) === base) {
+            if (subhash && hash) {
+                dictionary.push(subhash);
+            }
+        } else {
+            if (!subhash && !hash) {
+                dictionary.push(subbase);
+            }
+        }
+    }
+
+    return propose(hash ? hash : base, dictionary, {
+        'threshold': 0.7
+    });
+}
+
 /**
  * Utilitity to warn `warning` for each node in `nodes`,
  * on `file`.
@@ -76,8 +105,15 @@ function gatherReferences(file, project) {
     var filePath = file.filePath();
     var directory = file.directory;
     var ast = file.ast;
-    var getDefinition = definitions(ast);
+    var getDefinition;
     var prefix = '';
+
+    /* istanbul ignore next - next release of mdast */
+    if (!ast) {
+        ast = file.namespace('mdast').ast;
+    }
+
+    getDefinition = definitions(ast);
 
     if (project.user && project.repo) {
         prefix = '/' + project.user + '/' + project.repo + '/blob/';
@@ -304,6 +340,7 @@ function validate(exposed, file, project) {
     var hash;
     var pathname;
     var warning;
+    var suggestion;
 
     for (reference in references) {
         nodes = references[reference];
@@ -334,6 +371,12 @@ function validate(exposed, file, project) {
                 warning += ': `' + hash + '`';
             } else {
                 warning = 'Link to unknown file: `' + reference + '`';
+            }
+
+            suggestion = getClosest(reference, exposed);
+
+            if (suggestion) {
+                warning += '. Did you mean `' + suggestion + '`';
             }
 
             warnAll(file, nodes, warning);

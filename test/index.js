@@ -429,4 +429,33 @@ describe('mdast-validate-links', function () {
             done(err);
         });
     });
+
+    it('should suggest similar links', function (done) {
+        var stop = intercept();
+
+        cli({
+            'files': ['suggestions.md'],
+            'color': false,
+            'detectRC': false,
+            'detectIgnore': false,
+            'plugins': [
+                '../../../node_modules/mdast-slug',
+                '../../../index.js'
+            ]
+        }, function (err) {
+            var res = stop();
+
+            assert.equal(res.err, [
+                'suggestions.md: done.',
+                '  3:22  warning  Link to unknown heading: ' +
+                    '`helloo`. Did you mean `hello`',
+                '  7:17  warning  Link to unknown heading in `example.md`: ' +
+                    '`fiiiles`. Did you mean `files`',
+                '',
+                '✖ 2 problems (0 errors, 2 warnings)'
+            ].join('\n'));
+
+            done(err);
+        });
+    });
 });
