@@ -5,6 +5,11 @@ mdast:
 
 <!--lint disable no-multiple-toplevel-headings-->
 
+0.3.1 / 2015-07-27
+==================
+
+*   Fix for changes in mdast ([e9702cf](https://github.com/wooorm/mdast-validate-links/commit/e9702cf))
+
 0.3.0 / 2015-07-26
 ==================
 
