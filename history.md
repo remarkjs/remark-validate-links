@@ -8,7 +8,7 @@ mdast:
 0.3.0 / 2015-07-26
 ==================
 
-*   Add suggestions for similar references on failure (ddabfe2)
+*   Add suggestions for similar references on failure ([ddabfe2](https://github.com/wooorm/mdast-validate-links/commit/ddabfe2))
 
 0.2.1 / 2015-07-19
 ==================

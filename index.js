@@ -44,6 +44,14 @@ function getHash(uri) {
     return hash ? hash.slice(1) : null;
 }
 
+/**
+ * Suggest a possible similar reference.
+ *
+ * @param {string} pathname - Unfound reference.
+ * @param {Object<string, boolean>} references - All
+ *   references.
+ * @return {string?} - Suggested reference.
+ */
 function getClosest(pathname, references) {
     var hash = getHash(pathname);
     var base = getPathname(pathname);
@@ -104,14 +112,9 @@ function gatherReferences(file, project) {
     var cache = {};
     var filePath = file.filePath();
     var directory = file.directory;
-    var ast = file.ast;
+    var ast = file.namespace('mdast').ast;
     var getDefinition;
     var prefix = '';
-
-    /* istanbul ignore next - next release of mdast */
-    if (!ast) {
-        ast = file.namespace('mdast').ast;
-    }
 
     getDefinition = definitions(ast);
 
@@ -289,15 +292,16 @@ function gatherExposedFactory() {
      */
     function gather(file) {
         var filePath = file.filePath();
+        var ast = file.namespace('mdast').ast;
 
         /*
          * Ignore files without AST or filename.
          */
 
-        if (filePath && file.ast) {
+        if (filePath && ast) {
             cache[filePath] = true;
 
-            visit(file.ast, 'heading', function (node) {
+            visit(ast, 'heading', function (node) {
                 var id = node.attributes && node.attributes.id;
 
                 hasHeadings = true;
@@ -332,7 +336,8 @@ function gatherExposedFactory() {
  *   (optional).
  */
 function validate(exposed, file, project) {
-    var references = file.ast ? gatherReferences(file, project) : {};
+    var ast = file.namespace('mdast').ast;
+    var references = ast ? gatherReferences(file, project) : {};
     var filePath = file.filePath();
     var reference;
     var nodes;
