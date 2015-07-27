@@ -1,4 +1,4 @@
-# mdast-validate-links [![Build Status](https://img.shields.io/travis/wooorm/mdast-validate-links.svg?style=flat)](https://travis-ci.org/wooorm/mdast-validate-links) [![Coverage Status](https://img.shields.io/coveralls/wooorm/mdast-validate-links.svg?style=flat)](https://coveralls.io/r/wooorm/mdast-validate-links?branch=master)
+# mdast-validate-links [![Build Status](https://img.shields.io/travis/wooorm/mdast-validate-links.svg)](https://travis-ci.org/wooorm/mdast-validate-links) [![Coverage Status](https://img.shields.io/codecov/c/github/wooorm/mdast-validate-links.svg)](https://codecov.io/github/wooorm/mdast-validate-links)
 
 [**mdast**](https://github.com/wooorm/mdast) plug-in to validate if links to
 headings and files in markdown point to existing things.
