@@ -1,3 +1,11 @@
+/**
+ * @author Titus Wormer
+ * @copyright 2015 Titus Wormer
+ * @license MIT
+ * @module mdast:validate-links
+ * @fileoverview Validate links to headings and files in markdown.
+ */
+
 'use strict';
 
 /*
@@ -8,7 +16,7 @@ var url = require('url');
 var fs = require('fs');
 var path = require('path');
 var propose = require('propose');
-var visit = require('mdast-util-visit');
+var visit = require('unist-util-visit');
 var definitions = require('mdast-util-definitions');
 var gh = require('github-url-to-object');
 var urljoin = require('urljoin');

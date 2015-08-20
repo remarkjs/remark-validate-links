@@ -13,47 +13,39 @@
   ],
   "dependencies": {
     "github-url-to-object": "^1.5.2",
-    "mdast-slug": "^0.1.1",
-    "mdast-util-definitions": "^0.1.0",
-    "mdast-util-visit": "^0.1.1",
+    "mdast-slug": "^1.0.0",
+    "mdast-util-definitions": "^1.0.0",
+    "unist-util-visit": "^1.0.0",
     "propose": "0.0.5",
     "urljoin": "^0.1.5"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/wooorm/mdast-validate-links.git"
-  },
-  "author": {
-    "name": "Titus Wormer",
-    "email": "tituswormer@gmail.com"
-  },
+  "repository": "wooorm/mdast-validate-links",
+  "author": "Titus Wormer <tituswormer@gmail.com>",
   "files": [
-    "index.js",
-    "LICENSE"
+    "index.js"
   ],
   "devDependencies": {
     "cept": "^1.0.0",
-    "eslint": "^0.24.0",
+    "eslint": "^1.0.0",
     "istanbul": "^0.3.0",
-    "jscs": "^1.0.0",
+    "jscs": "^2.0.0",
     "jscs-jsdoc": "^1.0.0",
-    "mdast": "^0.27.0",
-    "mdast-github": "^0.3.0",
-    "mdast-lint": "^0.4.0",
-    "mdast-yaml-config": "^0.2.0",
+    "mdast": "^1.0.0",
+    "mdast-comment-config": "^1.0.0",
+    "mdast-github": "^1.0.0",
+    "mdast-lint": "^1.0.0",
     "mocha": "^2.0.0"
   },
   "scripts": {
     "test-api": "mocha --check-leaks test/index.js",
-    "test-coveralls": "istanbul cover _mocha --report lcovonly -- --check-leaks test/index.js",
     "test-coverage": "istanbul cover _mocha -- test/index.js",
-    "test-travis": "npm run test-coveralls",
+    "test-travis": "npm run test-coverage",
     "test": "npm run test-api",
     "lint-api": "eslint .",
     "lint-style": "jscs --reporter inline .",
     "lint": "npm run lint-api && npm run lint-style",
     "make": "npm run lint && npm run test-coverage",
-    "build-md": "mdast . --output --quiet",
+    "build-md": "mdast . --quiet",
     "build": "npm run build-md"
   }
 }

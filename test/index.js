@@ -1,3 +1,11 @@
+/**
+ * @author Titus Wormer
+ * @copyright 2015 Titus Wormer
+ * @license MIT
+ * @module mdast:validate-links:test
+ * @fileoverview Test suite for `mdast-validate-links`.
+ */
+
 'use strict';
 
 /* eslint-env mocha */
@@ -12,6 +20,12 @@ var cept = require('cept');
 var mdast = require('mdast');
 var cli = require('mdast/lib/cli');
 var links = require('..');
+
+/*
+ * Methods.
+ */
+
+var equal = assert.strictEqual;
 
 /*
  * Cache to store output and errors by mdast.
@@ -101,7 +115,7 @@ describe('mdast-validate-links', function () {
         }, function (err) {
             var res = stop();
 
-            assert.equal(res.err, [
+            equal(res.err, [
                 'example.md: done.',
                 '  0:0  error  Missing slugs. Use for example `mdast-slug` ' +
                     'to generate heading IDs',
@@ -128,9 +142,9 @@ describe('mdast-validate-links', function () {
         }, function (err) {
             var res = stop();
 
-            assert.equal(res.out, '');
+            equal(res.out, '');
 
-            assert.equal(res.err, [
+            equal(res.err, [
                 'FOOOO: done.',
                 '  0:0  error  No such file or directory',
                 '',
@@ -162,7 +176,7 @@ describe('mdast-validate-links', function () {
         }, function (err) {
             var res = stop();
 
-            assert.equal(res.err, [
+            equal(res.err, [
                 'example.md: done.',
                 '   5:37  warning  Link to unknown heading: `world`',
                 '  23:10  warning  Link to unknown file: `examples/world.md`',
@@ -203,9 +217,9 @@ describe('mdast-validate-links', function () {
         }, function (err) {
             var res = stop();
 
-            assert.equal(res.out, '');
+            equal(res.out, '');
 
-            assert.equal(res.err, [
+            equal(res.err, [
                 'example.md: done.',
                 '   5:37  warning  Link to unknown heading: `world`',
                 '  23:10  warning  Link to unknown file: `examples/world.md`',
@@ -255,7 +269,7 @@ describe('mdast-validate-links', function () {
         }, function (err) {
             var res = stop();
 
-            assert.equal(res.err, [
+            equal(res.err, [
                 'definitions.md: done.',
                 '  5:12  warning  Link to unknown heading: `world`',
                 '',
@@ -286,9 +300,9 @@ describe('mdast-validate-links', function () {
         }, function (err) {
             var res = stop();
 
-            assert.equal(res.out, '');
+            equal(res.out, '');
 
-            assert.equal(res.err, [
+            equal(res.err, [
                 'example.md: done.',
                 '   5:37  warning  Link to unknown heading: `world`',
                 '  19:34  warning  Link to unknown file: `examples/world.md`',
@@ -371,7 +385,7 @@ describe('mdast-validate-links', function () {
 
             fs.unlinkSync('./package.json');
 
-            assert.equal(res.err, [
+            equal(res.err, [
                 'example.md: done.',
                 '   5:37  warning  Link to unknown heading: `world`',
                 '  19:34  warning  Link to unknown file: `examples/world.md`',
@@ -445,7 +459,7 @@ describe('mdast-validate-links', function () {
         }, function (err) {
             var res = stop();
 
-            assert.equal(res.err, [
+            equal(res.err, [
                 'suggestions.md: done.',
                 '  3:22  warning  Link to unknown heading: ' +
                     '`helloo`. Did you mean `hello`',

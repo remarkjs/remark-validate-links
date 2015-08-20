@@ -23,7 +23,7 @@ npm install mdast-validate-links
 
 ## Command line
 
-![Example of how mdast-validate-links looks on screen](https://cdn.rawgit.com/wooorm/mdast-validate-links/master/screen-shot.png)
+![Example of how mdast-validate-links looks on screen](https://cdn.rawgit.com/wooorm/mdast-validate-links/master/screenshot.png)
 
 Use **mdast-validate-links** together with [**mdast**](https://github.com/wooorm/mdast)
 and [**mdast-slug**](https://github.com/wooorm/mdast-slug):
