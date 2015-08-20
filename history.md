@@ -2,6 +2,11 @@
 
 <!--lint disable no-multiple-toplevel-headings-->
 
+1.0.0 / 2015-08-20
+==================
+
+*   Update dependencies, dev-dependencies ([986797a](https://github.com/wooorm/mdast-validate-links/commit/986797a))
+
 0.3.1 / 2015-07-27
 ==================
 
