@@ -310,7 +310,12 @@ function gatherExposedFactory() {
             cache[filePath] = true;
 
             visit(ast, 'heading', function (node) {
-                var id = node.attributes && node.attributes.id;
+                var data = node.data || {};
+                var attributes = data.htmlAttributes || {};
+                var id = attributes.id || data.id;
+
+                /* istanbul ignore next */
+                id = id || (node.attributes && node.attributes.id);
 
                 hasHeadings = true;
 
