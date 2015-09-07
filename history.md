@@ -2,6 +2,12 @@
 
 <!--lint disable no-multiple-toplevel-headings-->
 
+1.1.0 / 2015-09-07
+==================
+
+*   Add support for changes in mdast-slug ([8749876](https://github.com/wooorm/mdast-validate-links/commit/8749876))
+*   Update test fixtures for updates in mdast ([e9b32d4](https://github.com/wooorm/mdast-validate-links/commit/e9b32d4))
+
 1.0.0 / 2015-08-20
 ==================
 
