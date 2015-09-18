@@ -2,6 +2,12 @@
 
 <!--lint disable no-multiple-toplevel-headings-->
 
+1.1.1 / 2015-09-18
+==================
+
+*   Add support for future changes in unified ([fab6a89](https://github.com/wooorm/mdast-validate-links/commit/fab6a89))
+*   Add related section, table-of-contents ([0b6c35b](https://github.com/wooorm/mdast-validate-links/commit/0b6c35b))
+
 1.1.0 / 2015-09-07
 ==================
 
