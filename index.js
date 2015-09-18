@@ -351,7 +351,8 @@ function gatherExposedFactory() {
  *   (optional).
  */
 function validate(exposed, file, project) {
-    var ast = file.namespace('mdast').ast;
+    var space = file.namespace('mdast');
+    var ast = space.tree || space.ast;
     var references = ast ? gatherReferences(file, project) : {};
     var filePath = file.filePath();
     var reference;
