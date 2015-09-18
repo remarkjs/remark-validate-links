@@ -120,7 +120,8 @@ function gatherReferences(file, project) {
     var cache = {};
     var filePath = file.filePath();
     var directory = file.directory;
-    var ast = file.namespace('mdast').ast;
+    var space = file.namespace('mdast');
+    var ast = space.tree || space.ast;
     var getDefinition;
     var prefix = '';
 
@@ -300,7 +301,8 @@ function gatherExposedFactory() {
      */
     function gather(file) {
         var filePath = file.filePath();
-        var ast = file.namespace('mdast').ast;
+        var space = file.namespace('mdast');
+        var ast = space.tree || space.ast;
 
         /*
          * Ignore files without AST or filename.
