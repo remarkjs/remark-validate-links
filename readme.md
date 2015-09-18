@@ -13,6 +13,15 @@ or if the file does not exist, this plug-in will also warn.
 Linking to other files, such as `LICENSE` or `index.js` (when they exist)
 is fine.
 
+## Table of Contents
+
+*   [Installation](#installation)
+*   [Command line](#command-line)
+*   [Programmatic](#programmatic)
+*   [Configuration](#configuration)
+*   [Related](#related)
+*   [License](#license)
+
 ## Installation
 
 [npm](https://docs.npmjs.com/cli/install):
@@ -94,6 +103,11 @@ too. An example `.mdastrc` file could look as follows:
   }
 }
 ```
+
+## Related
+
+*   [`mdast-lint`](https://github.com/wooorm/mdast-lint)
+    — Markdown code style linter.
 
 ## License
 
