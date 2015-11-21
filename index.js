@@ -439,7 +439,10 @@ function completerFactory(project) {
         exposed = gatherExposed.done();
 
         set.valueOf().forEach(function (file) {
-            validate(exposed, file, project);
+            /* istanbul ignore else - stdin */
+            if (file.filePath()) {
+                validate(exposed, file, project);
+            }
         });
 
         done();
@@ -474,11 +477,19 @@ function transformerFactory(project, fileSet) {
      * @param {File} file - Virtual file.
      */
     function transformer(ast, file) {
-        var references = gatherReferences(file, project);
         var links = [];
-        var current = getPathname(file.filePath());
+        var references;
+        var current;
         var link;
         var pathname;
+
+        /* istanbul ignore if - stdin */
+        if (!file.filePath()) {
+            return;
+        }
+
+        references = gatherReferences(file, project);
+        current = getPathname(file.filePath());
 
         for (link in references) {
             pathname = getPathname(link);
