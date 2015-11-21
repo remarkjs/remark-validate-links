@@ -143,11 +143,11 @@ describe('mdast-validate-links', function () {
             equal(res.out, '');
 
             equal(res.err, [
-                'definitions.md',
-                '  5:12-5:21  warning  Link to unknown heading: `world`',
-                '',
                 'FOOOO',
                 '        1:1  error    No such file or directory',
+                '',
+                'definitions.md',
+                '  5:12-5:21  warning  Link to unknown heading: `world`',
                 '',
                 '2 messages (✖ 1 error, ⚠ 1 warning)'
             ].join('\n'));
