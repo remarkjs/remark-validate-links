@@ -121,9 +121,9 @@ function gatherReferences(file, project) {
     var filePath = file.filePath();
     var directory = file.directory;
     var space = file.namespace('mdast');
-    var ast = space.tree || space.ast;
     var getDefinition;
     var prefix = '';
+    var ast = space.tree || /* istanbul ignore next */ space.ast;
 
     getDefinition = definitions(ast);
 

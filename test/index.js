@@ -15,8 +15,8 @@
  */
 
 var assert = require('assert');
+var hook = require('hook-std');
 var fs = require('fs');
-var cept = require('cept');
 var mdast = require('mdast');
 var cli = require('mdast/lib/cli');
 var links = require('..');
@@ -27,59 +27,37 @@ var links = require('..');
 
 var equal = assert.strictEqual;
 
-/*
- * Cache to store output and errors by mdast.
- */
-
-var std = {
-    'out': [],
-    'err': []
-};
-
 /**
- * Factory to store a bound type.
+ * Test the cli.
  *
- * @param {string} type - `"out"` or `"err"`.
- * @return {Function} - Stores the bound type.
+ * @param {Object} config - Configuration.
+ * @param {Function} callback - Completion handler.
  */
-function queue(type) {
-    /**
-     * Store a bound type.
-     */
-    return function () {
-        std[type].push([].slice.call(arguments).join(''));
-    };
-}
+function test(config, callback) {
+    var stdout = [];
+    var stderr = [];
+    var opts = {};
+    var unhookStdout;
+    var unhookStderr;
 
-/**
- * Intercept both `console.log` to `std.out` and
- * `console.error` to `std.err`;
- *
- * @return {Function} - Stores output.
- */
-function intercept() {
-    var stopOut = cept(console, 'log', queue('out'));
-    var stopErr = cept(console, 'error', queue('err'));
+    opts.silent = true;
 
-    /**
-     * Stops intercepting. Returns the captured `std`.
-     *
-     * @return {Object} - Output.
-     */
-    return function () {
-        var current = {
-            'out': std.out.join('\n').trim(),
-            'err': std.err.join('\n').trim()
-        };
+    unhookStdout = hook.stdout(opts, [].push.bind(stdout));
+    unhookStderr = hook.stderr(opts, [].push.bind(stderr));
 
-        stopOut();
-        stopErr();
+    cli(config, function (err) {
+        unhookStdout();
+        unhookStderr();
 
-        std.out = [];
-        std.err = [];
+        if (err) {
+            return callback(err);
+        }
 
-        return current;
-    };
+        return callback(null, {
+            'stdout': stdout.join(''),
+            'stderr': stderr.join('')
+        });
+    });
 }
 
 /*
@@ -102,9 +80,7 @@ describe('mdast-validate-links', function () {
     });
 
     it('should warn when used without slugs', function (done) {
-        var stop = intercept();
-
-        cli({
+        test({
             'files': 'example.md',
             'color': false,
             'detectRC': false,
@@ -112,10 +88,8 @@ describe('mdast-validate-links', function () {
             'plugins': [
                 '../../../index.js'
             ]
-        }, function (err) {
-            var res = stop();
-
-            equal(res.err.split('\n').slice(0, 2).join('\n'), [
+        }, function (err, res) {
+            equal(res.stderr.split('\n').slice(0, 2).join('\n'), [
                 'example.md',
                 '        1:1  error    Error: Missing slugs. Use for ' +
                     'example `mdast-slug` to generate heading IDs'
@@ -126,9 +100,7 @@ describe('mdast-validate-links', function () {
     });
 
     it('should ignore unfound files', function (done) {
-        var stop = intercept();
-
-        cli({
+        test({
             'files': ['definitions.md', 'FOOOO'],
             'color': false,
             'detectRC': false,
@@ -137,19 +109,18 @@ describe('mdast-validate-links', function () {
                 '../../../node_modules/mdast-slug',
                 '../../../index.js'
             ]
-        }, function (err) {
-            var res = stop();
+        }, function (err, res) {
+            equal(res.stdout, '');
 
-            equal(res.out, '');
-
-            equal(res.err, [
+            equal(res.stderr, [
                 'FOOOO',
                 '        1:1  error    No such file or directory',
                 '',
                 'definitions.md',
                 '  5:12-5:21  warning  Link to unknown heading: `world`',
                 '',
-                '2 messages (✖ 1 error, ⚠ 1 warning)'
+                '2 messages (✖ 1 error, ⚠ 1 warning)',
+                ''
             ].join('\n'));
 
             done(err);
@@ -157,9 +128,7 @@ describe('mdast-validate-links', function () {
     });
 
     it('should work when not all files are given', function (done) {
-        var stop = intercept();
-
-        cli({
+        test({
             'files': 'example.md',
             'color': false,
             'detectRC': false,
@@ -168,10 +137,8 @@ describe('mdast-validate-links', function () {
                 '../../../node_modules/mdast-slug',
                 '../../../index.js'
             ]
-        }, function (err) {
-            var res = stop();
-
-            equal(res.err, [
+        }, function (err, res) {
+            equal(res.stderr, [
                 'example.md',
                 '  5:37-5:51    warning  Link to unknown heading: `world`',
                 '  23:10-23:37  warning  Link to unknown file: ' +
@@ -191,7 +158,8 @@ describe('mdast-validate-links', function () {
                 '  47:10-47:38  warning  Link to unknown heading in ' +
                     '`examples/world.md`: `hello`',
                 '',
-                '⚠ 9 warnings'
+                '⚠ 9 warnings',
+                ''
             ].join('\n'));
 
             done(err);
@@ -199,9 +167,7 @@ describe('mdast-validate-links', function () {
     });
 
     it('should work when all files are given', function (done) {
-        var stop = intercept();
-
-        cli({
+        test({
             'files': [
                 'example.md',
                 'examples/example.md'
@@ -213,12 +179,10 @@ describe('mdast-validate-links', function () {
                     '../../../node_modules/mdast-slug',
                     '../../../index.js'
                 ]
-        }, function (err) {
-            var res = stop();
+        }, function (err, res) {
+            equal(res.stdout, '');
 
-            equal(res.out, '');
-
-            equal(res.err, [
+            equal(res.stderr, [
                 'example.md',
                 '  5:37-5:51    warning  Link to unknown heading: `world`',
                 '  23:10-23:37  warning  Link to unknown file: ' +
@@ -250,7 +214,8 @@ describe('mdast-validate-links', function () {
                 '  35:10-35:32  warning  Link to unknown heading in ' +
                     '`world.md`: `hello`',
                 '',
-                '⚠ 14 warnings'
+                '⚠ 14 warnings',
+                ''
             ].join('\n'));
 
             done(err);
@@ -258,9 +223,7 @@ describe('mdast-validate-links', function () {
     });
 
     it('should work with definitions', function (done) {
-        var stop = intercept();
-
-        cli({
+        test({
             'files': 'definitions.md',
             'color': false,
             'detectRC': false,
@@ -269,14 +232,13 @@ describe('mdast-validate-links', function () {
                     '../../../node_modules/mdast-slug',
                     '../../../index.js'
                 ]
-        }, function (err) {
-            var res = stop();
-
-            equal(res.err, [
+        }, function (err, res) {
+            equal(res.stderr, [
                 'definitions.md',
                 '  5:12-5:21  warning  Link to unknown heading: `world`',
                 '',
-                '⚠ 1 warning'
+                '⚠ 1 warning',
+                ''
             ].join('\n'));
 
             done(err);
@@ -284,9 +246,7 @@ describe('mdast-validate-links', function () {
     });
 
     it('should work on GitHub URLs when given a repo', function (done) {
-        var stop = intercept();
-
-        cli({
+        test({
             'files': [
                 'example.md',
                 'examples/example.md'
@@ -300,12 +260,10 @@ describe('mdast-validate-links', function () {
                     'repository': 'wooorm/test'
                 }
             }
-        }, function (err) {
-            var res = stop();
+        }, function (err, res) {
+            equal(res.stdout, '');
 
-            equal(res.out, '');
-
-            equal(res.err, [
+            equal(res.stderr, [
                 'example.md',
                 '  5:37-5:51     warning  Link to unknown heading: ' +
                     '`world`',
@@ -370,7 +328,8 @@ describe('mdast-validate-links', function () {
                 '  39:10-39:73  warning  Link to unknown file: ' +
                     '`world.md`',
                 '',
-                '⚠ 30 warnings'
+                '⚠ 30 warnings',
+                ''
             ].join('\n'));
 
             done(err);
@@ -378,13 +337,11 @@ describe('mdast-validate-links', function () {
     });
 
     it('should work on GitHub URLs when with package.json', function (done) {
-        var stop = intercept();
-
         fs.writeFileSync('./package.json', JSON.stringify({
             'repository': 'wooorm/test'
         }, 0, 2));
 
-        cli({
+        test({
             'files': [
                 'example.md',
                 'examples/example.md'
@@ -396,12 +353,10 @@ describe('mdast-validate-links', function () {
                     '../../../node_modules/mdast-slug',
                     '../../../index.js'
                 ]
-        }, function (err) {
-            var res = stop();
-
+        }, function (err, res) {
             fs.unlinkSync('./package.json');
 
-            equal(res.err, [
+            equal(res.stderr, [
                 'example.md',
                 '  5:37-5:51     warning  Link to unknown heading: ' +
                     '`world`',
@@ -466,7 +421,8 @@ describe('mdast-validate-links', function () {
                 '  39:10-39:73  warning  Link to unknown file: ' +
                     '`world.md`',
                 '',
-                '⚠ 30 warnings'
+                '⚠ 30 warnings',
+                ''
             ].join('\n'));
 
             done(err);
@@ -474,9 +430,7 @@ describe('mdast-validate-links', function () {
     });
 
     it('should suggest similar links', function (done) {
-        var stop = intercept();
-
-        cli({
+        test({
             'files': ['suggestions.md'],
             'color': false,
             'detectRC': false,
@@ -485,17 +439,16 @@ describe('mdast-validate-links', function () {
                 '../../../node_modules/mdast-slug',
                 '../../../index.js'
             ]
-        }, function (err) {
-            var res = stop();
-
-            equal(res.err, [
+        }, function (err, res) {
+            equal(res.stderr, [
                 'suggestions.md',
                 '  3:22-3:37  warning  Link to unknown heading: `helloo`. ' +
                     'Did you mean `hello`',
                 '  7:17-7:40  warning  Link to unknown heading in ' +
                     '`example.md`: `fiiiles`. Did you mean `files`',
                 '',
-                '⚠ 2 warnings'
+                '⚠ 2 warnings',
+                ''
             ].join('\n'));
 
             done(err);
