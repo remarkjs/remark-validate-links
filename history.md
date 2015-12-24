@@ -2,6 +2,15 @@
 
 <!--lint disable no-multiple-toplevel-headings-->
 
+2.0.0 / 2015-12-24
+==================
+
+*   Add temporary warning to `readme.md` ([ab023b0](https://github.com/wooorm/remark-validate-links/commit/ab023b0))
+*   Rename `mdast-validate-links` > `remark-validate-links` ([c9e9391](https://github.com/wooorm/remark-validate-links/commit/c9e9391))
+*   Refactor tests for changes in mdast ([f8fc60d](https://github.com/wooorm/remark-validate-links/commit/f8fc60d))
+*   Update dependencies ([a93303c](https://github.com/wooorm/remark-validate-links/commit/a93303c))
+*   Fix failure when using stdin(4) ([40e1ced](https://github.com/wooorm/remark-validate-links/commit/40e1ced))
+
 1.1.1 / 2015-09-18
 ==================
 
