@@ -5,39 +5,39 @@
 1.1.1 / 2015-09-18
 ==================
 
-*   Add support for future changes in unified ([fab6a89](https://github.com/wooorm/mdast-validate-links/commit/fab6a89))
-*   Add related section, table-of-contents ([0b6c35b](https://github.com/wooorm/mdast-validate-links/commit/0b6c35b))
+*   Add support for future changes in unified ([fab6a89](https://github.com/wooorm/remark-validate-links/commit/fab6a89))
+*   Add related section, table-of-contents ([0b6c35b](https://github.com/wooorm/remark-validate-links/commit/0b6c35b))
 
 1.1.0 / 2015-09-07
 ==================
 
-*   Add support for changes in mdast-slug ([8749876](https://github.com/wooorm/mdast-validate-links/commit/8749876))
-*   Update test fixtures for updates in mdast ([e9b32d4](https://github.com/wooorm/mdast-validate-links/commit/e9b32d4))
+*   Add support for changes in mdast-slug ([8749876](https://github.com/wooorm/remark-validate-links/commit/8749876))
+*   Update test fixtures for updates in mdast ([e9b32d4](https://github.com/wooorm/remark-validate-links/commit/e9b32d4))
 
 1.0.0 / 2015-08-20
 ==================
 
-*   Update dependencies, dev-dependencies ([986797a](https://github.com/wooorm/mdast-validate-links/commit/986797a))
+*   Update dependencies, dev-dependencies ([986797a](https://github.com/wooorm/remark-validate-links/commit/986797a))
 
 0.3.1 / 2015-07-27
 ==================
 
-*   Fix for changes in mdast ([e9702cf](https://github.com/wooorm/mdast-validate-links/commit/e9702cf))
+*   Fix for changes in mdast ([e9702cf](https://github.com/wooorm/remark-validate-links/commit/e9702cf))
 
 0.3.0 / 2015-07-26
 ==================
 
-*   Add suggestions for similar references on failure ([ddabfe2](https://github.com/wooorm/mdast-validate-links/commit/ddabfe2))
+*   Add suggestions for similar references on failure ([ddabfe2](https://github.com/wooorm/remark-validate-links/commit/ddabfe2))
 
 0.2.1 / 2015-07-19
 ==================
 
-*   Update mdast ([10411ef](https://github.com/wooorm/mdast-validate-links/commit/10411ef))
+*   Update mdast ([10411ef](https://github.com/wooorm/remark-validate-links/commit/10411ef))
 
 0.2.0 / 2015-07-19
 ==================
 
-*   Add support for inspecting referenced files ([763c0d1](https://github.com/wooorm/mdast-validate-links/commit/763c0d1))
+*   Add support for inspecting referenced files ([763c0d1](https://github.com/wooorm/remark-validate-links/commit/763c0d1))
 
 0.1.0 / 2015-07-18
 ==================

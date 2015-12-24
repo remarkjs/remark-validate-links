@@ -1,6 +1,6 @@
-# mdast-validate-links [![Build Status](https://img.shields.io/travis/wooorm/mdast-validate-links.svg)](https://travis-ci.org/wooorm/mdast-validate-links) [![Coverage Status](https://img.shields.io/codecov/c/github/wooorm/mdast-validate-links.svg)](https://codecov.io/github/wooorm/mdast-validate-links)
+# remark-validate-links [![Build Status](https://img.shields.io/travis/wooorm/remark-validate-links.svg)](https://travis-ci.org/wooorm/remark-validate-links) [![Coverage Status](https://img.shields.io/codecov/c/github/wooorm/remark-validate-links.svg)](https://codecov.io/github/wooorm/remark-validate-links)
 
-[**mdast**](https://github.com/wooorm/mdast) plug-in to validate if links to
+[**remark**](https://github.com/wooorm/remark) plug-in to validate if links to
 headings and files in markdown point to existing things.
 
 For example, this document does not have a heading named `Hello`. So if I
@@ -27,18 +27,18 @@ is fine.
 [npm](https://docs.npmjs.com/cli/install):
 
 ```bash
-npm install mdast-validate-links
+npm install remark-validate-links
 ```
 
 ## Command line
 
-![Example of how mdast-validate-links looks on screen](https://cdn.rawgit.com/wooorm/mdast-validate-links/master/screenshot.png)
+![Example of how remark-validate-links looks on screen](https://cdn.rawgit.com/wooorm/remark-validate-links/master/screenshot.png)
 
-Use **mdast-validate-links** together with [**mdast**](https://github.com/wooorm/mdast)
-and [**mdast-slug**](https://github.com/wooorm/mdast-slug):
+Use **remark-validate-links** together with [**remark**](https://github.com/wooorm/remark)
+and [**remark-slug**](https://github.com/wooorm/remark-slug):
 
 ```bash
-npm install --global mdast mdast-slug mdast-validate-links
+npm install --global remark remark-slug remark-validate-links
 ```
 
 Let’s say `readme.md` is this document, and `example.md` looks as follows:
@@ -55,10 +55,10 @@ But this does exist: [LICENSE](LICENSE).
 So does this: [README](readme.md#installation).
 ```
 
-Then, to run **mdast-validate-links** on `example.md` and `readme.md`:
+Then, to run **remark-validate-links** on `example.md` and `readme.md`:
 
 ```bash
-mdast -u mdast-slug -u mdast-validate-links example.md
+remark -u remark-slug -u remark-validate-links example.md
 #
 # Yields:
 #
@@ -71,25 +71,25 @@ mdast -u mdast-slug -u mdast-validate-links example.md
 
 ## Programmatic
 
-This plug-in is **not** available on the API of mdast.
+This plug-in is **not** available on the API of remark.
 
 ## Configuration
 
 You can pass a `repository`, containing anything `package.json`s
 [`repository`](https://docs.npmjs.com/files/package.json#repository) can
-handle. If this is omitted, **mdast-validate-links** will try
+handle. If this is omitted, **remark-validate-links** will try
 the `package.json` in your current working directory.
 
 ```bash
-mdast --use 'validate-links=repository:"foo/bar"' example.md
+remark --use 'validate-links=repository:"foo/bar"' example.md
 ```
 
 When a repository is given or detected, links to GitHub are normalized
 to the file-system. E.g., `https://github.com/foo/bar/blob/master/example.md`
 becomes `example.md`.
 
-You can define this repository in `.mdastrc` or `package.json` [files](https://github.com/wooorm/mdast/blob/master/doc/mdastrc.5.md)
-too. An example `.mdastrc` file could look as follows:
+You can define this repository in `.remarkrc` or `package.json` [files](https://github.com/wooorm/remark/blob/master/doc/remarkrc.5.md)
+too. An example `.remarkrc` file could look as follows:
 
 ```json
 {
@@ -106,7 +106,7 @@ too. An example `.mdastrc` file could look as follows:
 
 ## Related
 
-*   [`mdast-lint`](https://github.com/wooorm/mdast-lint)
+*   [`remark-lint`](https://github.com/wooorm/remark-lint)
     — Markdown code style linter.
 
 ## License

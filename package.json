@@ -1,5 +1,5 @@
 {
-  "name": "mdast-validate-links",
+  "name": "remark-validate-links",
   "version": "1.1.1",
   "description": "Validate links to headings and files in markdown",
   "license": "MIT",
@@ -9,17 +9,17 @@
     "reference",
     "file",
     "heading",
-    "mdast"
+    "remark"
   ],
   "dependencies": {
     "github-url-to-object": "^2.1.0",
-    "mdast-slug": "^2.0.0",
+    "remark-slug": "^3.0.0",
     "mdast-util-definitions": "^1.0.0",
     "unist-util-visit": "^1.0.0",
     "propose": "0.0.5",
     "urljoin": "^0.1.5"
   },
-  "repository": "wooorm/mdast-validate-links",
+  "repository": "wooorm/remark-validate-links",
   "author": "Titus Wormer <tituswormer@gmail.com>",
   "files": [
     "index.js"
@@ -30,10 +30,10 @@
     "istanbul": "^0.4.0",
     "jscs": "^2.0.0",
     "jscs-jsdoc": "^1.0.0",
-    "mdast": "^2.2.2",
-    "mdast-comment-config": "^1.0.0",
-    "mdast-github": "^1.0.0",
-    "mdast-lint": "^1.0.0",
+    "mdast": "^3.0.0-alpha.5",
+    "mdast-comment-config": "^2.0.0-alpha.1",
+    "mdast-github": "^2.0.0-alpha.1",
+    "mdast-lint": "^2.0.0-alpha.1",
     "mdast-toc": "^1.0.0",
     "mocha": "^2.0.0"
   },

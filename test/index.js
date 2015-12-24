@@ -2,8 +2,8 @@
  * @author Titus Wormer
  * @copyright 2015 Titus Wormer
  * @license MIT
- * @module mdast:validate-links:test
- * @fileoverview Test suite for `mdast-validate-links`.
+ * @module remark:validate-links:test
+ * @fileoverview Test suite for `remark-validate-links`.
  */
 
 'use strict';
@@ -64,7 +64,7 @@ function test(config, callback) {
  * Tests.
  */
 
-describe('mdast-validate-links', function () {
+describe('remark-validate-links', function () {
     beforeEach(function () {
         process.chdir('./test/fixtures');
     });
@@ -76,7 +76,7 @@ describe('mdast-validate-links', function () {
     it('should throw an error when not on the CLI', function () {
         assert.throws(function () {
             mdast().use(links);
-        }, /Error: mdast-validate-links only works on the CLI/);
+        }, /Error: remark-validate-links only works on the CLI/);
     });
 
     it('should warn when used without slugs', function (done) {
@@ -92,7 +92,7 @@ describe('mdast-validate-links', function () {
             equal(res.stderr.split('\n').slice(0, 2).join('\n'), [
                 'example.md',
                 '        1:1  error    Error: Missing slugs. Use for ' +
-                    'example `mdast-slug` to generate heading IDs'
+                    'example `remark-slug` to generate heading IDs'
             ].join('\n'));
 
             done(err);
@@ -106,7 +106,7 @@ describe('mdast-validate-links', function () {
             'detectRC': false,
             'detectIgnore': false,
             'plugins': [
-                '../../../node_modules/mdast-slug',
+                '../../../node_modules/remark-slug',
                 '../../../index.js'
             ]
         }, function (err, res) {
@@ -134,7 +134,7 @@ describe('mdast-validate-links', function () {
             'detectRC': false,
             'detectIgnore': false,
             'plugins': [
-                '../../../node_modules/mdast-slug',
+                '../../../node_modules/remark-slug',
                 '../../../index.js'
             ]
         }, function (err, res) {
@@ -176,7 +176,7 @@ describe('mdast-validate-links', function () {
             'detectRC': false,
             'detectIgnore': false,
                 'plugins': [
-                    '../../../node_modules/mdast-slug',
+                    '../../../node_modules/remark-slug',
                     '../../../index.js'
                 ]
         }, function (err, res) {
@@ -229,7 +229,7 @@ describe('mdast-validate-links', function () {
             'detectRC': false,
             'detectIgnore': false,
                 'plugins': [
-                    '../../../node_modules/mdast-slug',
+                    '../../../node_modules/remark-slug',
                     '../../../index.js'
                 ]
         }, function (err, res) {
@@ -255,7 +255,7 @@ describe('mdast-validate-links', function () {
             'detectRC': false,
             'detectIgnore': false,
             'plugins': {
-                '../../../node_modules/mdast-slug': null,
+                '../../../node_modules/remark-slug': null,
                 '../../../index.js': {
                     'repository': 'wooorm/test'
                 }
@@ -350,7 +350,7 @@ describe('mdast-validate-links', function () {
             'detectRC': false,
             'detectIgnore': false,
                 'plugins': [
-                    '../../../node_modules/mdast-slug',
+                    '../../../node_modules/remark-slug',
                     '../../../index.js'
                 ]
         }, function (err, res) {
@@ -436,7 +436,7 @@ describe('mdast-validate-links', function () {
             'detectRC': false,
             'detectIgnore': false,
             'plugins': [
-                '../../../node_modules/mdast-slug',
+                '../../../node_modules/remark-slug',
                 '../../../index.js'
             ]
         }, function (err, res) {

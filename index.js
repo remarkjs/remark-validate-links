@@ -2,7 +2,7 @@
  * @author Titus Wormer
  * @copyright 2015 Titus Wormer
  * @license MIT
- * @module mdast:validate-links
+ * @module remark:validate-links
  * @fileoverview Validate links to headings and files in markdown.
  */
 
@@ -284,7 +284,7 @@ function gatherExposedFactory() {
     function done() {
         if (hasHeadings && !hasSlugs) {
             throw new Error(
-                'Missing slugs. Use for example `mdast-slug` to generate ' +
+                'Missing slugs. Use for example `remark-slug` to generate ' +
                 'heading IDs'
             );
         }
@@ -371,7 +371,7 @@ function validate(exposed, file, project) {
         /*
          * Check if files without `hash` can be linked to.
          * Because there’s no need to inspect those files
-         * for headings they are not added to mdast. This
+         * for headings they are not added to remark. This
          * is especially useful because they might be
          * non-markdown files. Here we check if they exist.
          */
@@ -448,7 +448,7 @@ function completerFactory(project) {
         done();
     }
 
-    completer.pluginId = 'mdast-validate-links';
+    completer.pluginId = 'remark-validate-links';
 
     return completer;
 }
@@ -513,16 +513,16 @@ function transformerFactory(project, fileSet) {
  * Attacher.
  *
  * @example
- *   attacher(mdast())
- *   // [Error: mdast-validate-links only works on the CLI]
+ *   attacher(remark())
+ *   // [Error: remark-validate-links only works on the CLI]
  *
- * @param {MDAST} mdast - Processor.
+ * @param {Remark} remark - Processor.
  * @param {Object?} options - Settings.
  * @param {FileSet?} fileSet - Virtual file-set.
  * @throws {Error} - When `fileSet` is not given (when not on
  *   the CLI).
  */
-function attacher(mdast, options, fileSet) {
+function attacher(remark, options, fileSet) {
     var repo = (options || {}).repository;
     var pack;
 
@@ -531,7 +531,7 @@ function attacher(mdast, options, fileSet) {
      */
 
     if (!fileSet) {
-        throw new Error('mdast-validate-links only works on the CLI');
+        throw new Error('remark-validate-links only works on the CLI');
     }
 
     /*
