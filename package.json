@@ -35,18 +35,17 @@
     "remark-github": "^2.0.0",
     "remark-lint": "^2.0.0",
     "remark-toc": "^2.0.0",
-    "mocha": "^2.0.0"
+    "tape": "^4.0.0"
   },
   "scripts": {
-    "test-api": "node test/index.js",
-    "test-coverage": "istanbul cover test/index.js",
-    "test-travis": "npm run test-coverage",
-    "test": "npm run test-api",
+    "build-md": "remark . --quiet --frail",
+    "build": "npm run build-md",
     "lint-api": "eslint .",
     "lint-style": "jscs --reporter inline .",
     "lint": "npm run lint-api && npm run lint-style",
-    "make": "npm run lint && npm run test-coverage",
-    "build-md": "remark . --quiet --frail",
-    "build": "npm run build-md"
+    "test-api": "node test/index.js",
+    "test-coverage": "istanbul cover test/index.js",
+    "test-travis": "npm run test-coverage",
+    "test": "npm run build && npm run lint && npm run test-coverage"
   }
 }
