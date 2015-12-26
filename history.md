@@ -5,8 +5,8 @@
 2.0.1 / 2015-12-26
 ==================
 
-*   Refactor to replace mocha with tape (5b7dcf5)
-*   Replace internal dependency of mdast > remark (848dfd4)
+*   Refactor to replace mocha with tape ([5b7dcf5](https://github.com/wooorm/remark-validate-links/commit/5b7dcf5))
+*   Replace internal dependency of mdast > remark ([848dfd4](https://github.com/wooorm/remark-validate-links/commit/848dfd4))
 
 2.0.0 / 2015-12-24
 ==================
