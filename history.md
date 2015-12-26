@@ -2,7 +2,7 @@
 
 <!--lint disable no-multiple-toplevel-headings-->
 
-2.0.1 / 2015-12-26
+2.0.2 / 2015-12-26
 ==================
 
 *   Refactor to replace mocha with tape ([5b7dcf5](https://github.com/wooorm/remark-validate-links/commit/5b7dcf5))
