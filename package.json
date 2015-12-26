@@ -38,8 +38,8 @@
     "mocha": "^2.0.0"
   },
   "scripts": {
-    "test-api": "mocha --check-leaks test/index.js",
-    "test-coverage": "istanbul cover _mocha -- test/index.js",
+    "test-api": "node test/index.js",
+    "test-coverage": "istanbul cover test/index.js",
     "test-travis": "npm run test-coverage",
     "test": "npm run test-api",
     "lint-api": "eslint .",
