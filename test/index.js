@@ -17,8 +17,8 @@
 var assert = require('assert');
 var hook = require('hook-std');
 var fs = require('fs');
-var mdast = require('mdast');
-var cli = require('mdast/lib/cli');
+var remark = require('remark');
+var cli = require('remark/lib/cli');
 var links = require('..');
 
 /*
@@ -75,7 +75,7 @@ describe('remark-validate-links', function () {
 
     it('should throw an error when not on the CLI', function () {
         assert.throws(function () {
-            mdast().use(links);
+            remark().use(links);
         }, /Error: remark-validate-links only works on the CLI/);
     });
 
