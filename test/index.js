@@ -63,7 +63,7 @@ process.chdir(path.resolve(process.cwd(), 'test', 'fixtures'));
 
 test.onFinish(function () {
     process.chdir(path.resolve(process.cwd(), '..', '..'));
-})
+});
 
 test('remark-validate-links', function (t) {
     // t.plan(1);
@@ -132,7 +132,7 @@ test('remark-validate-links', function (t) {
 
             st.end();
         });
-    })
+    });
 
     t.test('should work when not all files are given', function (st) {
         assertion({
@@ -176,7 +176,7 @@ test('remark-validate-links', function (t) {
 
             st.end();
         });
-    })
+    });
 
     t.test('should work when all files are given', function (st) {
         assertion({
@@ -187,10 +187,10 @@ test('remark-validate-links', function (t) {
             'color': false,
             'detectRC': false,
             'detectIgnore': false,
-                'plugins': [
-                    '../../../node_modules/remark-slug',
-                    '../../../index.js'
-                ]
+            'plugins': [
+                '../../../node_modules/remark-slug',
+                '../../../index.js'
+            ]
         }, function (err, res) {
             st.ifErr(err);
 
@@ -245,10 +245,10 @@ test('remark-validate-links', function (t) {
             'color': false,
             'detectRC': false,
             'detectIgnore': false,
-                'plugins': [
-                    '../../../node_modules/remark-slug',
-                    '../../../index.js'
-                ]
+            'plugins': [
+                '../../../node_modules/remark-slug',
+                '../../../index.js'
+            ]
         }, function (err, res) {
             st.ifErr(err);
 
@@ -376,10 +376,10 @@ test('remark-validate-links', function (t) {
             'color': false,
             'detectRC': false,
             'detectIgnore': false,
-                'plugins': [
-                    '../../../node_modules/remark-slug',
-                    '../../../index.js'
-                ]
+            'plugins': [
+                '../../../node_modules/remark-slug',
+                '../../../index.js'
+            ]
         }, function (err, res) {
             fs.unlinkSync('./package.json');
 
@@ -478,8 +478,8 @@ test('remark-validate-links', function (t) {
                 res.stderr,
                 [
                     'suggestions.md',
-                    '  3:22-3:37  warning  Link to unknown heading: `helloo`. ' +
-                        'Did you mean `hello`',
+                    '  3:22-3:37  warning  Link to unknown heading: ' +
+                        '`helloo`. Did you mean `hello`',
                     '  7:17-7:40  warning  Link to unknown heading in ' +
                         '`example.md`: `fiiiles`. Did you mean `files`',
                     '',

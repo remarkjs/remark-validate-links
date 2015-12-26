@@ -8,6 +8,8 @@
 
 'use strict';
 
+/* eslint-env node */
+
 /*
  * Dependencies.
  */
@@ -266,7 +268,7 @@ function gatherReferences(file, project) {
  *
  *   gather(file).done() // {}
  *
- * @return {Function}
+ * @return {Function} - Gatherer.
  */
 function gatherExposedFactory() {
     var cache = {};
@@ -464,7 +466,7 @@ function completerFactory(project) {
  *   project, with a `user` and `repo` property
  *   (optional).
  * @param {FileSet} fileSet - Set of virtual files.
- * @return {function(ast, file)}
+ * @return {function(ast, file)} - Transformer.
  */
 function transformerFactory(project, fileSet) {
     /**
