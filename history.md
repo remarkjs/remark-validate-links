@@ -2,6 +2,12 @@
 
 <!--lint disable no-multiple-toplevel-headings-->
 
+2.0.1 / 2015-12-26
+==================
+
+*   Refactor to replace mocha with tape (5b7dcf5)
+*   Replace internal dependency of mdast > remark (848dfd4)
+
 2.0.0 / 2015-12-24
 ==================
 
