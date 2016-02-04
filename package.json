@@ -13,7 +13,7 @@
   ],
   "dependencies": {
     "github-url-to-object": "^2.1.0",
-    "remark-slug": "^3.0.0",
+    "remark-slug": "^4.0.0",
     "mdast-util-definitions": "^1.0.0",
     "unist-util-visit": "^1.0.0",
     "propose": "0.0.5",
@@ -26,13 +26,13 @@
   ],
   "devDependencies": {
     "eslint": "^1.0.0",
-    "hook-std": "^0.1.0",
+    "hook-std": "^0.2.0",
     "istanbul": "^0.4.0",
     "jscs": "^2.0.0",
     "jscs-jsdoc": "^1.0.0",
     "remark": "^3.0.0",
     "remark-comment-config": "^2.0.0",
-    "remark-github": "^2.0.0",
+    "remark-github": "^4.0.0",
     "remark-lint": "^2.0.0",
     "remark-toc": "^2.0.0",
     "tape": "^4.0.0"
