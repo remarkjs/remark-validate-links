@@ -22,6 +22,7 @@ var visit = require('unist-util-visit');
 var definitions = require('mdast-util-definitions');
 var gh = require('github-url-to-object');
 var urljoin = require('urljoin');
+var slug = require('remark-slug');
 
 /*
  * Methods.
@@ -272,32 +273,11 @@ function gatherReferences(file, project) {
  */
 function gatherExposedFactory() {
     var cache = {};
-    var hasHeadings = false;
-    var hasSlugs = false;
-
-    /**
-     * Access found files and headings.
-     *
-     * @return {Object.<string, boolean>} - Map of
-     *   file-paths, with `true` as their value.
-     * @throws {Error} - When headings are found, but no
-     *   heading has a slug.
-     */
-    function done() {
-        if (hasHeadings && !hasSlugs) {
-            throw new Error(
-                'Missing slugs. Use for example `remark-slug` to generate ' +
-                'heading IDs'
-            );
-        }
-
-        return cache;
-    }
 
     /**
      * Find headings in `file`.
      *
-     * @property {Function} done - Access found links.
+     * @property {Object} cache - Found links.
      * @param {File} file - Virtual file.
      * @returns {Function} - Itself.
      */
@@ -314,17 +294,12 @@ function gatherExposedFactory() {
             cache[filePath] = true;
 
             visit(ast, 'heading', function (node) {
-                var data = node.data || {};
-                var attributes = data.htmlAttributes || {};
-                var id = attributes.id || data.id;
-
-                /* istanbul ignore next */
-                id = id || (node.attributes && node.attributes.id);
-
-                hasHeadings = true;
+                var data = node.data || /* istanbul ignore next */ {};
+                var attrs = data.htmlAttributes;
+                var id = (attrs && attrs.id) || data.id;
 
                 if (id) {
-                    cache[filePath + '#' + id] = hasSlugs = true;
+                    cache[filePath + '#' + id] = true;
                 }
             });
         }
@@ -332,7 +307,7 @@ function gatherExposedFactory() {
         return gather;
     }
 
-    gather.done = done;
+    gather.cache = cache;
 
     return gather;
 }
@@ -434,16 +409,13 @@ function completerFactory(project) {
      */
     function completer(set, done) {
         var gatherExposed = gatherExposedFactory();
-        var exposed;
 
         set.valueOf().forEach(gatherExposed);
-
-        exposed = gatherExposed.done();
 
         set.valueOf().forEach(function (file) {
             /* istanbul ignore else - stdin */
             if (file.filePath()) {
-                validate(exposed, file, project);
+                validate(gatherExposed.cache, file, project);
             }
         });
 
@@ -563,6 +535,16 @@ function attacher(remark, options, fileSet) {
      */
 
     fileSet.use(completerFactory(repo));
+
+    /*
+     * Attach `slug`.
+     */
+
+    remark.use(slug);
+
+    /*
+     * Expose transformer.
+     */
 
     return transformerFactory(repo, fileSet);
 }

@@ -34,11 +34,10 @@ npm install remark-validate-links
 
 ![Example of how remark-validate-links looks on screen](https://cdn.rawgit.com/wooorm/remark-validate-links/master/screenshot.png)
 
-Use **remark-validate-links** together with [**remark**](https://github.com/wooorm/remark)
-and [**remark-slug**](https://github.com/wooorm/remark-slug):
+Use **remark-validate-links** together with [**remark**](https://github.com/wooorm/remark):
 
 ```bash
-npm install --global remark remark-slug remark-validate-links
+npm install --global remark remark-validate-links
 ```
 
 Let’s say `readme.md` is this document, and `example.md` looks as follows:
@@ -58,7 +57,7 @@ So does this: [README](readme.md#installation).
 Then, to run **remark-validate-links** on `example.md` and `readme.md`:
 
 ```bash
-remark -u remark-slug -u remark-validate-links example.md
+remark -u remark-validate-links example.md
 #
 # Yields:
 #

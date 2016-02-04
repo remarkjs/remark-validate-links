@@ -76,31 +76,6 @@ test('remark-validate-links', function (t) {
         'should throw an error when not on the CLI'
     );
 
-    t.test('should warn when used without slugs', function (st) {
-        assertion({
-            'files': 'example.md',
-            'color': false,
-            'detectRC': false,
-            'detectIgnore': false,
-            'plugins': [
-                '../../../index.js'
-            ]
-        }, function (err, res) {
-            st.ifErr(err);
-
-            st.equal(
-                res.stderr.split('\n').slice(0, 2).join('\n'),
-                [
-                    'example.md',
-                    '        1:1  error    Error: Missing slugs. Use for ' +
-                        'example `remark-slug` to generate heading IDs'
-                ].join('\n')
-            );
-
-            st.end();
-        });
-    });
-
     t.test('should ignore unfound files', function (st) {
         assertion({
             'files': ['definitions.md', 'FOOOO'],
@@ -108,7 +83,6 @@ test('remark-validate-links', function (t) {
             'detectRC': false,
             'detectIgnore': false,
             'plugins': [
-                '../../../node_modules/remark-slug',
                 '../../../index.js'
             ]
         }, function (err, res) {
@@ -141,7 +115,6 @@ test('remark-validate-links', function (t) {
             'detectRC': false,
             'detectIgnore': false,
             'plugins': [
-                '../../../node_modules/remark-slug',
                 '../../../index.js'
             ]
         }, function (err, res) {
@@ -188,7 +161,6 @@ test('remark-validate-links', function (t) {
             'detectRC': false,
             'detectIgnore': false,
             'plugins': [
-                '../../../node_modules/remark-slug',
                 '../../../index.js'
             ]
         }, function (err, res) {
@@ -246,7 +218,6 @@ test('remark-validate-links', function (t) {
             'detectRC': false,
             'detectIgnore': false,
             'plugins': [
-                '../../../node_modules/remark-slug',
                 '../../../index.js'
             ]
         }, function (err, res) {
@@ -277,7 +248,6 @@ test('remark-validate-links', function (t) {
             'detectRC': false,
             'detectIgnore': false,
             'plugins': {
-                '../../../node_modules/remark-slug': null,
                 '../../../index.js': {
                     'repository': 'wooorm/test'
                 }
@@ -377,7 +347,6 @@ test('remark-validate-links', function (t) {
             'detectRC': false,
             'detectIgnore': false,
             'plugins': [
-                '../../../node_modules/remark-slug',
                 '../../../index.js'
             ]
         }, function (err, res) {
@@ -468,7 +437,6 @@ test('remark-validate-links', function (t) {
             'detectRC': false,
             'detectIgnore': false,
             'plugins': [
-                '../../../node_modules/remark-slug',
                 '../../../index.js'
             ]
         }, function (err, res) {
