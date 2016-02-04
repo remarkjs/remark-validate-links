@@ -19,8 +19,12 @@
     "propose": "0.0.5",
     "urljoin": "^0.1.5"
   },
-  "repository": "wooorm/remark-validate-links",
-  "author": "Titus Wormer <tituswormer@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wooorm/remark-validate-links.git"
+  },
+  "bugs": "https://github.com/wooorm/remark-validate-links/issues",
+  "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
   "files": [
     "index.js"
   ],
