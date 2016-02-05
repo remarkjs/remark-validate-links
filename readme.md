@@ -19,6 +19,7 @@ is fine.
 *   [Command line](#command-line)
 *   [Programmatic](#programmatic)
 *   [Configuration](#configuration)
+*   [Integration](#integration)
 *   [Related](#related)
 *   [License](#license)
 
@@ -103,6 +104,20 @@ too. An example `.remarkrc` file could look as follows:
 }
 ```
 
+## Integration
+
+**remark-validate-links** can detect anchors on nodes through
+several properties on nodes:
+
+*   `node.data.htmlAttributes.name` — Used by [`remark-html`][remark-html]
+    to create a `name` attribute, which anchors can link to;
+
+*   `node.data.htmlAttributes.id` — Used by [`remark-html`][remark-html]
+    to create an `id` attribute, which anchors can link to;
+
+*   `node.data.id` — Used, in the future, by other tools to signal
+    unique identifiers on nodes.
+
 ## Related
 
 *   [`remark-lint`](https://github.com/wooorm/remark-lint)
@@ -111,3 +126,7 @@ too. An example `.remarkrc` file could look as follows:
 ## License
 
 [MIT](LICENSE) © [Titus Wormer](http://wooorm.com)
+
+<!-- Definitions -->
+
+[remark-html]: https://github.com/wooorm/remark-html

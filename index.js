@@ -293,10 +293,10 @@ function gatherExposedFactory() {
         if (filePath && ast) {
             cache[filePath] = true;
 
-            visit(ast, 'heading', function (node) {
-                var data = node.data || /* istanbul ignore next */ {};
-                var attrs = data.htmlAttributes;
-                var id = (attrs && attrs.id) || data.id;
+            visit(ast, function (node) {
+                var data = node.data || {};
+                var attrs = data.htmlAttributes || {};
+                var id = attrs.name || attrs.id || data.id;
 
                 if (id) {
                     cache[filePath + '#' + id] = true;
