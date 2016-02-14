@@ -2,6 +2,13 @@
 
 <!--lint disable no-multiple-toplevel-headings-->
 
+3.0.0 / 2016-02-14
+==================
+
+*   Update for changes in `remark@4.0.0` ([`3910d2f`](https://github.com/wooorm/remark-validate-links/commit/3910d2f))
+*   Add `name`, non-header support for anchors ([`ec06782`](https://github.com/wooorm/remark-validate-links/commit/ec06782))
+*   Remove peer-dependency on `remark-slug` ([`39cfd46`](https://github.com/wooorm/remark-validate-links/commit/39cfd46))
+
 2.0.2 / 2015-12-26
 ==================
 
