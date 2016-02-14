@@ -25,6 +25,9 @@
   },
   "bugs": "https://github.com/wooorm/remark-validate-links/issues",
   "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
+  "contributors": [
+    "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)"
+  ],
   "files": [
     "index.js"
   ],
