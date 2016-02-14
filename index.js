@@ -139,7 +139,7 @@ function gatherReferences(file, project) {
      *
      * @example
      *   link({
-     *     href: 'foo/bar/baz.md#foo',
+     *     url: 'foo/bar/baz.md#foo',
      *     children: [
      *       {
      *         type: 'text',
@@ -151,7 +151,7 @@ function gatherReferences(file, project) {
      * @param {Node} node - Link or link-reference node.
      */
     function onlink(node) {
-        var link = node.href;
+        var link = node.url;
         var definition;
         var index;
         var uri;
@@ -164,7 +164,7 @@ function gatherReferences(file, project) {
 
         if (node.identifier) {
             definition = getDefinition(node.identifier);
-            link = definition && definition.link;
+            link = definition && definition.url;
         }
 
         /*

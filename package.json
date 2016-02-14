@@ -13,7 +13,7 @@
   ],
   "dependencies": {
     "github-url-to-object": "^2.1.0",
-    "remark-slug": "^4.0.0",
+    "remark-slug": "^4.1.0",
     "mdast-util-definitions": "^1.0.0",
     "unist-util-visit": "^1.0.0",
     "propose": "0.0.5",
@@ -34,11 +34,11 @@
     "istanbul": "^0.4.0",
     "jscs": "^2.0.0",
     "jscs-jsdoc": "^1.0.0",
-    "remark": "^3.0.0",
-    "remark-comment-config": "^2.0.0",
-    "remark-github": "^4.0.0",
-    "remark-lint": "^2.0.0",
-    "remark-toc": "^2.0.0",
+    "remark": "^4.0.0-alpha.1",
+    "remark-comment-config": "^3.0.0",
+    "remark-github": "^4.0.1",
+    "remark-lint": "^3.0.0",
+    "remark-toc": "^3.0.0",
     "tape": "^4.0.0"
   },
   "scripts": {
