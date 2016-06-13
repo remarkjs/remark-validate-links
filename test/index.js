@@ -9,64 +9,29 @@
 'use strict';
 
 /* eslint-env node */
+/* jscs:disable jsDoc */
+/* jscs:disable maximumLineLength */
 
-/*
- * Dependencies.
- */
-
+/* Dependencies. */
 var fs = require('fs');
 var path = require('path');
 var test = require('tape');
-var hook = require('hook-std');
+var execa = require('execa');
 var remark = require('remark');
-var cli = require('remark/lib/cli');
 var links = require('..');
 
-/**
- * Test the cli.
- *
- * @param {Object} config - Configuration.
- * @param {Function} callback - Completion handler.
- */
-function assertion(config, callback) {
-    var stdout = [];
-    var stderr = [];
-    var opts = {};
-    var unhookStdout;
-    var unhookStderr;
-
-    opts.silent = true;
-
-    unhookStdout = hook.stdout(opts, [].push.bind(stdout));
-    unhookStderr = hook.stderr(opts, [].push.bind(stderr));
-
-    cli(config, function (err) {
-        unhookStdout();
-        unhookStderr();
-
-        if (err) {
-            return callback(err);
-        }
-
-        return callback(null, {
-            'stdout': stdout.join(''),
-            'stderr': stderr.join('')
-        });
-    });
-}
-
-/*
- * Tests.
- */
-
+/* Constants. */
 process.chdir(path.resolve(process.cwd(), 'test', 'fixtures'));
 
 test.onFinish(function () {
     process.chdir(path.resolve(process.cwd(), '..', '..'));
 });
 
+var bin = path.join('..', '..', 'node_modules', '.bin', 'remark');
+
+/* Tests. */
 test('remark-validate-links', function (t) {
-    // t.plan(1);
+    t.plan(8);
 
     t.throws(
         function () {
@@ -77,21 +42,19 @@ test('remark-validate-links', function (t) {
     );
 
     t.test('should ignore unfound files', function (st) {
-        assertion({
-            'files': ['definitions.md', 'FOOOO'],
-            'color': false,
-            'detectRC': false,
-            'detectIgnore': false,
-            'plugins': [
-                '../../../index.js'
-            ]
-        }, function (err, res) {
-            st.ifErr(err);
+        st.plan(2);
 
-            st.equal(res.stdout, '');
-
+        execa.stderr(bin, [
+            '--no-config',
+            '--no-ignore',
+            '--use',
+            '.',
+            'definitions.md',
+            'FOOOO'
+        ]).catch(function (err) {
+            st.equal(err.code, 1, 'should exit with `1`');
             st.equal(
-                res.stderr,
+                err.stderr,
                 [
                     'FOOOO',
                     '        1:1  error    No such file or directory',
@@ -101,94 +64,67 @@ test('remark-validate-links', function (t) {
                     '',
                     '2 messages (✖ 1 error, ⚠ 1 warning)',
                     ''
-                ].join('\n')
+                ].join('\n'),
+                'should report'
             );
-
-            st.end();
         });
     });
 
     t.test('should work when not all files are given', function (st) {
-        assertion({
-            'files': 'example.md',
-            'color': false,
-            'detectRC': false,
-            'detectIgnore': false,
-            'plugins': [
-                '../../../index.js'
-            ]
-        }, function (err, res) {
-            st.ifErr(err);
+        st.plan(1);
 
+        execa.stderr(bin, [
+            '--no-config',
+            '--no-ignore',
+            '--use',
+            '.',
+            'example.md'
+        ]).then(function (stderr) {
             st.equal(
-                res.stderr,
+                stderr,
                 [
                     'example.md',
                     '  5:37-5:51    warning  Link to unknown heading: `world`',
-                    '  23:10-23:37  warning  Link to unknown file: ' +
-                        '`examples/world.md`',
-                    '  25:10-25:35  warning  Link to unknown file: ' +
-                        '`examples/world.md`',
-                    '  37:10-37:42  warning  Link to unknown heading in ' +
-                        '`examples/example.md`: `world`',
-                    '  39:10-39:40  warning  Link to unknown heading in ' +
-                        '`examples/example.md`: `world`',
-                    '  45:10-45:40  warning  Link to unknown file: ' +
-                        '`examples/world.md`',
-                    '  45:10-45:40  warning  Link to unknown heading in ' +
-                        '`examples/world.md`: `hello`',
-                    '  47:10-47:38  warning  Link to unknown file: ' +
-                        '`examples/world.md`',
-                    '  47:10-47:38  warning  Link to unknown heading in ' +
-                        '`examples/world.md`: `hello`',
+                    '  23:10-23:37  warning  Link to unknown file: `examples/world.md`',
+                    '  25:10-25:35  warning  Link to unknown file: `examples/world.md`',
+                    '  37:10-37:42  warning  Link to unknown heading in `examples/example.md`: `world`',
+                    '  39:10-39:40  warning  Link to unknown heading in `examples/example.md`: `world`',
+                    '  45:10-45:40  warning  Link to unknown file: `examples/world.md`',
+                    '  45:10-45:40  warning  Link to unknown heading in `examples/world.md`: `hello`',
+                    '  47:10-47:38  warning  Link to unknown file: `examples/world.md`',
+                    '  47:10-47:38  warning  Link to unknown heading in `examples/world.md`: `hello`',
                     '',
-                    '⚠ 9 warnings',
-                    ''
-                ].join('\n')
+                    '⚠ 9 warnings'
+                ].join('\n'),
+                'should report'
             );
-
-            st.end();
         });
     });
 
     t.test('should work when all files are given', function (st) {
-        assertion({
-            'files': [
-                'example.md',
-                'examples/example.md'
-            ],
-            'color': false,
-            'detectRC': false,
-            'detectIgnore': false,
-            'plugins': [
-                '../../../index.js'
-            ]
-        }, function (err, res) {
-            st.ifErr(err);
+        st.plan(1);
 
-            st.equal(res.stdout, '');
-
+        execa.stderr(bin, [
+            '--no-config',
+            '--no-ignore',
+            '--use',
+            '.',
+            'example.md',
+            'examples/example.md'
+        ]).then(function (stderr) {
             st.equal(
-                res.stderr,
+                stderr,
                 [
                     'example.md',
                     '  5:37-5:51    warning  Link to unknown heading: `world`',
-                    '  23:10-23:37  warning  Link to unknown file: ' +
-                        '`examples/world.md`',
-                    '  25:10-25:35  warning  Link to unknown file: ' +
-                        '`examples/world.md`',
-                    '  37:10-37:42  warning  Link to unknown heading in ' +
-                        '`examples/example.md`: `world`',
-                    '  39:10-39:40  warning  Link to unknown heading in ' +
-                        '`examples/example.md`: `world`',
-                    '  45:10-45:40  warning  Link to unknown file: ' +
-                        '`examples/world.md`',
-                    '  45:10-45:40  warning  Link to unknown heading in ' +
-                        '`examples/world.md`: `hello`',
-                    '  47:10-47:38  warning  Link to unknown file: ' +
-                        '`examples/world.md`',
-                    '  47:10-47:38  warning  Link to unknown heading in ' +
-                        '`examples/world.md`: `hello`',
+                    '  23:10-23:37  warning  Link to unknown file: `examples/world.md`',
+                    '  25:10-25:35  warning  Link to unknown file: `examples/world.md`',
+                    '  37:10-37:42  warning  Link to unknown heading in `examples/example.md`: `world`',
+                    '  39:10-39:40  warning  Link to unknown heading in `examples/example.md`: `world`',
+                    '  45:10-45:40  warning  Link to unknown file: `examples/world.md`',
+                    '  45:10-45:40  warning  Link to unknown heading in `examples/world.md`: `hello`',
+                    '  47:10-47:38  warning  Link to unknown file: `examples/world.md`',
+                    '  47:10-47:38  warning  Link to unknown heading in `examples/world.md`: `hello`',
                     '',
                     'examples/example.md',
                     '  5:37-5:51    warning  Link to unknown heading: ' +
@@ -202,63 +138,49 @@ test('remark-validate-links', function (t) {
                     '  35:10-35:32  warning  Link to unknown heading in ' +
                         '`world.md`: `hello`',
                     '',
-                    '⚠ 14 warnings',
-                    ''
-                ].join('\n')
+                    '⚠ 14 warnings'
+                ].join('\n'),
+                'should report'
             );
-
-            st.end();
         });
     });
 
     t.test('should work with definitions', function (st) {
-        assertion({
-            'files': 'definitions.md',
-            'color': false,
-            'detectRC': false,
-            'detectIgnore': false,
-            'plugins': [
-                '../../../index.js'
-            ]
-        }, function (err, res) {
-            st.ifErr(err);
+        st.plan(1);
 
+        execa.stderr(bin, [
+            '--no-config',
+            '--no-ignore',
+            '--use',
+            '.',
+            'definitions.md'
+        ]).then(function (stderr) {
             st.equal(
-                res.stderr,
+                stderr,
                 [
                     'definitions.md',
                     '  5:12-5:21  warning  Link to unknown heading: `world`',
                     '',
-                    '⚠ 1 warning',
-                    ''
-                ].join('\n')
+                    '⚠ 1 warning'
+                ].join('\n'),
+                'should report'
             );
-
-            st.end();
         });
     });
 
     t.test('should work on GitHub URLs when given a repo', function (st) {
-        assertion({
-            'files': [
-                'example.md',
-                'examples/example.md'
-            ],
-            'color': false,
-            'detectRC': false,
-            'detectIgnore': false,
-            'plugins': {
-                '../../../index.js': {
-                    'repository': 'wooorm/test'
-                }
-            }
-        }, function (err, res) {
-            st.ifErr(err);
+        st.plan(1);
 
-            st.equal(res.stdout, '');
-
+        execa.stderr(bin, [
+            '--no-config',
+            '--no-ignore',
+            '--use',
+            '.=repository:"wooorm/test"',
+            'example.md',
+            'examples/example.md'
+        ]).then(function (stderr) {
             st.equal(
-                res.stderr,
+                stderr,
                 [
                     'example.md',
                     '  5:37-5:51     warning  Link to unknown heading: ' +
@@ -324,38 +246,36 @@ test('remark-validate-links', function (t) {
                     '  39:10-39:73  warning  Link to unknown file: ' +
                         '`world.md`',
                     '',
-                    '⚠ 30 warnings',
-                    ''
-                ].join('\n')
+                    '⚠ 30 warnings'
+                ].join('\n'),
+                'should report'
             );
-
-            st.end();
         });
     });
 
     t.test('should work on GitHub URLs when with package.json', function (st) {
+        st.plan(1);
+
+        /* cwd is moved to `test/fixtures`. */
         fs.writeFileSync('./package.json', JSON.stringify({
             'repository': 'wooorm/test'
         }, 0, 2));
 
-        assertion({
-            'files': [
-                'example.md',
-                'examples/example.md'
-            ],
-            'color': false,
-            'detectRC': false,
-            'detectIgnore': false,
-            'plugins': [
-                '../../../index.js'
-            ]
-        }, function (err, res) {
+        function clean() {
             fs.unlinkSync('./package.json');
+        }
 
-            st.ifErr(err);
-
+        execa.stderr(bin, [
+            '--no-config',
+            '--no-ignore',
+            '--use',
+            '../..',
+            'example.md',
+            'examples/example.md'
+        ]).then(function (stderr) {
+            clean();
             st.equal(
-                res.stderr,
+                stderr,
                 [
                     'example.md',
                     '  5:37-5:51     warning  Link to unknown heading: ' +
@@ -421,29 +341,25 @@ test('remark-validate-links', function (t) {
                     '  39:10-39:73  warning  Link to unknown file: ' +
                         '`world.md`',
                     '',
-                    '⚠ 30 warnings',
-                    ''
-                ].join('\n')
+                    '⚠ 30 warnings'
+                ].join('\n'),
+                'should report'
             );
-
-            st.end();
-        });
+        }, clean);
     });
 
     t.test('should suggest similar links', function (st) {
-        assertion({
-            'files': ['suggestions.md'],
-            'color': false,
-            'detectRC': false,
-            'detectIgnore': false,
-            'plugins': [
-                '../../../index.js'
-            ]
-        }, function (err, res) {
-            st.ifErr(err);
+        st.plan(1);
 
+        execa.stderr(bin, [
+            '--no-config',
+            '--no-ignore',
+            '--use',
+            '.',
+            'suggestions.md'
+        ]).then(function (stderr) {
             st.equal(
-                res.stderr,
+                stderr,
                 [
                     'suggestions.md',
                     '  3:22-3:37  warning  Link to unknown heading: ' +
@@ -451,12 +367,10 @@ test('remark-validate-links', function (t) {
                     '  7:17-7:40  warning  Link to unknown heading in ' +
                         '`example.md`: `fiiiles`. Did you mean `files`',
                     '',
-                    '⚠ 2 warnings',
-                    ''
-                ].join('\n')
+                    '⚠ 2 warnings'
+                ].join('\n'),
+                'should report'
             );
-
-            st.end();
         });
     });
 });

@@ -13,11 +13,12 @@
   ],
   "dependencies": {
     "github-url-to-object": "^2.1.0",
-    "remark-slug": "^4.1.0",
     "mdast-util-definitions": "^1.0.0",
-    "unist-util-visit": "^1.0.0",
     "propose": "0.0.5",
-    "urljoin": "^0.1.5"
+    "remark-slug": "^4.1.0",
+    "unist-util-visit": "^1.0.0",
+    "urljoin": "^0.1.5",
+    "xtend": "^4.0.1"
   },
   "repository": {
     "type": "git",
@@ -33,16 +34,23 @@
   ],
   "devDependencies": {
     "eslint": "^2.0.0",
-    "hook-std": "^0.2.0",
+    "execa": "^0.4.0",
     "istanbul": "^0.4.0",
-    "jscs": "^2.0.0",
-    "jscs-jsdoc": "^1.0.0",
-    "remark": "^4.0.0-alpha.1",
-    "remark-comment-config": "^3.0.0",
-    "remark-github": "^4.0.1",
-    "remark-lint": "^3.0.0",
+    "jscs": "^3.0.0",
+    "jscs-jsdoc": "^2.0.0",
+    "remark": "^5.0.0",
+    "remark-cli": "^1.0.0",
+    "remark-comment-config": "^4.0.0",
+    "remark-github": "^5.0.0-alpha.1",
+    "remark-lint": "^4.0.0",
     "remark-toc": "^3.0.0",
     "tape": "^4.0.0"
+  },
+  "nyc": {
+    "check-coverage": true,
+    "lines": 100,
+    "functions": 100,
+    "branches": 100
   },
   "scripts": {
     "build-md": "remark . --quiet --frail",
@@ -51,8 +59,7 @@
     "lint-style": "jscs --reporter inline .",
     "lint": "npm run lint-api && npm run lint-style",
     "test-api": "node test/index.js",
-    "test-coverage": "istanbul cover test/index.js",
-    "test-travis": "npm run test-coverage",
+    "test-coverage": "nyc --reporter lcov tape test/index.js",
     "test": "npm run build && npm run lint && npm run test-coverage"
   }
 }

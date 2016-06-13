@@ -23,6 +23,7 @@ var definitions = require('mdast-util-definitions');
 var gh = require('github-url-to-object');
 var urljoin = require('urljoin');
 var slug = require('remark-slug');
+var xtend = require('xtend');
 
 /*
  * Methods.
@@ -30,6 +31,12 @@ var slug = require('remark-slug');
 
 var exists = fs.existsSync;
 var parse = url.parse;
+
+/*
+ * Constants.
+ */
+
+var NS = 'remark-validate-links';
 
 /**
  * Get the `pathname` of `uri`, if applicable.
@@ -110,25 +117,24 @@ function warnAll(file, nodes, warning) {
  * to be one or more nodes.
  *
  * @example
- *   gatherReferences(new File(), {});
+ *   gatherReferences(new File(), {type: 'root'}, {});
  *
  * @param {File} file - Set of virtual files.
+ * @param {Node} tree - Syntax tree.
  * @param {Object.<string, string>} project - GitHub
  *   project, with a `user` and `repo` property
  *   (optional).
  * @return {Object.<string, Array.<Node>>} exposed - Map of
  *   file-paths (and anchors) which are referenced.
  */
-function gatherReferences(file, project) {
+function gatherReferences(file, tree, project) {
     var cache = {};
     var filePath = file.filePath();
     var directory = file.directory;
-    var space = file.namespace('mdast');
     var getDefinition;
     var prefix = '';
-    var ast = space.tree || /* istanbul ignore next */ space.ast;
 
-    getDefinition = definitions(ast);
+    getDefinition = definitions(tree);
 
     if (project.user && project.repo) {
         prefix = '/' + project.user + '/' + project.repo + '/blob/';
@@ -185,10 +191,17 @@ function gatherReferences(file, project) {
                 link = filePath + uri.hash;
                 uri = parse(link);
             } else {
-                link = urljoin(directory, link) + (uri.hash || '');
+                // var a = link;
+                link = urljoin(directory || './', link);
+                if (uri.hash) {
+                    // console.error('a: ', a, link, '\n\n');
+                    link += uri.hash;
+                }
                 uri = parse(link);
+                // console.error(['a', directory, link, a]);
             }
         }
+        // console.error(['b', link]);
 
         /*
          * Handle full links.
@@ -254,62 +267,10 @@ function gatherReferences(file, project) {
         }
     }
 
-    visit(ast, 'link', onlink);
-    visit(ast, 'linkReference', onlink);
+    visit(tree, 'link', onlink);
+    visit(tree, 'linkReference', onlink);
 
     return cache;
-}
-
-/**
- * Factory to store all markdown files, and headings.
- *
- * @example
- *   var gather = gatherExposedFactory();
- *   var file = new File('# foo');
- *
- *   gather(file).done() // {}
- *
- * @return {Function} - Gatherer.
- */
-function gatherExposedFactory() {
-    var cache = {};
-
-    /**
-     * Find headings in `file`.
-     *
-     * @property {Object} cache - Found links.
-     * @param {File} file - Virtual file.
-     * @returns {Function} - Itself.
-     */
-    function gather(file) {
-        var filePath = file.filePath();
-        var space = file.namespace('mdast');
-        var ast = space.tree || space.ast;
-
-        /*
-         * Ignore files without AST or filename.
-         */
-
-        if (filePath && ast) {
-            cache[filePath] = true;
-
-            visit(ast, function (node) {
-                var data = node.data || {};
-                var attrs = data.htmlAttributes || {};
-                var id = attrs.name || attrs.id || data.id;
-
-                if (id) {
-                    cache[filePath + '#' + id] = true;
-                }
-            });
-        }
-
-        return gather;
-    }
-
-    gather.cache = cache;
-
-    return gather;
 }
 
 /**
@@ -323,14 +284,9 @@ function gatherExposedFactory() {
  * @param {Object.<string, boolean?>} exposed - Map of
  *   file-paths (and anchors) which can be references to.
  * @param {File} file - Set of virtual files.
- * @param {Object.<string, string>} project - GitHub
- *   project, with a `user` and `repo` property
- *   (optional).
  */
-function validate(exposed, file, project) {
-    var space = file.namespace('mdast');
-    var ast = space.tree || space.ast;
-    var references = ast ? gatherReferences(file, project) : {};
+function validate(exposed, file) {
+    var references = file.namespace(NS).references;
     var filePath = file.filePath();
     var reference;
     var nodes;
@@ -344,6 +300,10 @@ function validate(exposed, file, project) {
         nodes = references[reference];
         real = exposed[reference];
         hash = getHash(reference);
+
+        // if (hash) {
+        //     console.error(['hash', reference, hash]);
+        // }
 
         /*
          * Check if files without `hash` can be linked to.
@@ -383,49 +343,39 @@ function validate(exposed, file, project) {
 }
 
 /**
- * Factory to create a new completer.
+ * Completer.
  *
  * @example
- *   var completer = completerFactory({
- *     'user': 'foo',
- *     'repo': 'bar'
- *   });
+ *   completer(new FileSet(), console.log)
  *
- * @param {Object} project - GitHub project, if applicable.
- * @return {Function} - `completer`, bound to `project`.
+ * @property {*} pluginId - Unique ID so completers by
+ *   this plug-in are not added multiple times to a single
+ *   file-set pipeline.
+ * @param {FileSet} set - Virtual file-set.
+ * @param {function(err?)} done - Callback.
  */
-function completerFactory(project) {
-    /**
-     * Completer.
-     *
-     * @example
-     *   completer(new FileSet(), console.log)
-     *
-     * @property {*} pluginId - Unique ID so completers by
-     *   this plug-in are not added multiple times to a single
-     *   file-set pipeline.
-     * @param {FileSet} set - Virtual file-set.
-     * @param {function(err?)} done - Callback.
-     */
-    function completer(set, done) {
-        var gatherExposed = gatherExposedFactory();
+function completer(set, done) {
+    var exposed = {};
 
-        set.valueOf().forEach(gatherExposed);
+    set.valueOf().forEach(function (file) {
+        var landmarks = file.namespace(NS).landmarks;
 
-        set.valueOf().forEach(function (file) {
-            /* istanbul ignore else - stdin */
-            if (file.filePath()) {
-                validate(gatherExposed.cache, file, project);
-            }
-        });
+        if (landmarks) {
+            exposed = xtend(exposed, landmarks);
+        }
+    });
 
-        done();
-    }
+    set.valueOf().forEach(function (file) {
+        /* istanbul ignore else - stdin */
+        if (file.filePath()) {
+            validate(exposed, file);
+        }
+    });
 
-    completer.pluginId = 'remark-validate-links';
-
-    return completer;
+    done();
 }
+
+completer.pluginId = 'remark-validate-links';
 
 /**
  * Factory to create a transformer based on the given
@@ -451,19 +401,22 @@ function transformerFactory(project, fileSet) {
      * @param {File} file - Virtual file.
      */
     function transformer(ast, file) {
+        var filePath = file.filePath();
+        var space = file.namespace(NS);
         var links = [];
+        var landmarks = {};
         var references;
         var current;
         var link;
         var pathname;
 
         /* istanbul ignore if - stdin */
-        if (!file.filePath()) {
+        if (!filePath) {
             return;
         }
 
-        references = gatherReferences(file, project);
-        current = getPathname(file.filePath());
+        references = gatherReferences(file, ast, project);
+        current = getPathname(filePath);
 
         for (link in references) {
             pathname = getPathname(link);
@@ -474,10 +427,24 @@ function transformerFactory(project, fileSet) {
                 links.indexOf(pathname) === -1
             ) {
                 links.push(pathname);
-
                 fileSet.add(pathname);
             }
         }
+
+        landmarks[filePath] = true;
+
+        visit(ast, function (node) {
+            var data = node.data || {};
+            var attrs = data.htmlAttributes || {};
+            var id = attrs.name || attrs.id || data.id;
+
+            if (id) {
+                landmarks[filePath + '#' + id] = true;
+            }
+        });
+
+        space.references = references;
+        space.landmarks = landmarks;
     }
 
     return transformer;
@@ -534,7 +501,7 @@ function attacher(remark, options, fileSet) {
      * Attach a `completer`.
      */
 
-    fileSet.use(completerFactory(repo));
+    fileSet.use(completer);
 
     /*
      * Attach `slug`.
