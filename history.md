@@ -2,6 +2,12 @@
 
 <!--lint disable no-multiple-toplevel-headings-->
 
+4.0.0 / 2016-06-13
+==================
+
+*   Update `readme.md` ([`3aad02d`](https://github.com/wooorm/remark-validate-links/commit/3aad02d))
+*   Update for changes in remark@5.0.0 ([`72c5aa2`](https://github.com/wooorm/remark-validate-links/commit/72c5aa2))
+
 3.0.0 / 2016-02-14
 ==================
 
@@ -22,7 +28,7 @@
 *   Rename `mdast-validate-links` > `remark-validate-links` ([c9e9391](https://github.com/wooorm/remark-validate-links/commit/c9e9391))
 *   Refactor tests for changes in mdast ([f8fc60d](https://github.com/wooorm/remark-validate-links/commit/f8fc60d))
 *   Update dependencies ([a93303c](https://github.com/wooorm/remark-validate-links/commit/a93303c))
-*   Fix failure when using stdin(4) ([40e1ced](https://github.com/wooorm/remark-validate-links/commit/40e1ced))
+*   Fix bug when using stdin(4) ([40e1ced](https://github.com/wooorm/remark-validate-links/commit/40e1ced))
 
 1.1.1 / 2015-09-18
 ==================
@@ -49,7 +55,7 @@
 0.3.0 / 2015-07-26
 ==================
 
-*   Add suggestions for similar references on failure ([ddabfe2](https://github.com/wooorm/remark-validate-links/commit/ddabfe2))
+*   Add suggestions for similar references on missing link ([ddabfe2](https://github.com/wooorm/remark-validate-links/commit/ddabfe2))
 
 0.2.1 / 2015-07-19
 ==================
