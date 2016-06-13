@@ -1,4 +1,6 @@
-# remark-validate-links [![Build Status][travis-badge]][travis] [![Coverage Status][codecov-badge]][codecov]
+# remark-validate-links [![Build Status][build-badge]][build-status] [![Coverage Status][coverage-badge]][coverage-status] [![Chat][chat-badge]][chat]
+
+<!--lint disable list-item-spacing-->
 
 [**remark**][remark] plug-in to validate if links to headings and files
 in markdown point to existing things.
@@ -25,7 +27,7 @@ is fine.
 
 ## Installation
 
-[npm][npm-install]:
+[npm][]:
 
 ```bash
 npm install remark-validate-links
@@ -88,8 +90,8 @@ When a repository is given or detected, links to GitHub are normalized
 to the file-system. E.g., `https://github.com/foo/bar/blob/master/example.md`
 becomes `example.md`.
 
-You can define this repository in `.remarkrc` or `package.json`
-[files][remarkrc] too. An example `.remarkrc` file could look as follows:
+You can define this repository in [configuration files][cli] too.
+An example `.remarkrc` file could look as follows:
 
 ```json
 {
@@ -108,10 +110,8 @@ several properties on nodes:
 
 *   `node.data.htmlAttributes.name` — Used by [`remark-html`][remark-html]
     to create a `name` attribute, which anchors can link to;
-
 *   `node.data.htmlAttributes.id` — Used by [`remark-html`][remark-html]
     to create an `id` attribute, which anchors can link to;
-
 *   `node.data.id` — Used, in the future, by other tools to signal
     unique identifiers on nodes.
 
@@ -126,19 +126,23 @@ several properties on nodes:
 
 <!-- Definitions -->
 
-[travis-badge]: https://img.shields.io/travis/wooorm/remark-validate-links.svg
+[build-badge]: https://img.shields.io/travis/wooorm/remark-validate-links.svg
 
-[travis]: https://travis-ci.org/wooorm/remark-validate-links
+[build-status]: https://travis-ci.org/wooorm/remark-validate-links
 
-[codecov-badge]: https://img.shields.io/codecov/c/github/wooorm/remark-validate-links.svg
+[coverage-badge]: https://img.shields.io/codecov/c/github/wooorm/remark-validate-links.svg
 
-[codecov]: https://codecov.io/github/wooorm/remark-validate-links
+[coverage-status]: https://codecov.io/github/wooorm/remark-validate-links
 
-[npm-install]: https://docs.npmjs.com/cli/install
+[chat-badge]: https://img.shields.io/gitter/room/wooorm/remark.svg
+
+[chat]: https://gitter.im/wooorm/remark
 
 [license]: LICENSE
 
 [author]: http://wooorm.com
+
+[npm]: https://docs.npmjs.com/cli/install
 
 [remark]: https://github.com/wooorm/remark
 
@@ -150,4 +154,4 @@ several properties on nodes:
 
 [package-repository]: https://docs.npmjs.com/files/package.json#repository
 
-[remarkrc]: https://github.com/wooorm/remark/blob/master/doc/remarkrc.5.md
+[cli]: https://github.com/wooorm/remark/tree/master/packages/remark-cli#readme
