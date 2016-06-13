@@ -35,9 +35,9 @@
   "devDependencies": {
     "eslint": "^2.0.0",
     "execa": "^0.4.0",
-    "istanbul": "^0.4.0",
     "jscs": "^3.0.0",
     "jscs-jsdoc": "^2.0.0",
+    "nyc": "^6.4.4",
     "remark": "^5.0.0",
     "remark-cli": "^1.0.0",
     "remark-comment-config": "^4.0.0",
