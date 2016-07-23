@@ -150,7 +150,7 @@ several properties on nodes:
 
 [remark-html]: https://github.com/wooorm/remark-html
 
-[screenshot]: https://cdn.rawgit.com/wooorm/remark-validate-links/master/screenshot.png
+[screenshot]: https://cdn.rawgit.com/wooorm/remark-validate-links/master/screenshot.png#1
 
 [package-repository]: https://docs.npmjs.com/files/package.json#repository
 
