@@ -2,6 +2,14 @@
 
 <!--lint disable no-multiple-toplevel-headings-->
 
+4.1.0 / 2016-07-23
+==================
+
+*   Update `screenshot.png` ([`ba6a5fe`](https://github.com/wooorm/remark-validate-links/commit/ba6a5fe))
+*   Add `source` to messages ([`fa62c71`](https://github.com/wooorm/remark-validate-links/commit/fa62c71))
+*   Refactor code-style to use `xo` ([`aaf7831`](https://github.com/wooorm/remark-validate-links/commit/aaf7831))
+*   Update tests for bugfix in `unified-engine` ([`28190d3`](https://github.com/wooorm/remark-validate-links/commit/28190d3))
+
 4.0.0 / 2016-06-13
 ==================
 
