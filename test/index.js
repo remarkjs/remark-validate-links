@@ -18,6 +18,7 @@ var path = require('path');
 var test = require('tape');
 var execa = require('execa');
 var remark = require('remark');
+var strip = require('strip-ansi');
 var links = require('..');
 
 /* Constants. */
@@ -54,7 +55,7 @@ test('remark-validate-links', function (t) {
         ]).catch(function (err) {
             st.equal(err.code, 1, 'should exit with `1`');
             st.equal(
-                err.stderr,
+                strip(err.stderr),
                 [
                     'FOOOO',
                     '        1:1  error    No such file or directory',
@@ -81,7 +82,7 @@ test('remark-validate-links', function (t) {
             'example.md'
         ]).then(function (stderr) {
             st.equal(
-                stderr,
+                strip(stderr),
                 [
                     'example.md',
                     '  5:37-5:51    warning  Link to unknown heading: `world`',
@@ -113,7 +114,7 @@ test('remark-validate-links', function (t) {
             'examples/example.md'
         ]).then(function (stderr) {
             st.equal(
-                stderr,
+                strip(stderr),
                 [
                     'example.md',
                     '  5:37-5:51    warning  Link to unknown heading: `world`',
@@ -156,7 +157,7 @@ test('remark-validate-links', function (t) {
             'definitions.md'
         ]).then(function (stderr) {
             st.equal(
-                stderr,
+                strip(stderr),
                 [
                     'definitions.md',
                     '  5:12-5:21  warning  Link to unknown heading: `world`',
@@ -180,7 +181,7 @@ test('remark-validate-links', function (t) {
             'examples/example.md'
         ]).then(function (stderr) {
             st.equal(
-                stderr,
+                strip(stderr),
                 [
                     'example.md',
                     '  5:37-5:51     warning  Link to unknown heading: ' +
@@ -275,7 +276,7 @@ test('remark-validate-links', function (t) {
         ]).then(function (stderr) {
             clean();
             st.equal(
-                stderr,
+                strip(stderr),
                 [
                     'example.md',
                     '  5:37-5:51     warning  Link to unknown heading: ' +
@@ -359,7 +360,7 @@ test('remark-validate-links', function (t) {
             'suggestions.md'
         ]).then(function (stderr) {
             st.equal(
-                stderr,
+                strip(stderr),
                 [
                     'suggestions.md',
                     '  3:22-3:37  warning  Link to unknown heading: ' +
