@@ -33,10 +33,7 @@
     "index.js"
   ],
   "devDependencies": {
-    "eslint": "^2.0.0",
     "execa": "^0.4.0",
-    "jscs": "^3.0.0",
-    "jscs-jsdoc": "^2.0.0",
     "nyc": "^7.0.0",
     "remark": "^5.0.0",
     "remark-cli": "^1.0.0",
@@ -45,7 +42,25 @@
     "remark-lint": "^4.0.0",
     "remark-toc": "^3.0.0",
     "strip-ansi": "^3.0.1",
-    "tape": "^4.0.0"
+    "tape": "^4.0.0",
+    "xo": "^0.16.0"
+  },
+  "scripts": {
+    "build-md": "remark . --quiet --frail",
+    "build": "npm run build-md",
+    "lint": "xo",
+    "test-api": "node test/index.js",
+    "test-coverage": "nyc --reporter lcov tape test/index.js",
+    "test": "npm run build && npm run lint && npm run test-coverage"
+  },
+  "xo": {
+    "space": true,
+    "rules": {
+      "no-eq-null": "off",
+      "eqeqeq": "off",
+      "guard-for-in": "off",
+      "max-lines": "off"
+    }
   },
   "nyc": {
     "check-coverage": true,
@@ -53,14 +68,17 @@
     "functions": 100,
     "branches": 100
   },
-  "scripts": {
-    "build-md": "remark . --quiet --frail",
-    "build": "npm run build-md",
-    "lint-api": "eslint .",
-    "lint-style": "jscs --reporter inline .",
-    "lint": "npm run lint-api && npm run lint-style",
-    "test-api": "node test/index.js",
-    "test-coverage": "nyc --reporter lcov tape test/index.js",
-    "test": "npm run build && npm run lint && npm run test-coverage"
+  "remarkConfig": {
+    "output": true,
+    "plugins": [
+      "comment-config",
+      "github",
+      "lint",
+      "toc",
+      "./"
+    ],
+    "settings": {
+      "bullet": "*"
+    }
   }
 }
