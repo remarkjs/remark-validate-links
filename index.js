@@ -94,11 +94,12 @@ function getClosest(pathname, references) {
  *
  * @param {File} file - Virtual file.
  * @param {Array.<Node>} nodes - Offending nodes.
- * @param {string} warning - Message.
+ * @param {string} message - Message.
  */
-function warnAll(file, nodes, warning) {
+function warnAll(file, nodes, message) {
   nodes.forEach(function (node) {
-    file.warn(warning, node);
+    var warning = file.warn(message, node);
+    warning.source = 'remark-validate-links';
   });
 }
 
