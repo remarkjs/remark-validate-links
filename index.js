@@ -29,9 +29,6 @@ module.exports = attacher;
 var exists = fs.existsSync;
 var parse = url.parse;
 
-/* Constants. */
-var NS = 'remark-validate-links';
-
 /**
  * Get the `pathname` of `uri`, if applicable.
  *
@@ -89,17 +86,17 @@ function getClosest(pathname, references) {
 }
 
 /**
- * Utilitity to warn `warning` for each node in `nodes`,
+ * Utilitity to warn `reason` for each node in `nodes`,
  * on `file`.
  *
  * @param {File} file - Virtual file.
  * @param {Array.<Node>} nodes - Offending nodes.
- * @param {string} message - Message.
+ * @param {string} reason - Message.
  */
-function warnAll(file, nodes, message) {
+function warnAll(file, nodes, reason) {
   nodes.forEach(function (node) {
-    var warning = file.warn(message, node);
-    warning.source = 'remark-validate-links';
+    var message = file.message(reason, node);
+    message.source = message.ruleId = 'remark-validate-links';
   });
 }
 
@@ -117,8 +114,8 @@ function warnAll(file, nodes, message) {
  */
 function gatherReferences(file, tree, project) {
   var cache = {};
-  var filePath = file.filePath();
-  var directory = file.directory;
+  var filePath = file.path;
+  var dirname = file.dirname;
   var getDefinition;
   var prefix = '';
 
@@ -158,7 +155,7 @@ function gatherReferences(file, tree, project) {
         link = filePath + uri.hash;
         uri = parse(link);
       } else {
-        link = urljoin(directory || './', link);
+        link = urljoin(dirname, link);
         if (uri.hash) {
           link += uri.hash;
         }
@@ -238,8 +235,8 @@ function gatherReferences(file, tree, project) {
  * @param {File} file - Set of virtual files.
  */
 function validate(exposed, file) {
-  var references = file.namespace(NS).references;
-  var filePath = file.filePath();
+  var references = file.data.remarkValidateLinksReferences;
+  var filePath = file.path;
   var reference;
   var nodes;
   var real;
@@ -300,7 +297,7 @@ function completer(set, done) {
   var exposed = {};
 
   set.valueOf().forEach(function (file) {
-    var landmarks = file.namespace(NS).landmarks;
+    var landmarks = file.data.remarkValidateLinksLandmarks;
 
     if (landmarks) {
       exposed = xtend(exposed, landmarks);
@@ -309,7 +306,7 @@ function completer(set, done) {
 
   set.valueOf().forEach(function (file) {
     /* istanbul ignore else - stdin */
-    if (file.filePath()) {
+    if (file.path) {
       validate(exposed, file);
     }
   });
@@ -337,8 +334,8 @@ function transformerFactory(project, fileSet) {
    * @param {File} file - Virtual file.
    */
   function transformer(ast, file) {
-    var filePath = file.filePath();
-    var space = file.namespace(NS);
+    var filePath = file.path;
+    var space = file.data;
     var links = [];
     var landmarks = {};
     var references;
@@ -379,8 +376,8 @@ function transformerFactory(project, fileSet) {
       }
     });
 
-    space.references = references;
-    space.landmarks = landmarks;
+    space.remarkValidateLinksReferences = references;
+    space.remarkValidateLinksLandmarks = landmarks;
   }
 
   return transformer;
@@ -408,7 +405,8 @@ function attacher(remark, options, fileSet) {
    * given. */
   if (!repo) {
     try {
-      pack = require(path.resolve(process.cwd(), 'package.json'));
+      pack = fileSet.files[0].cwd;
+      pack = require(path.resolve(pack, 'package.json'));
     } catch (err) {
       pack = {};
     }
