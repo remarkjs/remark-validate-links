@@ -2,6 +2,11 @@
 
 <!--lint disable no-multiple-toplevel-headings-->
 
+5.0.0 / 2016-08-21
+==================
+
+*   Update for remark@6.0.0 ([`3963fba`](https://github.com/wooorm/remark-validate-links/commit/3963fba))
+
 4.1.0 / 2016-07-23
 ==================
 
