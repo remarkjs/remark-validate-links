@@ -20,10 +20,7 @@
     "urljoin": "^0.1.5",
     "xtend": "^4.0.1"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/wooorm/remark-validate-links.git"
-  },
+  "repository": "https://github.com/wooorm/remark-validate-links",
   "bugs": "https://github.com/wooorm/remark-validate-links/issues",
   "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
   "contributors": [
@@ -37,16 +34,13 @@
     "nyc": "^8.1.0",
     "remark": "^6.0.0",
     "remark-cli": "^2.0.0",
-    "remark-comment-config": "^4.0.0",
-    "remark-github": "^5.0.0-alpha.1",
-    "remark-lint": "^4.0.0",
-    "remark-toc": "^3.0.0",
+    "remark-preset-wooorm": "^1.0.0",
     "strip-ansi": "^3.0.1",
     "tape": "^4.0.0",
     "xo": "^0.16.0"
   },
   "scripts": {
-    "build-md": "remark . --quiet --frail",
+    "build-md": "remark *.md --quiet --frail",
     "build": "npm run build-md",
     "lint": "xo",
     "test-api": "node test/index.js",
@@ -70,15 +64,6 @@
   },
   "remarkConfig-": {
     "output": true,
-    "plugins": [
-      "comment-config",
-      "github",
-      "lint",
-      "toc",
-      "./"
-    ],
-    "settings": {
-      "bullet": "*"
-    }
+    "presets": "wooorm"
   }
 }
