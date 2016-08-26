@@ -62,7 +62,7 @@
     "functions": 100,
     "branches": 100
   },
-  "remarkConfig-": {
+  "remarkConfig": {
     "output": true,
     "presets": "wooorm"
   }

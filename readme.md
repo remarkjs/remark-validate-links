@@ -1,12 +1,11 @@
 # remark-validate-links [![Build Status][build-badge]][build-status] [![Coverage Status][coverage-badge]][coverage-status] [![Chat][chat-badge]][chat]
 
-<!--lint disable list-item-spacing-->
-
 [**remark**][remark] plug-in to validate if links to headings and files
 in markdown point to existing things.
 
-For example, this document does not have a heading named `Hello`. So if I
-link to that (`[welcome](#hello)`), this plug-in will warn about it.
+For example, this document does not have a heading named `Hello`.
+So if I link to that (`[welcome](#hello)`), this plug-in will warn
+about it.
 
 In addition, when I link to a heading in another document
 (`examples/foo.md#hello`), if this file exists but the heading does not,
@@ -78,7 +77,7 @@ This plug-in is **not** available on the API of remark.
 ## Configuration
 
 You can pass a `repository`, containing anything `package.json`s
-[`repository`][package-repository] can handle. If this is omitted,
+[`repository`][package-repository] can handle.  If this is omitted,
 **remark-validate-links** will try the `package.json` in your
 current working directory.
 
@@ -87,8 +86,8 @@ remark --use 'validate-links=repository:"foo/bar"' example.md
 ```
 
 When a repository is given or detected, links to GitHub are normalized
-to the file-system. E.g., `https://github.com/foo/bar/blob/master/example.md`
-becomes `example.md`.
+to the file-system.  For example,
+`https://github.com/foo/bar/blob/master/example.md` becomes `example.md`.
 
 You can define this repository in [configuration files][cli] too.
 An example `.remarkrc` file could look as follows:
