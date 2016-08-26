@@ -8,8 +8,6 @@
 
 'use strict';
 
-/* eslint-env node */
-
 /* Dependencies. */
 var url = require('url');
 var fs = require('fs');
