@@ -1,14 +1,5 @@
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:validate-links
- * @fileoverview Validate links to headings and files in markdown.
- */
-
 'use strict';
 
-/* Dependencies. */
 var url = require('url');
 var fs = require('fs');
 var path = require('path');
@@ -20,96 +11,179 @@ var urljoin = require('urljoin');
 var slug = require('remark-slug');
 var xtend = require('xtend');
 
-/* Expose. */
 module.exports = attacher;
 
-/* Methods. */
+completer.pluginId = 'remark-validate-links';
+
 var exists = fs.existsSync;
 var parse = url.parse;
 
-/**
- * Get the `pathname` of `uri`, if applicable.
- *
- * @todo Externalise.
- * @param {string} uri - Reference.
- * @return {string?} - Pathname.
- */
-function getPathname(uri) {
-  return parse(uri).pathname;
-}
+function attacher(remark, options, fileSet) {
+  var repo = (options || {}).repository;
+  var pack;
 
-/**
- * Get the `hash` of `uri`, if applicable.
- *
- * @todo Externalise.
- * @param {string} uri - Reference.
- * @return {string?} - Hash.
- */
-function getHash(uri) {
-  var hash = parse(uri).hash;
-
-  return hash ? hash.slice(1) : null;
-}
-
-/**
- * Suggest a possible similar reference.
- *
- * @param {string} pathname - Unfound reference.
- * @param {Object<string, boolean>} references - All
- *   references.
- * @return {string?} - Suggested reference.
- */
-function getClosest(pathname, references) {
-  var hash = getHash(pathname);
-  var base = getPathname(pathname);
-  var dictionary = [];
-  var reference;
-  var subhash;
-  var subbase;
-
-  for (reference in references) {
-    subbase = getPathname(reference);
-    subhash = getHash(reference);
-
-    if (getPathname(reference) === base) {
-      if (subhash && hash) {
-        dictionary.push(subhash);
-      }
-    } else if (!subhash && !hash) {
-      dictionary.push(subbase);
-    }
+  /* Throw when not on the CLI. */
+  if (!fileSet) {
+    throw new Error('remark-validate-links only works on the CLI');
   }
 
-  return propose(hash ? hash : base, dictionary, {threshold: 0.7});
+  /* Try to get the repo from `package.json` when not
+   * given. */
+  if (!repo) {
+    try {
+      pack = fileSet.files[0].cwd;
+      // eslint-disable-next-line import/no-dynamic-require
+      pack = require(path.resolve(pack, 'package.json'));
+    } catch (err) {
+      pack = {};
+    }
+
+    repo = pack.repository ? pack.repository.url || pack.repository : '';
+  }
+
+  repo = repo ? gh(repo) : {};
+
+  /* Attach a `completer`. */
+  fileSet.use(completer);
+
+  /* Attach `slug`. */
+  remark.use(slug);
+
+  /* Expose transformer. */
+  return transformerFactory({user: repo.user, repo: repo.repo}, fileSet);
 }
 
-/**
- * Utilitity to warn `reason` for each node in `nodes`,
- * on `file`.
- *
- * @param {File} file - Virtual file.
- * @param {Array.<Node>} nodes - Offending nodes.
- * @param {string} reason - Message.
- */
-function warnAll(file, nodes, reason) {
-  nodes.forEach(function (node) {
-    var message = file.message(reason, node);
-    message.source = message.ruleId = 'remark-validate-links';
+/* Completer. */
+function completer(set, done) {
+  var exposed = {};
+
+  set.valueOf().forEach(function (file) {
+    var landmarks = file.data.remarkValidateLinksLandmarks;
+
+    if (landmarks) {
+      exposed = xtend(exposed, landmarks);
+    }
   });
+
+  set.valueOf().forEach(function (file) {
+    /* istanbul ignore else - stdin */
+    if (file.path) {
+      validate(exposed, file);
+    }
+  });
+
+  done();
 }
 
-/**
- * Gather references: a map of file-paths references
- * to be one or more nodes.
- *
- * @param {File} file - Set of virtual files.
- * @param {Node} tree - Syntax tree.
- * @param {Object.<string, string>} project - GitHub
- *   project, with a `user` and `repo` property
- *   (optional).
- * @return {Object.<string, Array.<Node>>} exposed - Map of
- *   file-paths (and anchors) which are referenced.
- */
+/* Factory to create a transformer based on the given
+ * project and set. */
+function transformerFactory(project, fileSet) {
+  return transformer;
+
+  /* Transformer. Adds references files to the set. */
+  function transformer(ast, file) {
+    var filePath = file.path;
+    var space = file.data;
+    var links = [];
+    var landmarks = {};
+    var references;
+    var current;
+    var link;
+    var pathname;
+
+    /* istanbul ignore if - stdin */
+    if (!filePath) {
+      return;
+    }
+
+    references = gatherReferences(file, ast, project);
+    current = getPathname(filePath);
+
+    for (link in references) {
+      pathname = getPathname(link);
+
+      if (
+        pathname !== current &&
+        getHash(link) &&
+        links.indexOf(pathname) === -1
+      ) {
+        links.push(pathname);
+        fileSet.add(pathname);
+      }
+    }
+
+    landmarks[filePath] = true;
+
+    visit(ast, function (node) {
+      var data = node.data || {};
+      var attrs = data.htmlAttributes || {};
+      var id = attrs.name || attrs.id || data.id;
+
+      if (id) {
+        landmarks[filePath + '#' + id] = true;
+      }
+    });
+
+    space.remarkValidateLinksReferences = references;
+    space.remarkValidateLinksLandmarks = landmarks;
+  }
+}
+
+/* Check if `file` references headings or files not in
+ * `exposed`. If `project` is given, normalizes GitHub blob
+ * URLs. */
+function validate(exposed, file) {
+  var references = file.data.remarkValidateLinksReferences;
+  var filePath = file.path;
+  var reference;
+  var nodes;
+  var real;
+  var hash;
+  var pathname;
+  var warning;
+  var suggestion;
+
+  for (reference in references) {
+    nodes = references[reference];
+    real = exposed[reference];
+    hash = getHash(reference);
+
+    /* Check if files without `hash` can be linked to.
+     * Because there’s no need to inspect those files
+     * for headings they are not added to remark. This
+     * is especially useful because they might be
+     * non-markdown files. Here we check if they exist. */
+    if ((real === undefined || real === null) && !hash) {
+      real = references[reference] = exists(reference);
+    }
+
+    if (!real) {
+      if (hash) {
+        pathname = getPathname(reference);
+        warning = 'Link to unknown heading';
+
+        if (pathname !== filePath) {
+          warning += ' in `' + pathname + '`';
+        }
+
+        warning += ': `' + hash + '`';
+      } else {
+        warning = 'Link to unknown file: `' + reference + '`';
+      }
+
+      suggestion = getClosest(reference, exposed);
+
+      if (suggestion) {
+        warning += '. Did you mean `' + suggestion + '`';
+      }
+
+      warnAll(file, nodes, warning);
+    }
+  }
+}
+
+/* Gather references: a map of file-paths references
+ * to be one or more nodes. */
 function gatherReferences(file, tree, project) {
   var cache = {};
   var filePath = file.path;
@@ -123,9 +197,7 @@ function gatherReferences(file, tree, project) {
     prefix = '/' + project.user + '/' + project.repo + '/blob/';
   }
 
-  /**
-   * Handle new links.
-   */
+  /* Handle new links. */
   function onlink(node) {
     var link = node.url;
     var definition;
@@ -223,204 +295,48 @@ function gatherReferences(file, tree, project) {
   return cache;
 }
 
-/**
- * Check if `file` references headings or files not in
- * `exposed`. If `project` is given, normalizes GitHub blob
- * URLs.
- *
- * @param {Object.<string, boolean?>} exposed - Map of
- *   file-paths (and anchors) which can be references to.
- * @param {File} file - Set of virtual files.
- */
-function validate(exposed, file) {
-  var references = file.data.remarkValidateLinksReferences;
-  var filePath = file.path;
+/* Utilitity to warn `reason` for each node in `nodes`,
+ * on `file`. */
+function warnAll(file, nodes, reason) {
+  nodes.forEach(function (node) {
+    var message = file.message(reason, node);
+    message.source = message.ruleId = 'remark-validate-links';
+  });
+}
+
+/* Suggest a possible similar reference. */
+function getClosest(pathname, references) {
+  var hash = getHash(pathname);
+  var base = getPathname(pathname);
+  var dictionary = [];
   var reference;
-  var nodes;
-  var real;
-  var hash;
-  var pathname;
-  var warning;
-  var suggestion;
+  var subhash;
+  var subbase;
 
   for (reference in references) {
-    nodes = references[reference];
-    real = exposed[reference];
-    hash = getHash(reference);
+    subbase = getPathname(reference);
+    subhash = getHash(reference);
 
-    /* Check if files without `hash` can be linked to.
-     * Because there’s no need to inspect those files
-     * for headings they are not added to remark. This
-     * is especially useful because they might be
-     * non-markdown files. Here we check if they exist. */
-    if ((real === undefined || real === null) && !hash) {
-      real = references[reference] = exists(reference);
-    }
-
-    if (!real) {
-      if (hash) {
-        pathname = getPathname(reference);
-        warning = 'Link to unknown heading';
-
-        if (pathname !== filePath) {
-          warning += ' in `' + pathname + '`';
-        }
-
-        warning += ': `' + hash + '`';
-      } else {
-        warning = 'Link to unknown file: `' + reference + '`';
+    if (getPathname(reference) === base) {
+      if (subhash && hash) {
+        dictionary.push(subhash);
       }
-
-      suggestion = getClosest(reference, exposed);
-
-      if (suggestion) {
-        warning += '. Did you mean `' + suggestion + '`';
-      }
-
-      warnAll(file, nodes, warning);
+    } else if (!subhash && !hash) {
+      dictionary.push(subbase);
     }
   }
+
+  return propose(hash ? hash : base, dictionary, {threshold: 0.7});
 }
 
-/**
- * Completer.
- *
- * @property {*} pluginId - Unique ID so completers by
- *   this plug-in are not added multiple times to a single
- *   file-set pipeline.
- * @param {FileSet} set - Virtual file-set.
- * @param {function(err?)} done - Callback.
- */
-function completer(set, done) {
-  var exposed = {};
+/* Get the `hash` of `uri`, if applicable. */
+function getHash(uri) {
+  var hash = parse(uri).hash;
 
-  set.valueOf().forEach(function (file) {
-    var landmarks = file.data.remarkValidateLinksLandmarks;
-
-    if (landmarks) {
-      exposed = xtend(exposed, landmarks);
-    }
-  });
-
-  set.valueOf().forEach(function (file) {
-    /* istanbul ignore else - stdin */
-    if (file.path) {
-      validate(exposed, file);
-    }
-  });
-
-  done();
+  return hash ? hash.slice(1) : null;
 }
 
-completer.pluginId = 'remark-validate-links';
-
-/**
-* Factory to create a transformer based on the given
-* project and set.
-*
-* @param {Object.<string, string>} project - GitHub
-*   project, with a `user` and `repo` property
-*   (optional).
-* @param {FileSet} fileSet - Set of virtual files.
-* @return {function(ast, file)} - Transformer.
-*/
-function transformerFactory(project, fileSet) {
-  /**
-   * Transformer. Adds references files to the set.
-   *
-   * @param {*} ast - Node.
-   * @param {File} file - Virtual file.
-   */
-  function transformer(ast, file) {
-    var filePath = file.path;
-    var space = file.data;
-    var links = [];
-    var landmarks = {};
-    var references;
-    var current;
-    var link;
-    var pathname;
-
-    /* istanbul ignore if - stdin */
-    if (!filePath) {
-      return;
-    }
-
-    references = gatherReferences(file, ast, project);
-    current = getPathname(filePath);
-
-    for (link in references) {
-      pathname = getPathname(link);
-
-      if (
-        pathname !== current &&
-        getHash(link) &&
-        links.indexOf(pathname) === -1
-      ) {
-        links.push(pathname);
-        fileSet.add(pathname);
-      }
-    }
-
-    landmarks[filePath] = true;
-
-    visit(ast, function (node) {
-      var data = node.data || {};
-      var attrs = data.htmlAttributes || {};
-      var id = attrs.name || attrs.id || data.id;
-
-      if (id) {
-        landmarks[filePath + '#' + id] = true;
-      }
-    });
-
-    space.remarkValidateLinksReferences = references;
-    space.remarkValidateLinksLandmarks = landmarks;
-  }
-
-  return transformer;
-}
-
-/**
-* Attacher.
-*
-* @param {Remark} remark - Processor.
-* @param {Object?} options - Settings.
-* @param {FileSet?} fileSet - Virtual file-set.
-* @throws {Error} - When `fileSet` is not given (when not on
-*   the CLI).
-*/
-function attacher(remark, options, fileSet) {
-  var repo = (options || {}).repository;
-  var pack;
-
-  /* Throw when not on the CLI. */
-  if (!fileSet) {
-    throw new Error('remark-validate-links only works on the CLI');
-  }
-
-  /* Try to get the repo from `package.json` when not
-   * given. */
-  if (!repo) {
-    try {
-      pack = fileSet.files[0].cwd;
-      // eslint-disable-next-line import/no-dynamic-require
-      pack = require(path.resolve(pack, 'package.json'));
-    } catch (err) {
-      pack = {};
-    }
-
-    repo = pack.repository ? pack.repository.url || pack.repository : '';
-  }
-
-  repo = repo ? gh(repo) : {};
-
-  /* Attach a `completer`. */
-  fileSet.use(completer);
-
-  /* Attach `slug`. */
-  remark.use(slug);
-
-  /* Expose transformer. */
-  return transformerFactory({user: repo.user, repo: repo.repo}, fileSet);
+/* Get the `pathname` of `uri`, if applicable. */
+function getPathname(uri) {
+  return parse(uri).pathname;
 }

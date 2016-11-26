@@ -1,14 +1,5 @@
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:validate-links:test
- * @fileoverview Test suite for `remark-validate-links`.
- */
-
 'use strict';
 
-/* Dependencies. */
 var fs = require('fs');
 var path = require('path');
 var test = require('tape');
@@ -17,7 +8,6 @@ var remark = require('remark');
 var strip = require('strip-ansi');
 var links = require('..');
 
-/* Constants. */
 process.chdir(path.resolve(process.cwd(), 'test', 'fixtures'));
 
 test.onFinish(function () {
@@ -28,7 +18,6 @@ var bin = path.join('..', '..', 'node_modules', '.bin', 'remark');
 
 var source = '  remark-validate-links  remark-validate-links';
 
-/* Tests. */
 test('remark-validate-links', function (t) {
   t.plan(8);
 
