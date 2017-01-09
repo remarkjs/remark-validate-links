@@ -30,7 +30,7 @@
     "index.js"
   ],
   "devDependencies": {
-    "execa": "^0.5.0",
+    "execa": "^0.6.0",
     "nyc": "^10.0.0",
     "remark": "^6.0.0",
     "remark-cli": "^2.0.0",
