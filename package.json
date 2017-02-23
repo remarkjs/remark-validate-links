@@ -32,7 +32,7 @@
   "devDependencies": {
     "execa": "^0.6.0",
     "nyc": "^10.0.0",
-    "remark": "^6.0.0",
+    "remark": "^7.0.0",
     "remark-cli": "^2.0.0",
     "remark-preset-wooorm": "^1.0.0",
     "strip-ansi": "^3.0.1",
