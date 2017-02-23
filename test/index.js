@@ -23,7 +23,7 @@ test('remark-validate-links', function (t) {
 
   t.throws(
     function () {
-      remark().use(links);
+      remark().use(links).freeze();
     },
     /Error: remark-validate-links only works on the CLI/,
     'should throw an error when not on the CLI'

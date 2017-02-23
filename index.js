@@ -18,7 +18,7 @@ completer.pluginId = 'remark-validate-links';
 var exists = fs.existsSync;
 var parse = url.parse;
 
-function attacher(remark, options, fileSet) {
+function attacher(options, fileSet) {
   var repo = (options || {}).repository;
   var pack;
 
@@ -47,10 +47,12 @@ function attacher(remark, options, fileSet) {
   fileSet.use(completer);
 
   /* Attach `slug`. */
-  remark.use(slug);
+  this.use(slug).use(subplugin);
 
-  /* Expose transformer. */
-  return transformerFactory({user: repo.user, repo: repo.repo}, fileSet);
+  function subplugin() {
+    /* Expose transformer. */
+    return transformerFactory({user: repo.user, repo: repo.repo}, fileSet);
+  }
 }
 
 /* Completer. */
