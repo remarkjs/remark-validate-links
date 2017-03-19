@@ -119,7 +119,27 @@ function transformerFactory(project, fileSet) {
     visit(ast, function (node) {
       var data = node.data || {};
       var attrs = data.htmlAttributes || {};
-      var id = attrs.name || attrs.id || data.id;
+      var child = 0;
+      var matches = [];
+      var anchors = new RegExp('^<(a|span) (?:name|id)="([^"]+)">$');
+      var anchorname = false;
+
+      // Find a very constrained set of HTML anchor tags.
+      if (node.children && node.children.length > 0) {
+        for (child = 0; child < node.children.length; child++) {
+          if (node.children[child].type == "html" && node.children[child+1] && node.children[child+1].type == "html") {
+            // Match only a and span tags with only a (quoted) name or id attribute,
+            // no content and a matching end tag in the next child.
+            matches = anchors.exec(node.children[child].value);
+            if (matches && matches.length == 3 && node.children[child+1].value == "</" + matches[1] + ">") {
+              // Have a match and the close tag matches also, we use the first one found.
+              anchorname = matches[2];
+              break;
+            }
+          }
+        }
+      }
+      var id = attrs.name || anchorname || attrs.id || data.id;
 
       if (id) {
         landmarks[filePath + '#' + id] = true;
