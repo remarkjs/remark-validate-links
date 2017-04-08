@@ -121,6 +121,7 @@ function transformerFactory(project, fileSet) {
       var data = node.data || {};
       var attrs = data.htmlAttributes || {};
       var id = attrs.name || attrs.id || data.id;
+      
       if (id) {
         landmarks[filePath + '#' + id] = true;
       }
@@ -163,7 +164,8 @@ function validate(exposed, file) {
      * is especially useful because they might be
      * non-markdown files. Here we check if they exist. */
     if ((real === undefined || real === null) && !hash) {
-      real = references[reference] = exists(reference);
+      real = exists(reference);
+      references[reference] = real;
     }
 
     if (!real) {
@@ -309,7 +311,8 @@ function gatherReferences(file, tree, project) {
 function warnAll(file, nodes, reason) {
   nodes.forEach(function (node) {
     var message = file.message(reason, node);
-    message.source = message.ruleId = 'remark-validate-links';
+    message.source = 'remark-validate-links';
+    message.ruleId = 'remark-validate-links';
   });
 }
 
