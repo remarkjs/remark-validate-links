@@ -10,6 +10,7 @@ var gh = require('github-url-to-object');
 var urljoin = require('urljoin');
 var slug = require('remark-slug');
 var xtend = require('xtend');
+var select = require('unist-util-select');
 
 module.exports = attacher;
 
@@ -120,10 +121,17 @@ function transformerFactory(project, fileSet) {
       var data = node.data || {};
       var attrs = data.hProperties || data.htmlAttributes || {};
       var id = attrs.name || attrs.id || data.id;
-
+      
       if (id) {
         landmarks[filePath + '#' + id] = true;
       }
+    });
+
+    // Look for HTML anchor tags
+    var anchors=select(ast, 'listItem > paragraph > html[value*="<a name="]');
+    anchors.forEach(function(node){
+      var anchor=node.value.match(/<a name=\"([^"]+)\"/);
+      landmarks[filePath + '#' + anchor[1]] = true;
     });
 
     space.remarkValidateLinksReferences = references;
@@ -163,7 +171,7 @@ function validate(exposed, file) {
     if (!real) {
       if (hash) {
         pathname = getPathname(reference);
-        warning = 'Link to unknown heading';
+        warning = 'Link to unknown heading or anchor';
 
         if (pathname !== filePath) {
           warning += ' in `' + pathname + '`';
