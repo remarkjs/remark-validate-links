@@ -74,8 +74,8 @@ This plug-in is **not** available on the API of remark.
 
 You can pass a `repository`, containing anything `package.json`s
 [`repository`][package-repository] can handle.  If this is omitted,
-**remark-validate-links** will try the `package.json` in your
-current working directory.
+`remark-validate-links` will try the `package.json` in your current working
+directory.
 
 ```bash
 remark --use 'validate-links=repository:"foo/bar"' example.md
@@ -103,17 +103,16 @@ An example `.remarkrc` file could look as follows:
 **remark-validate-links** can detect anchors on nodes through
 several properties on nodes:
 
-*   `node.data.htmlAttributes.name` — Used by [`remark-html`][remark-html]
-    to create a `name` attribute, which anchors can link to;
-*   `node.data.htmlAttributes.id` — Used by [`remark-html`][remark-html]
-    to create an `id` attribute, which anchors can link to;
+*   `node.data.hProperties.name` — Used by [`remark-html`][remark-html]
+    to create a `name` attribute, which anchors can link to
+*   `node.data.hProperties.id` — Used by [`remark-html`][remark-html]
+    to create an `id` attribute, which anchors can link to
 *   `node.data.id` — Used, in the future, by other tools to signal
-    unique identifiers on nodes.
+    unique identifiers on nodes
 
 ## Related
 
-*   [`wooorm/remark-lint`][remark-lint]
-    — Markdown code style linter.
+*   [`remark-lint`][remark-lint] — Markdown code style linter
 
 ## License
 
