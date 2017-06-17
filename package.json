@@ -11,6 +11,15 @@
     "heading",
     "remark"
   ],
+  "repository": "wooorm/remark-validate-links",
+  "bugs": "https://github.com/wooorm/remark-validate-links/issues",
+  "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
+  "contributors": [
+    "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)"
+  ],
+  "files": [
+    "index.js"
+  ],
   "dependencies": {
     "github-url-to-object": "^4.0.0",
     "mdast-util-definitions": "^1.0.0",
@@ -20,15 +29,6 @@
     "urljoin": "^0.1.5",
     "xtend": "^4.0.1"
   },
-  "repository": "https://github.com/wooorm/remark-validate-links",
-  "bugs": "https://github.com/wooorm/remark-validate-links/issues",
-  "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
-  "contributors": [
-    "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)"
-  ],
-  "files": [
-    "index.js"
-  ],
   "devDependencies": {
     "execa": "^0.7.0",
     "nyc": "^11.0.0",
@@ -43,7 +43,7 @@
     "build-md": "remark *.md -qfo",
     "build": "npm run build-md",
     "lint": "xo",
-    "test-api": "node test/index.js",
+    "test-api": "node test",
     "test-coverage": "nyc --reporter lcov tape test/index.js",
     "test": "npm run build && npm run lint && npm run test-coverage"
   },
@@ -64,6 +64,8 @@
     "branches": 100
   },
   "remarkConfig": {
-    "plugins": ["preset-wooorm"]
+    "plugins": [
+      "preset-wooorm"
+    ]
   }
 }
