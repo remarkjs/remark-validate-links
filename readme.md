@@ -34,17 +34,15 @@ npm install remark-validate-links
 
 ## Command line
 
-![Example of how remark-validate-links looks on screen][screenshot]
-
-Use **remark-validate-links** together with [**remark**][remark]:
+Use `remark-validate-links` together with [**remark**][remark]:
 
 ```bash
-npm install --global remark remark-validate-links
+npm install --global remark-cli remark-validate-links
 ```
 
 Let’s say `readme.md` is this document, and `example.md` looks as follows:
 
-```md
+```markdown
 # Hello
 
 Read more [whoops, this does not exist](#world).
@@ -56,18 +54,16 @@ But this does exist: [LICENSE](LICENSE).
 So does this: [README](readme.md#installation).
 ```
 
-Then, to run **remark-validate-links** on `example.md` and `readme.md`:
+Now, running `remark -u validate-links .` yields:
 
-```bash
-remark -u remark-validate-links example.md
-#
-# Yields:
-#
-# example.md
-#   3:11  warning  Link to unknown heading: `world`
-#   5:27  warning  Link to unknown heading in `readme.md`: `foo`
-#
-# ✖ 2 problems (0 errors, 2 warnings)
+```text
+example.md
+  3:11-3:48  warning  Link to unknown heading: `world`               remark-validate-links  remark-validate-links
+  5:27-5:51  warning  Link to unknown heading in `readme.md`: `foo`  remark-validate-links  remark-validate-links
+
+readme.md: no issues found
+
+⚠ 2 warnings
 ```
 
 ## Programmatic
@@ -148,8 +144,6 @@ several properties on nodes:
 [remark-lint]: https://github.com/wooorm/remark-lint
 
 [remark-html]: https://github.com/wooorm/remark-html
-
-[screenshot]: https://cdn.rawgit.com/wooorm/remark-validate-links/master/screenshot.png#1
 
 [package-repository]: https://docs.npmjs.com/files/package.json#repository
 
