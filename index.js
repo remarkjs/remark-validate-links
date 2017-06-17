@@ -118,7 +118,7 @@ function transformerFactory(project, fileSet) {
 
     visit(ast, function (node) {
       var data = node.data || {};
-      var attrs = data.htmlAttributes || {};
+      var attrs = data.hProperties || data.htmlAttributes || {};
       var id = attrs.name || attrs.id || data.id;
 
       if (id) {
