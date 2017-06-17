@@ -12,7 +12,7 @@
     "remark"
   ],
   "dependencies": {
-    "github-url-to-object": "^3.0.0",
+    "github-url-to-object": "^4.0.0",
     "mdast-util-definitions": "^1.0.0",
     "propose": "0.0.5",
     "remark-slug": "^4.2.1",
