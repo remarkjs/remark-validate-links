@@ -19,7 +19,7 @@ var bin = path.join('..', '..', 'node_modules', '.bin', 'remark');
 var source = '  remark-validate-links  remark-validate-links';
 
 test('remark-validate-links', function (t) {
-  t.plan(8);
+  t.plan(9);
 
   t.throws(
     function () {
@@ -291,6 +291,26 @@ test('remark-validate-links', function (t) {
           '⚠ 2 warnings'
         ].join('\n'),
         'should report'
+      );
+    });
+  });
+
+  t.test('should don\'t fail when given not GitHub repo', function (st) {
+    st.plan(1);
+
+    execa.stderr(bin, [
+      '--no-config',
+      '--no-ignore',
+      '--use',
+      '../../index=repository:"gitlab:another/repo"',
+      'example.md'
+    ]).then(function (stderr) {
+      st.equal(
+        strip(stderr),
+        [
+          'example.md: no issues found'
+        ].join('\n'),
+        'should don\'t report'
       );
     });
   });
