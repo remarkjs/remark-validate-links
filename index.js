@@ -43,6 +43,10 @@ function attacher(options, fileSet) {
 
   repo = repo ? gh(repo) : {};
 
+  if (!repo) {
+    return;
+  }
+
   /* Attach a `completer`. */
   fileSet.use(completer);
 
