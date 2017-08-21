@@ -30,12 +30,12 @@
     "xtend": "^4.0.1"
   },
   "devDependencies": {
-    "execa": "^0.7.0",
+    "execa": "^0.8.0",
     "nyc": "^11.0.0",
     "remark": "^8.0.0",
     "remark-cli": "^4.0.0",
     "remark-preset-wooorm": "^3.0.0",
-    "strip-ansi": "^3.0.1",
+    "strip-ansi": "^4.0.0",
     "tape": "^4.0.0",
     "xo": "^0.18.0"
   },
