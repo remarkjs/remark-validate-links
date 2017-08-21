@@ -32,8 +32,7 @@ function attacher(options, fileSet) {
   if (!repo) {
     try {
       pack = fileSet.files[0].cwd;
-      // eslint-disable-next-line import/no-dynamic-require
-      pack = require(path.resolve(pack, 'package.json'));
+      pack = JSON.parse(fs.readFileSync(path.resolve(pack, 'package.json')));
     } catch (err) {
       pack = {};
     }
