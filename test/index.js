@@ -4,6 +4,7 @@ var fs = require('fs');
 var path = require('path');
 var test = require('tape');
 var execa = require('execa');
+var vfile = require('to-vfile');
 var remark = require('remark');
 var strip = require('strip-ansi');
 var links = require('..');
@@ -21,13 +22,22 @@ var source = '  remark-validate-links  remark-validate-links';
 test('remark-validate-links', function (t) {
   t.plan(12);
 
-  t.throws(
-    function () {
-      remark().use(links).freeze();
-    },
-    /Error: remark-validate-links only works on the CLI/,
-    'should throw an error when not on the CLI'
-  );
+  t.test('should work on the API', function (st) {
+    st.plan(1);
+
+    remark()
+      .use(links)
+      .process(vfile.readSync('github.md'), function (err, file) {
+        st.deepEqual(
+          [err].concat(file.messages.map(String)),
+          [
+            null,
+            'github.md:5:37-5:51: Link to unknown heading: `world`'
+          ],
+          'should report messages'
+        );
+      });
+  });
 
   t.test('should throw on unparsable git repositories', function (st) {
     st.plan(1);

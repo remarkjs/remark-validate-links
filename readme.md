@@ -68,7 +68,46 @@ readme.md: no issues found
 
 ## Programmatic
 
-This plug-in is **not** available on the API of remark.
+> Note: The API only checks links to headings.  Other URLs are not checked.
+
+Say we have the following file, `example.md`:
+
+```markdown
+# Alpha
+
+This [exists](#alpha). This [exists][alpha] too.
+This [one does not](#does-not).
+
+# Bravo
+
+This is [not checked](readme.md#bravo).
+
+[alpha]: #alpha
+```
+
+And our script, `example.js`, looks as follows:
+
+```javascript
+var vfile = require('to-vfile');
+var report = require('vfile-reporter');
+var remark = require('remark');
+var links = require('remark-validate-links');
+
+remark()
+  .use(links)
+  .process(vfile.readSync('example.md'), function (err, file) {
+    console.error(report(err || file));
+  });
+```
+
+Now, running `node example` yields:
+
+```markdown
+example.md
+  4:6-4:31  warning  Link to unknown heading: `does-not`  remark-validate-links  remark-validate-links
+
+⚠ 1 warning
+```
 
 ## Configuration
 

@@ -1,15 +1,22 @@
 'use strict';
 
 var url = require('url');
-var fs = require('fs');
-var path = require('path');
 var propose = require('propose');
 var visit = require('unist-util-visit');
 var definitions = require('mdast-util-definitions');
 var hostedGitInfo = require('hosted-git-info');
 var urljoin = require('urljoin');
 var slug = require('remark-slug');
-var xtend = require('xtend');
+var xtend = require('xtend/mutable.js');
+
+/* Optional Node dependencies. */
+var fs;
+var path;
+
+try {
+  fs = require('fs');
+  path = require('path');
+} catch (err) {}
 
 module.exports = attacher;
 
@@ -17,9 +24,8 @@ var referenceId = 'remarkValidateLinksReferences';
 var landmarkId = 'remarkValidateLinksLandmarks';
 var sourceId = 'remark-validate-links';
 
-completer.pluginId = sourceId;
+cliCompleter.pluginId = sourceId;
 
-var exists = fs.existsSync;
 var parse = url.parse;
 
 var viewPaths = {
@@ -39,14 +45,9 @@ function attacher(options, fileSet) {
   var info;
   var pack;
 
-  /* Throw when not on the CLI. */
-  if (!fileSet) {
-    throw new Error('remark-validate-links only works on the CLI');
-  }
-
   /* Try to get the repo from `package.json` when not
    * given. */
-  if (!repo) {
+  if (!repo && fs && fileSet) {
     try {
       pack = fileSet.files[0].cwd;
       pack = JSON.parse(fs.readFileSync(path.resolve(pack, 'package.json')));
@@ -67,11 +68,15 @@ function attacher(options, fileSet) {
     }
   }
 
-  /* Attach a `completer`. */
-  fileSet.use(completer);
-
   /* Attach `slug` and a plugin that adds our transformer after it. */
   this.use(slug).use(subplugin);
+
+  /* Attach a `completer`. */
+  if (fileSet) {
+    fileSet.use(cliCompleter);
+  } else {
+    this.use(apiCompleter);
+  }
 
   function subplugin() {
     /* Expose transformer. */
@@ -79,9 +84,18 @@ function attacher(options, fileSet) {
   }
 }
 
-/* Completer. */
-function completer(set, done) {
+/* Completer for the API (one file, only headings are checked). */
+function apiCompleter() {
+  return transformer;
+  function transformer(tree, file) {
+    checkFactory(file.data[landmarkId])(file);
+  }
+}
+
+/* Completer for the CLI (multiple files, and support to add more). */
+function cliCompleter(set, done) {
   var exposed = {};
+  var check = checkFactory(exposed);
 
   set.valueOf().forEach(expose);
   set.valueOf().forEach(check);
@@ -92,10 +106,13 @@ function completer(set, done) {
     var landmarks = file.data[landmarkId];
 
     if (landmarks) {
-      exposed = xtend(exposed, landmarks);
+      xtend(exposed, landmarks);
     }
   }
+}
 
+function checkFactory(exposed) {
+  return check;
   function check(file) {
     /* istanbul ignore else - stdin */
     if (file.path) {
@@ -125,13 +142,14 @@ function transformerFactory(fileSet, info) {
       return;
     }
 
-    references = gatherReferences(file, ast, info);
+    references = gatherReferences(file, ast, info, fileSet);
     current = getPathname(filePath);
 
     for (link in references) {
       pathname = getPathname(link);
 
       if (
+        fileSet &&
         pathname !== current &&
         getHash(link) &&
         links.indexOf(pathname) === -1
@@ -182,8 +200,8 @@ function validate(exposed, file) {
      * for headings they are not added to remark. This
      * is especially useful because they might be
      * non-markdown files. Here we check if they exist. */
-    if ((real === undefined || real === null) && !hash) {
-      real = exists(reference);
+    if ((real === undefined || real === null) && !hash && fs) {
+      real = fs.existsSync(reference);
       references[reference] = real;
     }
 
@@ -214,15 +232,11 @@ function validate(exposed, file) {
 
 /* Gather references: a map of file-paths references
  * to be one or more nodes. */
-function gatherReferences(file, tree, info) {
+function gatherReferences(file, tree, info, fileSet) {
   var cache = {};
-  var filePath = file.path;
-  var dirname = file.dirname;
-  var getDefinition;
+  var getDefinition = definitions(tree);
   var prefix = '';
   var headingPrefix = '#';
-
-  getDefinition = definitions(tree);
 
   if (info && info.type in viewPaths) {
     prefix = '/' + info.path() + '/' + viewPaths[info.type] + '/';
@@ -259,13 +273,18 @@ function gatherReferences(file, tree, info) {
 
     uri = parse(link);
 
+    if (!fileSet && (uri.hostname || uri.pathname)) {
+      return;
+    }
+
     if (!uri.hostname) {
       /* Handle hashes, or relative files. */
       if (!uri.pathname && uri.hash) {
-        link = filePath + uri.hash;
+        link = file.path + uri.hash;
         uri = parse(link);
       } else {
-        link = urljoin(dirname, link);
+        link = urljoin(file.dirname, link);
+
         if (uri.hash) {
           link += uri.hash;
         }
@@ -275,7 +294,7 @@ function gatherReferences(file, tree, info) {
 
     /* Handle full links. */
     if (uri.hostname) {
-      if (!prefix) {
+      if (!prefix || !fileSet) {
         return;
       }
 
@@ -315,6 +334,7 @@ function gatherReferences(file, tree, info) {
 
     if (hash) {
       link = pathname + '#' + hash;
+
       if (!cache[link]) {
         cache[link] = [];
       }
