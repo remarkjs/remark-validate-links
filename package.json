@@ -1,6 +1,6 @@
 {
   "name": "remark-validate-links",
-  "version": "6.1.0",
+  "version": "7.0.0",
   "description": "Validate links to headings and files in markdown",
   "license": "MIT",
   "keywords": [
