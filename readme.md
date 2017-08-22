@@ -58,8 +58,8 @@ Now, running `remark -u validate-links .` yields:
 
 ```text
 example.md
-  3:11-3:48  warning  Link to unknown heading: `world`               remark-validate-links  remark-validate-links
-  5:27-5:51  warning  Link to unknown heading in `readme.md`: `foo`  remark-validate-links  remark-validate-links
+  3:11-3:48  warning  Link to unknown heading: `world`               missing-heading          remark-validate-links
+  5:27-5:51  warning  Link to unknown heading in `readme.md`: `foo`  missing-heading-in-file  remark-validate-links
 
 readme.md: no issues found
 
@@ -121,7 +121,7 @@ remark --use 'validate-links=repository:"foo/bar"' example.md
 ```
 
 When a repository is given or detected (supporting GitHub, GitLab, and
-Bitbucket), links to the only files are normalized to the file-system.
+Bitbucket), links to the files are normalized to the file-system.
 For example, `https://github.com/foo/bar/blob/master/example.md` becomes
 `example.md`.
 

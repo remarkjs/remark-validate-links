@@ -23,6 +23,9 @@ module.exports = attacher;
 var referenceId = 'remarkValidateLinksReferences';
 var landmarkId = 'remarkValidateLinksLandmarks';
 var sourceId = 'remark-validate-links';
+var headingRuleId = 'missing-heading';
+var headingInFileRuleId = 'missing-heading-in-file';
+var fileRuleId = 'missing-file';
 
 cliCompleter.pluginId = sourceId;
 
@@ -189,6 +192,7 @@ function validate(exposed, file) {
   var pathname;
   var warning;
   var suggestion;
+  var ruleId;
 
   for (reference in references) {
     nodes = references[reference];
@@ -209,14 +213,17 @@ function validate(exposed, file) {
       if (hash) {
         pathname = getPathname(reference);
         warning = 'Link to unknown heading';
+        ruleId = headingRuleId;
 
         if (pathname !== filePath) {
           warning += ' in `' + pathname + '`';
+          ruleId = headingInFileRuleId;
         }
 
         warning += ': `' + hash + '`';
       } else {
         warning = 'Link to unknown file: `' + reference + '`';
+        ruleId = fileRuleId;
       }
 
       suggestion = getClosest(reference, exposed);
@@ -225,7 +232,7 @@ function validate(exposed, file) {
         warning += '. Did you mean `' + suggestion + '`';
       }
 
-      warnAll(file, nodes, warning);
+      warnAll(file, nodes, warning, ruleId);
     }
   }
 }
@@ -346,13 +353,13 @@ function gatherReferences(file, tree, info, fileSet) {
 
 /* Utilitity to warn `reason` for each node in `nodes`,
  * on `file`. */
-function warnAll(file, nodes, reason) {
+function warnAll(file, nodes, reason, ruleId) {
   nodes.forEach(one);
 
   function one(node) {
     var message = file.message(reason, node);
     message.source = sourceId;
-    message.ruleId = sourceId;
+    message.ruleId = ruleId;
   }
 }
 
