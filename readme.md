@@ -81,27 +81,31 @@ directory.
 remark --use 'validate-links=repository:"foo/bar"' example.md
 ```
 
-When a repository is given or detected, links to GitHub are normalized
-to the file-system.  For example,
-`https://github.com/foo/bar/blob/master/example.md` becomes `example.md`.
+When a repository is given or detected (supporting GitHub, GitLab, and
+Bitbucket), links to the only files are normalized to the file-system.
+For example, `https://github.com/foo/bar/blob/master/example.md` becomes
+`example.md`.
 
 You can define this repository in [configuration files][cli] too.
 An example `.remarkrc` file could look as follows:
 
 ```json
 {
-  "plugins": {
-    "validate-links": {
-      "repository": "foo/bar"
-    }
-  }
+  "plugins": [
+    [
+      "validate-links",
+      {
+        "repository": "foo/bar"
+      }
+    ]
+  ]
 }
 ```
 
 ## Integration
 
-**remark-validate-links** can detect anchors on nodes through
-several properties on nodes:
+`remark-validate-links` can detect anchors on nodes through several properties
+on nodes:
 
 *   `node.data.hProperties.name` — Used by [`remark-html`][remark-html]
     to create a `name` attribute, which anchors can link to

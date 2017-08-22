@@ -6,13 +6,13 @@ This is an invalid relative heading [link](#world).
 
 ## Files
 
-This is a valid relative file [link](https://github.com/wooorm/test/blob/master/examples/example.md).
+This is a valid relative file [link](https://github.com/wooorm/test/blob/master/examples/github.md).
 
-So is this [link](https://github.com/wooorm/test/blob/foo-bar/examples/example.md).
+So is this [link](https://github.com/wooorm/test/blob/foo-bar/examples/github.md).
 
-And this [link](./examples/example.md).
+And this [link](./examples/github.md).
 
-And this [link](examples/example.md).
+And this [link](examples/github.md).
 
 This is a valid external [file](../index.js).
 
@@ -26,21 +26,21 @@ And this [link](examples/world.md).
 
 ## Combination
 
-Valid: [a](./examples/example.md#hello).
+Valid: [a](./examples/github.md#hello).
 
-Valid: [b](examples/example.md#hello).
+Valid: [b](examples/github.md#hello).
 
-Valid: [c](https://github.com/wooorm/test/blob/master/examples/example.md#hello).
+Valid: [c](https://github.com/wooorm/test/blob/master/examples/github.md#hello).
 
-Valid: [d](https://github.com/wooorm/test/blob/foo-bar/examples/example.md#hello).
+Valid: [d](https://github.com/wooorm/test/blob/foo-bar/examples/github.md#hello).
 
-Invalid: [e](./examples/example.md#world).
+Invalid: [e](./examples/github.md#world).
 
-Invalid: [f](examples/example.md#world).
+Invalid: [f](examples/github.md#world).
 
-Invalid: [g](https://github.com/wooorm/test/blob/master/examples/example.md#world).
+Invalid: [g](https://github.com/wooorm/test/blob/master/examples/github.md#world).
 
-Invalid: [h](https://github.com/wooorm/test/blob/foo-bar/examples/example.md#world).
+Invalid: [h](https://github.com/wooorm/test/blob/foo-bar/examples/github.md#world).
 
 Invalid: [i](./examples/world.md#hello).
 

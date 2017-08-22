@@ -6,20 +6,37 @@ var path = require('path');
 var propose = require('propose');
 var visit = require('unist-util-visit');
 var definitions = require('mdast-util-definitions');
-var gh = require('github-url-to-object');
+var hostedGitInfo = require('hosted-git-info');
 var urljoin = require('urljoin');
 var slug = require('remark-slug');
 var xtend = require('xtend');
 
 module.exports = attacher;
 
-completer.pluginId = 'remark-validate-links';
+var referenceId = 'remarkValidateLinksReferences';
+var landmarkId = 'remarkValidateLinksLandmarks';
+var sourceId = 'remark-validate-links';
+
+completer.pluginId = sourceId;
 
 var exists = fs.existsSync;
 var parse = url.parse;
 
+var viewPaths = {
+  github: 'blob',
+  gitlab: 'blob',
+  bitbucket: 'src'
+};
+
+var headingPrefixes = {
+  github: '#',
+  gitlab: '#',
+  bitbucket: '#markdown-header-'
+};
+
 function attacher(options, fileSet) {
   var repo = (options || {}).repository;
+  var info;
   var pack;
 
   /* Throw when not on the CLI. */
@@ -40,17 +57,25 @@ function attacher(options, fileSet) {
     repo = pack.repository ? pack.repository.url || pack.repository : '';
   }
 
-  repo = repo ? gh(repo) : {};
+  if (repo) {
+    info = hostedGitInfo.fromUrl(repo);
+
+    if (!info) {
+      throw new Error('remark-validate-links cannot parse `repository` (`' + repo + '`)');
+    } else if (info.domain === 'gist.github.com') {
+      throw new Error('remark-validate-links does not support gist repositories');
+    }
+  }
 
   /* Attach a `completer`. */
   fileSet.use(completer);
 
-  /* Attach `slug`. */
+  /* Attach `slug` and a plugin that adds our transformer after it. */
   this.use(slug).use(subplugin);
 
   function subplugin() {
     /* Expose transformer. */
-    return transformerFactory({user: repo.user, repo: repo.repo}, fileSet);
+    return transformerFactory(fileSet, info);
   }
 }
 
@@ -58,27 +83,30 @@ function attacher(options, fileSet) {
 function completer(set, done) {
   var exposed = {};
 
-  set.valueOf().forEach(function (file) {
-    var landmarks = file.data.remarkValidateLinksLandmarks;
+  set.valueOf().forEach(expose);
+  set.valueOf().forEach(check);
+
+  done();
+
+  function expose(file) {
+    var landmarks = file.data[landmarkId];
 
     if (landmarks) {
       exposed = xtend(exposed, landmarks);
     }
-  });
+  }
 
-  set.valueOf().forEach(function (file) {
+  function check(file) {
     /* istanbul ignore else - stdin */
     if (file.path) {
       validate(exposed, file);
     }
-  });
-
-  done();
+  }
 }
 
 /* Factory to create a transformer based on the given
- * project and set. */
-function transformerFactory(project, fileSet) {
+ * info and set. */
+function transformerFactory(fileSet, info) {
   return transformer;
 
   /* Transformer. Adds references files to the set. */
@@ -97,7 +125,7 @@ function transformerFactory(project, fileSet) {
       return;
     }
 
-    references = gatherReferences(file, ast, project);
+    references = gatherReferences(file, ast, info);
     current = getPathname(filePath);
 
     for (link in references) {
@@ -115,7 +143,12 @@ function transformerFactory(project, fileSet) {
 
     landmarks[filePath] = true;
 
-    visit(ast, function (node) {
+    visit(ast, mark);
+
+    space[referenceId] = references;
+    space[landmarkId] = landmarks;
+
+    function mark(node) {
       var data = node.data || {};
       var attrs = data.hProperties || data.htmlAttributes || {};
       var id = attrs.name || attrs.id || data.id;
@@ -123,18 +156,13 @@ function transformerFactory(project, fileSet) {
       if (id) {
         landmarks[filePath + '#' + id] = true;
       }
-    });
-
-    space.remarkValidateLinksReferences = references;
-    space.remarkValidateLinksLandmarks = landmarks;
+    }
   }
 }
 
-/* Check if `file` references headings or files not in
- * `exposed`. If `project` is given, normalizes GitHub blob
- * URLs. */
+/* Check if `file` references headings or files not in `exposed`. */
 function validate(exposed, file) {
-  var references = file.data.remarkValidateLinksReferences;
+  var references = file.data[referenceId];
   var filePath = file.path;
   var reference;
   var nodes;
@@ -186,18 +214,28 @@ function validate(exposed, file) {
 
 /* Gather references: a map of file-paths references
  * to be one or more nodes. */
-function gatherReferences(file, tree, project) {
+function gatherReferences(file, tree, info) {
   var cache = {};
   var filePath = file.path;
   var dirname = file.dirname;
   var getDefinition;
   var prefix = '';
+  var headingPrefix = '#';
 
   getDefinition = definitions(tree);
 
-  if (project.user && project.repo) {
-    prefix = '/' + project.user + '/' + project.repo + '/blob/';
+  if (info && info.type in viewPaths) {
+    prefix = '/' + info.path() + '/' + viewPaths[info.type] + '/';
   }
+
+  if (info && info.type in headingPrefixes) {
+    headingPrefix = headingPrefixes[info.type];
+  }
+
+  visit(tree, 'link', onlink);
+  visit(tree, 'linkReference', onlink);
+
+  return cache;
 
   /* Handle new links. */
   function onlink(node) {
@@ -235,18 +273,13 @@ function gatherReferences(file, tree, project) {
       }
     }
 
-    /* Handle full links.
-     * Only works with GitHub.
-     */
+    /* Handle full links. */
     if (uri.hostname) {
       if (!prefix) {
         return;
       }
 
-      if (
-        uri.hostname !== 'github.com' ||
-        uri.pathname.slice(0, prefix.length) !== prefix
-      ) {
+      if (uri.hostname !== info.domain || uri.pathname.slice(0, prefix.length) !== prefix) {
         return;
       }
 
@@ -260,20 +293,18 @@ function gatherReferences(file, tree, project) {
        * Currently, I’m ignoring this and just not
        * supporting branches. */
       link = link.slice(link.indexOf('/') + 1);
-
-      uri = parse(link);
     }
 
     /* Handle file links, or combinations of files
      * and hashes. */
-    index = link.indexOf('#');
+    index = link.indexOf(headingPrefix);
 
     if (index === -1) {
       pathname = link;
       hash = null;
     } else {
       pathname = link.slice(0, index);
-      hash = link.slice(index + 1);
+      hash = link.slice(index + headingPrefix.length);
     }
 
     if (!cache[pathname]) {
@@ -283,6 +314,7 @@ function gatherReferences(file, tree, project) {
     cache[pathname].push(node);
 
     if (hash) {
+      link = pathname + '#' + hash;
       if (!cache[link]) {
         cache[link] = [];
       }
@@ -290,21 +322,18 @@ function gatherReferences(file, tree, project) {
       cache[link].push(node);
     }
   }
-
-  visit(tree, 'link', onlink);
-  visit(tree, 'linkReference', onlink);
-
-  return cache;
 }
 
 /* Utilitity to warn `reason` for each node in `nodes`,
  * on `file`. */
 function warnAll(file, nodes, reason) {
-  nodes.forEach(function (node) {
+  nodes.forEach(one);
+
+  function one(node) {
     var message = file.message(reason, node);
-    message.source = 'remark-validate-links';
-    message.ruleId = 'remark-validate-links';
-  });
+    message.source = sourceId;
+    message.ruleId = sourceId;
+  }
 }
 
 /* Suggest a possible similar reference. */
