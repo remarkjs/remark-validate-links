@@ -22,6 +22,7 @@ is fine.
 *   [Configuration](#configuration)
 *   [Integration](#integration)
 *   [Related](#related)
+*   [Contribute](#contribute)
 *   [License](#license)
 
 ## Installation
@@ -157,6 +158,13 @@ on nodes:
 
 *   [`remark-lint`][remark-lint] — Markdown code style linter
 
+## Contribute
+
+See [`contribute.md` in `remarkjs/remarkj`][contribute] for ways to get started.
+
+This organisation has a [Code of Conduct][coc].  By interacting with this
+repository, organisation, or community you agree to abide by its terms.
+
 ## License
 
 [MIT][license] © [Titus Wormer][author]
@@ -190,3 +198,7 @@ on nodes:
 [package-repository]: https://docs.npmjs.com/files/package.json#repository
 
 [cli]: https://github.com/remarkjs/remark/tree/master/packages/remark-cli#readme
+
+[contribute]: https://github.com/remarkjs/remark/blob/master/contributing.md
+
+[coc]: https://github.com/remarkjs/remark/blob/master/code-of-conduct.md
