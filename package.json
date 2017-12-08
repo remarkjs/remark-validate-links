@@ -11,8 +11,8 @@
     "heading",
     "remark"
   ],
-  "repository": "wooorm/remark-validate-links",
-  "bugs": "https://github.com/wooorm/remark-validate-links/issues",
+  "repository": "remarkjs/remark-validate-links",
+  "bugs": "https://github.com/remarkjs/remark-validate-links/issues",
   "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
   "contributors": [
     "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)"

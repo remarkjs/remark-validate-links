@@ -163,17 +163,17 @@ on nodes:
 
 <!-- Definitions -->
 
-[build-badge]: https://img.shields.io/travis/wooorm/remark-validate-links.svg
+[build-badge]: https://img.shields.io/travis/remarkjs/remark-validate-links.svg
 
-[build-status]: https://travis-ci.org/wooorm/remark-validate-links
+[build-status]: https://travis-ci.org/remarkjs/remark-validate-links
 
-[coverage-badge]: https://img.shields.io/codecov/c/github/wooorm/remark-validate-links.svg
+[coverage-badge]: https://img.shields.io/codecov/c/github/remarkjs/remark-validate-links.svg
 
-[coverage-status]: https://codecov.io/github/wooorm/remark-validate-links
+[coverage-status]: https://codecov.io/github/remarkjs/remark-validate-links
 
-[chat-badge]: https://img.shields.io/gitter/room/wooorm/remark.svg
+[chat-badge]: https://img.shields.io/gitter/room/remarkjs/Lobby.svg
 
-[chat]: https://gitter.im/wooorm/remark
+[chat]: https://gitter.im/remarkjs/Lobby
 
 [license]: LICENSE
 
@@ -181,12 +181,12 @@ on nodes:
 
 [npm]: https://docs.npmjs.com/cli/install
 
-[remark]: https://github.com/wooorm/remark
+[remark]: https://github.com/remarkjs/remark
 
-[remark-lint]: https://github.com/wooorm/remark-lint
+[remark-lint]: https://github.com/remarkjs/remark-lint
 
-[remark-html]: https://github.com/wooorm/remark-html
+[remark-html]: https://github.com/remarkjs/remark-html
 
 [package-repository]: https://docs.npmjs.com/files/package.json#repository
 
-[cli]: https://github.com/wooorm/remark/tree/master/packages/remark-cli#readme
+[cli]: https://github.com/remarkjs/remark/tree/master/packages/remark-cli#readme
