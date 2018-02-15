@@ -1,7 +1,8 @@
 # remark-validate-links [![Build Status][build-badge]][build-status] [![Coverage Status][coverage-badge]][coverage-status] [![Chat][chat-badge]][chat]
 
-[**remark**][remark] plug-in to validate if links to headings and files
-in markdown point to existing things.
+This tool validates your Markdown internal links. **It will warn you** 
+if you have links to headings of files that don't exist. **It will not 
+warn you** if you have broken links to external pages.
 
 For example, this document does not have a heading named `Hello`.
 So if I link to that (`[welcome](#hello)`), this plug-in will warn
