@@ -1,15 +1,17 @@
 # remark-validate-links [![Build Status][build-badge]][build-status] [![Coverage Status][coverage-badge]][coverage-status] [![Chat][chat-badge]][chat]
 
-[**remark**][remark] plug-in to validate if links to headings and files
+[**remark**][remark] plugin to validate if internal links to headings and files
 in markdown point to existing things.
+It does not check external URLs (see [`remark-lint-no-dead-urls`][no-dead-urls]
+for that).
 
 For example, this document does not have a heading named `Hello`.
-So if I link to that (`[welcome](#hello)`), this plug-in will warn
+So if we link to that (`[welcome](#hello)`), this plugin will warn
 about it.
 
 In addition, when I link to a heading in another document
 (`examples/foo.md#hello`), if this file exists but the heading does not,
-or if the file does not exist, this plug-in will also warn.
+or if the file does not exist, this plugin will also warn.
 
 Linking to other files, such as `LICENSE` or `index.js` (when they exist)
 is fine.
@@ -157,6 +159,7 @@ on nodes:
 ## Related
 
 *   [`remark-lint`][remark-lint] — Markdown code style linter
+*   [`remark-lint-no-dead-urls`][no-dead-urls] — Ensure external links are alive
 
 ## Contribute
 
@@ -193,6 +196,8 @@ repository, organisation, or community you agree to abide by its terms.
 [remark]: https://github.com/remarkjs/remark
 
 [remark-lint]: https://github.com/remarkjs/remark-lint
+
+[no-dead-urls]: https://github.com/davidtheclark/remark-lint-no-dead-urls
 
 [remark-html]: https://github.com/remarkjs/remark-html
 
