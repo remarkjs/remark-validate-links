@@ -44,6 +44,13 @@ var headingPrefixes = {
   bitbucket: '#markdown-header-'
 }
 
+var lineLinks = {
+  github: true,
+  gitlab: true
+}
+
+var lineExpression = /^#?l\d/i
+
 function validateLinks(options, fileSet) {
   var repo = (options || {}).repository
   var info
@@ -179,7 +186,11 @@ function transformerFactory(fileSet, info) {
     function mark(node) {
       var data = node.data || {}
       var props = data.hProperties || {}
-      var id = props.name || props.id || data.id || slugs.slug(toString(node))
+      var id = props.name || props.id || data.id
+
+      if (!id && node.type === 'heading') {
+        id = slugs.slug(toString(node))
+      }
 
       if (id) {
         landmarks[filePath + '#' + id] = true
@@ -251,6 +262,7 @@ function gatherReferences(file, tree, info, fileSet) {
   var getDefinition = definitions(tree)
   var prefix = ''
   var headingPrefix = '#'
+  var lines
 
   if (info && info.type in viewPaths) {
     prefix = '/' + info.path() + '/' + viewPaths[info.type] + '/'
@@ -259,6 +271,8 @@ function gatherReferences(file, tree, info, fileSet) {
   if (info && info.type in headingPrefixes) {
     headingPrefix = headingPrefixes[info.type]
   }
+
+  lines = info && info.type in lineLinks ? lineLinks[info.type] : false
 
   visit(tree, ['link', 'linkReference'], onlink)
 
@@ -291,6 +305,10 @@ function gatherReferences(file, tree, info, fileSet) {
     }
 
     if (!uri.hostname) {
+      if (lines && lineExpression.test(uri.hash)) {
+        uri.hash = ''
+      }
+
       /* Handle hashes, or relative files. */
       if (!uri.pathname && uri.hash) {
         link = file.path + uri.hash
@@ -301,6 +319,7 @@ function gatherReferences(file, tree, info, fileSet) {
         if (uri.hash) {
           link += uri.hash
         }
+
         uri = parse(link)
       }
     }
@@ -340,6 +359,10 @@ function gatherReferences(file, tree, info, fileSet) {
     } else {
       pathname = link.slice(0, index)
       hash = link.slice(index + headingPrefix.length)
+
+      if (lines && lineExpression.test(hash)) {
+        hash = null
+      }
     }
 
     if (!cache[pathname]) {
@@ -360,7 +383,7 @@ function gatherReferences(file, tree, info, fileSet) {
   }
 }
 
-/* Utilitity to warn `reason` for each node in `nodes` on `file`. */
+/* Utility to warn `reason` for each node in `nodes` on `file`. */
 function warnAll(file, nodes, reason, ruleId) {
   nodes.forEach(one)
 

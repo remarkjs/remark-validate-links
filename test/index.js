@@ -445,5 +445,29 @@ test('remark-validate-links', function(t) {
     }, st.error)
   })
 
+  t.test('should recognize github links to particular lines', function(st) {
+    st.plan(1)
+
+    execa(bin, [
+      '--no-config',
+      '--no-ignore',
+      '--use',
+      '../..=repository:"wooorm/test"',
+      'line-links.md'
+    ]).then(function(result) {
+      st.equal(
+        strip(result.stderr),
+        [
+          'line-links.md',
+          '  5:9-5:61  warning  Link to unknown file: `examples/missing.js`  missing-file  remark-validate-links',
+          '  9:1-9:71  warning  Link to unknown file: `examples/missing.js`  missing-file  remark-validate-links',
+          '',
+          '⚠ 2 warnings'
+        ].join('\n'),
+        'should report'
+      )
+    }, st.error)
+  })
+
   t.end()
 })
