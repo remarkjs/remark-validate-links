@@ -18,7 +18,7 @@ test.onFinish(function () {
 var bin = path.join('..', '..', 'node_modules', '.bin', 'remark');
 
 test('remark-validate-links', function (t) {
-  t.plan(12);
+  t.plan(13);
 
   t.test('should work on the API', function (st) {
     st.plan(1);
@@ -425,6 +425,28 @@ test('remark-validate-links', function (t) {
           '  7:17-7:39  warning  Link to unknown heading in `github.md`: `fiiiles`. Did you mean `files`  missing-heading-in-file  remark-validate-links',
           '',
           '⚠ 2 warnings'
+        ].join('\n'),
+        'should report'
+      );
+    }, st.error);
+  });
+  t.test('should recognize github links to particular lines', function (st) {
+    st.plan(1);
+
+    execa(bin, [
+      '--no-config',
+      '--no-ignore',
+      '--use',
+      '../..',
+      'github-links.md'
+    ]).then(function (result) {
+      st.equal(
+        strip(result.stderr),
+        [
+          'github-links.md',
+          '  5:9-5:58  warning  Link to unknown file: `examples/non_existing.py`  missing-file  remark-validate-links',
+          '',
+          '⚠ 1 warning'
         ].join('\n'),
         'should report'
       );
