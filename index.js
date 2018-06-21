@@ -216,6 +216,9 @@ function validate(exposed, file) {
         ruleId = headingRuleId;
 
         if (pathname !== filePath) {
+          if (new RegExp('L\\d+', 'i').test(hash)) {
+            continue;
+          }
           warning += ' in `' + pathname + '`';
           ruleId = headingInFileRuleId;
         }
@@ -351,16 +354,14 @@ function gatherReferences(file, tree, info, fileSet) {
   }
 }
 
-/* Utilitity to warn `reason` for each node in `nodes`,
+/* Utility to warn `reason` for each node in `nodes`,
  * on `file`. */
 function warnAll(file, nodes, reason, ruleId) {
-  nodes.forEach(one);
-
-  function one(node) {
+  nodes.forEach(function (node) {
     var message = file.message(reason, node);
     message.source = sourceId;
     message.ruleId = ruleId;
-  }
+  });
 }
 
 /* Suggest a possible similar reference. */
