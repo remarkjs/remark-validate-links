@@ -30,15 +30,15 @@
     "xtend": "^4.0.1"
   },
   "devDependencies": {
-    "execa": "^0.8.0",
-    "nyc": "^11.0.0",
-    "remark": "^8.0.0",
-    "remark-cli": "^4.0.0",
-    "remark-preset-wooorm": "^3.0.0",
+    "execa": "^0.10.0",
+    "nyc": "^12.0.0",
+    "remark": "^9.0.0",
+    "remark-cli": "^5.0.0",
+    "remark-preset-wooorm": "^4.0.0",
     "strip-ansi": "^4.0.0",
     "tape": "^4.0.0",
-    "to-vfile": "^2.1.2",
-    "xo": "^0.18.0"
+    "to-vfile": "^5.0.0",
+    "xo": "^0.22.0"
   },
   "scripts": {
     "build-md": "remark *.md -qfo",
@@ -55,7 +55,8 @@
       "no-eq-null": "off",
       "eqeqeq": "off",
       "guard-for-in": "off",
-      "max-lines": "off"
+      "max-lines": "off",
+      "complexity": "off"
     }
   },
   "nyc": {
