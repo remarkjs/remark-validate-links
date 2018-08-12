@@ -21,10 +21,11 @@
     "index.js"
   ],
   "dependencies": {
+    "github-slugger": "^1.2.0",
     "hosted-git-info": "^2.5.0",
     "mdast-util-definitions": "^1.0.0",
+    "mdast-util-to-string": "^1.0.4",
     "propose": "0.0.5",
-    "remark-slug": "^5.0.0",
     "unist-util-visit": "^1.0.0",
     "urljoin": "^0.1.5",
     "xtend": "^4.0.1"

@@ -4,9 +4,10 @@ var url = require('url')
 var propose = require('propose')
 var visit = require('unist-util-visit')
 var definitions = require('mdast-util-definitions')
+var toString = require('mdast-util-to-string')
 var hostedGitInfo = require('hosted-git-info')
 var urljoin = require('urljoin')
-var slug = require('remark-slug')
+var slugs = require('github-slugger')()
 var xtend = require('xtend/mutable.js')
 
 /* Optional Node dependencies. */
@@ -75,8 +76,8 @@ function validateLinks(options, fileSet) {
     }
   }
 
-  /* Attach `slug` and a plugin that adds our transformer after it. */
-  this.use(slug).use(subplugin)
+  /* Attach a plugin that adds our transformer after it. */
+  this.use(subplugin)
 
   /* Attach a `completer`. */
   if (fileSet) {
@@ -103,10 +104,9 @@ function apiTransform(tree, file) {
 /* Completer for the CLI (multiple files, and support to add more). */
 function cliCompleter(set, done) {
   var exposed = {}
-  var check = checkFactory(exposed)
 
   set.valueOf().forEach(expose)
-  set.valueOf().forEach(check)
+  set.valueOf().forEach(checkFactory(exposed))
 
   done()
 
@@ -169,6 +169,8 @@ function transformerFactory(fileSet, info) {
 
     landmarks[filePath] = true
 
+    slugs.reset()
+
     visit(ast, mark)
 
     space[referenceId] = references
@@ -176,8 +178,8 @@ function transformerFactory(fileSet, info) {
 
     function mark(node) {
       var data = node.data || {}
-      var attrs = data.hProperties || data.htmlAttributes || {}
-      var id = attrs.name || attrs.id || data.id
+      var props = data.hProperties || {}
+      var id = props.name || props.id || data.id || slugs.slug(toString(node))
 
       if (id) {
         landmarks[filePath + '#' + id] = true
