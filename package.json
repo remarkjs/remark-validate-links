@@ -41,15 +41,27 @@
     "xo": "^0.22.0"
   },
   "scripts": {
-    "build-md": "remark *.md -qfo",
-    "build": "npm run build-md",
-    "lint": "xo",
+    "format": "remark *.md -qfo && prettier --write \"**/*.js\" && xo --fix",
     "test-api": "node test",
     "test-coverage": "nyc --reporter lcov tape test/index.js",
-    "test": "npm run build && npm run lint && npm run test-coverage"
+    "test": "npm run format && npm run test-coverage"
+  },
+  "nyc": {
+    "check-coverage": true,
+    "lines": 100,
+    "functions": 100,
+    "branches": 100
+  },
+  "prettier": {
+    "tabWidth": 2,
+    "useTabs": false,
+    "singleQuote": true,
+    "bracketSpacing": false,
+    "semi": false,
+    "trailingComma": "none"
   },
   "xo": {
-    "space": true,
+    "prettier": true,
     "esnext": false,
     "rules": {
       "no-eq-null": "off",
@@ -58,12 +70,6 @@
       "max-lines": "off",
       "complexity": "off"
     }
-  },
-  "nyc": {
-    "check-coverage": true,
-    "lines": 100,
-    "functions": 100,
-    "branches": 100
   },
   "remarkConfig": {
     "plugins": [

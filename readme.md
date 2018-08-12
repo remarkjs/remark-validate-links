@@ -89,16 +89,16 @@ This is [not checked](readme.md#bravo).
 And our script, `example.js`, looks as follows:
 
 ```javascript
-var vfile = require('to-vfile');
-var report = require('vfile-reporter');
-var remark = require('remark');
-var links = require('remark-validate-links');
+var vfile = require('to-vfile')
+var report = require('vfile-reporter')
+var remark = require('remark')
+var links = require('remark-validate-links')
 
 remark()
   .use(links)
-  .process(vfile.readSync('example.md'), function (err, file) {
-    console.error(report(err || file));
-  });
+  .process(vfile.readSync('example.md'), function(err, file) {
+    console.error(report(err || file))
+  })
 ```
 
 Now, running `node example` yields:
