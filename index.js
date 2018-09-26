@@ -9,6 +9,7 @@ var hostedGitInfo = require('hosted-git-info')
 var urljoin = require('urljoin')
 var slugs = require('github-slugger')()
 var xtend = require('xtend/mutable.js')
+var parseHtml = require('fast-html-parser').parse
 
 /* Optional Node dependencies. */
 var fs
@@ -128,6 +129,7 @@ function cliCompleter(set, done) {
 
 function checkFactory(exposed) {
   return check
+
   function check(file) {
     /* istanbul ignore else - stdin */
     if (file.path) {
@@ -179,7 +181,6 @@ function transformerFactory(fileSet, info) {
     slugs.reset()
 
     visit(ast, mark)
-
     space[referenceId] = references
     space[landmarkId] = landmarks
 
@@ -190,6 +191,18 @@ function transformerFactory(fileSet, info) {
 
       if (!id && node.type === 'heading') {
         id = slugs.slug(toString(node))
+      }
+      if (!id && node.type === 'html') {
+        var dom = parseHtml(node.value)
+        var htmlElement = dom.firstChild
+        if (htmlElement && htmlElement.tagName === 'a') {
+          var nameAttrRegex = /name=["](\w+)["]/
+          var match = htmlElement.rawAttrs.match(nameAttrRegex)
+          if (match && match.length > 1) {
+            var anchor = match[1]
+            id = slugs.slug(anchor)
+          }
+        }
       }
 
       if (id) {

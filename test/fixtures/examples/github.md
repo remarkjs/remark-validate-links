@@ -37,3 +37,10 @@ Invalid: [g](../world.md#hello).
 Invalid: [h](https://github.com/wooorm/test/blob/master/world.md#hello).
 
 Invalid: [i](https://github.com/wooorm/test/blob/foo-bar/world.md#hello).
+
+### HTML Anchor
+
+<a name="html"></a> <div id="test"></div>
+<a id="test"></div>
+
+Valid [html](#html)
