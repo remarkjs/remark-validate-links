@@ -21,6 +21,7 @@
     "index.js"
   ],
   "dependencies": {
+    "fast-html-parser": "^1.0.1",
     "github-slugger": "^1.2.0",
     "hosted-git-info": "^2.5.0",
     "mdast-util-definitions": "^1.0.0",
