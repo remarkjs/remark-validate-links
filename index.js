@@ -17,7 +17,7 @@ var path
 try {
   fs = require('fs')
   path = require('path')
-} catch (err) {}
+} catch (error) {}
 
 module.exports = validateLinks
 
@@ -62,7 +62,7 @@ function validateLinks(options, fileSet) {
     try {
       pack = fileSet.files[0].cwd
       pack = JSON.parse(fs.readFileSync(path.resolve(pack, 'package.json')))
-    } catch (err) {
+    } catch (error) {
       pack = {}
     }
 
