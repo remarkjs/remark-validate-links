@@ -7,6 +7,7 @@ var execa = require('execa')
 var vfile = require('to-vfile')
 var remark = require('remark')
 var strip = require('strip-ansi')
+var sort = require('./sort')
 var links = require('..')
 
 process.chdir(path.resolve(process.cwd(), 'test', 'fixtures'))
@@ -23,6 +24,7 @@ test('remark-validate-links', function(t) {
 
     remark()
       .use(links)
+      .use(sort)
       .process(vfile.readSync('github.md'), function(err, file) {
         st.deepEqual(
           [err].concat(file.messages.map(String)),
@@ -40,6 +42,8 @@ test('remark-validate-links', function(t) {
       '--no-ignore',
       '--use',
       '../..=repository:"invalid:shortcode"',
+      '--use',
+      '../sort',
       'definitions.md'
     ]).then(
       function() {
@@ -69,6 +73,8 @@ test('remark-validate-links', function(t) {
       '--no-ignore',
       '--use',
       '../..=repository:"gist:wooorm/8504606"',
+      '--use',
+      '../sort',
       'definitions.md'
     ]).then(
       function() {
@@ -99,6 +105,8 @@ test('remark-validate-links', function(t) {
       '--use',
       '../..',
       'definitions.md',
+      '--use',
+      '../sort',
       'FOOOO'
     ]).then(
       function() {
@@ -131,6 +139,8 @@ test('remark-validate-links', function(t) {
       '--no-ignore',
       '--use',
       '../..',
+      '--use',
+      '../sort',
       'github.md'
     ]).then(function(result) {
       st.equal(
@@ -162,6 +172,8 @@ test('remark-validate-links', function(t) {
       '--no-ignore',
       '--use',
       '../..',
+      '--use',
+      '../sort',
       'github.md',
       'examples/github.md'
     ]).then(function(result) {
@@ -201,6 +213,8 @@ test('remark-validate-links', function(t) {
       '--no-ignore',
       '--use',
       '../..',
+      '--use',
+      '../sort',
       'definitions.md'
     ]).then(function(result) {
       st.equal(
@@ -224,6 +238,8 @@ test('remark-validate-links', function(t) {
       '--no-ignore',
       '--use',
       '../..=repository:"wooorm/test"',
+      '--use',
+      '../sort',
       'github.md',
       'examples/github.md'
     ]).then(function(result) {
@@ -289,6 +305,8 @@ test('remark-validate-links', function(t) {
       '--no-ignore',
       '--use',
       '../..',
+      '--use',
+      '../sort',
       'github.md',
       'examples/github.md'
     ]).then(
@@ -351,6 +369,8 @@ test('remark-validate-links', function(t) {
       '--no-ignore',
       '--use',
       '../..=repository:"gitlab:wooorm/test"',
+      '--use',
+      '../sort',
       'gitlab.md'
     ]).then(function(result) {
       st.equal(
@@ -390,6 +410,8 @@ test('remark-validate-links', function(t) {
       '--no-ignore',
       '--use',
       '../..=repository:"bitbucket:wooorm/test"',
+      '--use',
+      '../sort',
       'bitbucket.md'
     ]).then(function(result) {
       st.equal(
@@ -429,6 +451,8 @@ test('remark-validate-links', function(t) {
       '--no-ignore',
       '--use',
       '../..',
+      '--use',
+      '../sort',
       'suggestions.md'
     ]).then(function(result) {
       st.equal(
@@ -453,6 +477,8 @@ test('remark-validate-links', function(t) {
       '--no-ignore',
       '--use',
       '../..=repository:"wooorm/test"',
+      '--use',
+      '../sort',
       'line-links.md'
     ]).then(function(result) {
       st.equal(
