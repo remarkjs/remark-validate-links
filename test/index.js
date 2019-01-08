@@ -495,5 +495,33 @@ test('remark-validate-links', function(t) {
     }, st.error)
   })
 
+  t.test('should check images', function(st) {
+    st.plan(1)
+
+    execa(bin, [
+      '--no-config',
+      '--no-ignore',
+      '--use',
+      '../..=repository:"wooorm/test"',
+      '--use',
+      '../sort',
+      'images.md'
+    ]).then(function(result) {
+      st.equal(
+        strip(result.stderr),
+        [
+          'images.md',
+          '  15:10-15:50  warning  Link to unknown file: `examples/missing.jpg`  missing-file  remark-validate-links',
+          '  17:10-17:91  warning  Link to unknown file: `examples/missing.jpg`  missing-file  remark-validate-links',
+          '  19:10-19:49  warning  Link to unknown file: `examples/missing.jpg`  missing-file  remark-validate-links',
+          '  21:10-21:49  warning  Link to unknown file: `examples/missing.jpg`  missing-file  remark-validate-links',
+          '',
+          '⚠ 4 warnings'
+        ].join('\n'),
+        'should report'
+      )
+    }, st.error)
+  })
+
   t.end()
 })

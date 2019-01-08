@@ -274,12 +274,12 @@ function gatherReferences(file, tree, info, fileSet) {
 
   lines = info && info.type in lineLinks ? lineLinks[info.type] : false
 
-  visit(tree, ['link', 'linkReference'], onlink)
+  visit(tree, ['link', 'image', 'linkReference', 'imageReference'], onresource)
 
   return cache
 
-  /* Handle new links. */
-  function onlink(node) {
+  /* Handle resources. */
+  function onresource(node) {
     var link = node.url
     var definition
     var index
@@ -287,13 +287,13 @@ function gatherReferences(file, tree, info, fileSet) {
     var pathname
     var hash
 
-    /* Handle link-references. */
+    /* Handle references. */
     if (node.identifier) {
       definition = getDefinition(node.identifier)
       link = definition && definition.url
     }
 
-    /* Ignore definitions without link. */
+    /* Ignore definitions without url. */
     if (!link) {
       return
     }
