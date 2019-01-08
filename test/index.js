@@ -290,7 +290,7 @@ test('remark-validate-links', function(t) {
   t.test('should work on GitHub URLs when with package.json', function(st) {
     st.plan(1)
 
-    /* `cwd` is moved to `test/fixtures`. */
+    // `cwd` is moved to `test/fixtures`.
     fs.writeFileSync(
       './package.json',
       JSON.stringify({repository: 'wooorm/test'}, 0, 2)

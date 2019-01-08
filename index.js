@@ -10,7 +10,7 @@ var urljoin = require('urljoin')
 var slugs = require('github-slugger')()
 var xtend = require('xtend/mutable.js')
 
-/* Optional Node dependencies. */
+// Optional Node dependencies.
 var fs
 var path
 
@@ -56,8 +56,7 @@ function validateLinks(options, fileSet) {
   var info
   var pack
 
-  /* Try to get the repo from `package.json` when not
-   * given. */
+  // Try to get the repo from `package.json` when not given.
   if (!repo && fs && fileSet) {
     try {
       pack = fileSet.files[0].cwd
@@ -83,10 +82,10 @@ function validateLinks(options, fileSet) {
     }
   }
 
-  /* Attach a plugin that adds our transformer after it. */
+  // Attach a plugin that adds our transformer after it.
   this.use(subplugin)
 
-  /* Attach a `completer`. */
+  // Attach a `completer`.
   if (fileSet) {
     fileSet.use(cliCompleter)
   } else {
@@ -94,12 +93,12 @@ function validateLinks(options, fileSet) {
   }
 
   function subplugin() {
-    /* Expose transformer. */
+    // Expose transformer.
     return transformerFactory(fileSet, info)
   }
 }
 
-/* Completer for the API (one file, only headings are checked). */
+// Completer for the API (one file, only headings are checked).
 function apiCompleter() {
   return apiTransform
 }
@@ -108,7 +107,7 @@ function apiTransform(tree, file) {
   checkFactory(file.data[landmarkId])(file)
 }
 
-/* Completer for the CLI (multiple files, and support to add more). */
+// Completer for the CLI (multiple files, and support to add more).
 function cliCompleter(set, done) {
   var exposed = {}
 
@@ -136,12 +135,11 @@ function checkFactory(exposed) {
   }
 }
 
-/* Factory to create a transformer based on the given
- * info and set. */
+// Factory to create a transformer based on the given info and set.
 function transformerFactory(fileSet, info) {
   return transformer
 
-  /* Transformer. Adds references files to the set. */
+  // Transformer. Adds references files to the set.
   function transformer(ast, file) {
     var filePath = file.path
     var space = file.data
@@ -199,7 +197,7 @@ function transformerFactory(fileSet, info) {
   }
 }
 
-/* Check if `file` references headings or files not in `exposed`. */
+// Check if `file` references headings or files not in `exposed`.
 function validate(exposed, file) {
   var references = file.data[referenceId]
   var filePath = file.path
@@ -217,11 +215,10 @@ function validate(exposed, file) {
     real = exposed[reference]
     hash = getHash(reference)
 
-    /* Check if files without `hash` can be linked to.
-     * Because there’s no need to inspect those files
-     * for headings they are not added to remark. This
-     * is especially useful because they might be
-     * non-markdown files. Here we check if they exist. */
+    // Check if files without `hash` can be linked to.  Because there’s no need
+    // to inspect those files for headings they are not added to remark.  This
+    // is especially useful because they might be non-markdown files. Here we
+    // check if they exist.
     if ((real === undefined || real === null) && !hash && fs) {
       real = fs.existsSync(reference)
       references[reference] = real
@@ -255,8 +252,7 @@ function validate(exposed, file) {
   }
 }
 
-/* Gather references: a map of file-paths references
- * to be one or more nodes. */
+// Gather references: a map of file-paths references to be one or more nodes.
 function gatherReferences(file, tree, info, fileSet) {
   var cache = {}
   var getDefinition = definitions(tree)
@@ -278,7 +274,7 @@ function gatherReferences(file, tree, info, fileSet) {
 
   return cache
 
-  /* Handle resources. */
+  // Handle resources.
   function onresource(node) {
     var link = node.url
     var definition
@@ -287,13 +283,13 @@ function gatherReferences(file, tree, info, fileSet) {
     var pathname
     var hash
 
-    /* Handle references. */
+    // Handle references.
     if (node.identifier) {
       definition = getDefinition(node.identifier)
       link = definition && definition.url
     }
 
-    /* Ignore definitions without url. */
+    // Ignore definitions without url.
     if (!link) {
       return
     }
@@ -309,7 +305,7 @@ function gatherReferences(file, tree, info, fileSet) {
         uri.hash = ''
       }
 
-      /* Handle hashes, or relative files. */
+      // Handle hashes, or relative files.
       if (!uri.pathname && uri.hash) {
         link = file.path + uri.hash
         uri = parse(link)
@@ -324,7 +320,7 @@ function gatherReferences(file, tree, info, fileSet) {
       }
     }
 
-    /* Handle full links. */
+    // Handle full links.
     if (uri.hostname) {
       if (!prefix || !fileSet) {
         return
@@ -339,18 +335,14 @@ function gatherReferences(file, tree, info, fileSet) {
 
       link = uri.pathname.slice(prefix.length) + (uri.hash || '')
 
-      /* Things get interesting here: branches.
-       * `foo/bar/baz` could be `baz` on the
-       * `foo/bar` branch. Or, `baz` in the `bar`
-       * directory on the `foo` branch.
-       *
-       * Currently, I’m ignoring this and just not
-       * supporting branches. */
+      // Things get interesting here: branches: `foo/bar/baz` could be `baz` on
+      // the `foo/bar` branch, or, `baz` in the `bar` directory on the `foo`
+      // branch.
+      //  Currently, we’re ignoring this and just not supporting branches.
       link = link.slice(link.indexOf('/') + 1)
     }
 
-    /* Handle file links, or combinations of files
-     * and hashes. */
+    // Handle file links, or combinations of files and hashes.
     index = link.indexOf(headingPrefix)
 
     if (index === -1) {
@@ -383,7 +375,7 @@ function gatherReferences(file, tree, info, fileSet) {
   }
 }
 
-/* Utility to warn `reason` for each node in `nodes` on `file`. */
+// Utility to warn `reason` for each node in `nodes` on `file`.
 function warnAll(file, nodes, reason, ruleId) {
   nodes.forEach(one)
 
@@ -392,7 +384,7 @@ function warnAll(file, nodes, reason, ruleId) {
   }
 }
 
-/* Suggest a possible similar reference. */
+// Suggest a possible similar reference.
 function getClosest(pathname, references) {
   var hash = getHash(pathname)
   var base = getPathname(pathname)
@@ -417,13 +409,13 @@ function getClosest(pathname, references) {
   return propose(hash ? hash : base, dictionary, {threshold: 0.7})
 }
 
-/* Get the `hash` of `uri`, if applicable. */
+// Get the `hash` of `uri`, if applicable.
 function getHash(uri) {
   var hash = parse(uri).hash
   return hash ? hash.slice(1) : null
 }
 
-/* Get the `pathname` of `uri`, if applicable. */
+// Get the `pathname` of `uri`, if applicable.
 function getPathname(uri) {
   return parse(uri).pathname
 }
