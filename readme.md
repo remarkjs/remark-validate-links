@@ -7,8 +7,8 @@
 [![Sponsors][sponsors-badge]][collective]
 [![Backers][backers-badge]][collective]
 
-[**remark**][remark] plugin to validate if internal links to headings and files
-in markdown point to existing things.
+[**remark**][remark] plugin to validate if internal links or images to headings
+and files in markdown point to existing things.
 It does not check external URLs (see [`remark-lint-no-dead-urls`][no-dead-urls]
 for that).
 
@@ -20,7 +20,7 @@ In addition, when I link to a heading in another document
 (`examples/foo.md#hello`), if this file exists but the heading does not,
 or if the file does not exist, this plugin will also warn.
 
-Linking to other files, such as `LICENSE` or `index.js` (when they exist)
+Linking to other files, such as `license` or `index.js` (when they exist)
 is fine.
 
 ## Table of Contents
