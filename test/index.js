@@ -511,12 +511,13 @@ test('remark-validate-links', function(t) {
         strip(result.stderr),
         [
           'images.md',
-          '  15:10-15:50  warning  Link to unknown file: `examples/missing.jpg`  missing-file  remark-validate-links',
-          '  17:10-17:91  warning  Link to unknown file: `examples/missing.jpg`  missing-file  remark-validate-links',
-          '  19:10-19:49  warning  Link to unknown file: `examples/missing.jpg`  missing-file  remark-validate-links',
-          '  21:10-21:49  warning  Link to unknown file: `examples/missing.jpg`  missing-file  remark-validate-links',
+          '  17:10-17:50  warning  Link to unknown file: `examples/missing.jpg`  missing-file  remark-validate-links',
+          '  19:12-19:42  warning  Link to unknown file: `examples/missing.jpg`  missing-file  remark-validate-links',
+          '  21:10-21:91  warning  Link to unknown file: `examples/missing.jpg`  missing-file  remark-validate-links',
+          '  23:10-23:49  warning  Link to unknown file: `examples/missing.jpg`  missing-file  remark-validate-links',
+          '  25:10-25:49  warning  Link to unknown file: `examples/missing.jpg`  missing-file  remark-validate-links',
           '',
-          '⚠ 4 warnings'
+          '⚠ 5 warnings'
         ].join('\n'),
         'should report'
       )
