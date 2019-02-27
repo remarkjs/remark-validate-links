@@ -7,8 +7,8 @@
 [![Sponsors][sponsors-badge]][collective]
 [![Backers][backers-badge]][collective]
 
-[**remark**][remark] plugin to validate if internal links or images to headings
-and files in markdown point to existing things.
+[**remark**][remark] plugin to validate that Markdown links and images
+reference existing local files and headings.
 It does not check external URLs (see [`remark-lint-no-dead-urls`][no-dead-urls]
 for that).
 
