@@ -507,7 +507,6 @@ test('remark-validate-links', function(t) {
       '../sort',
       'images.md'
     ]).then(function(result) {
-      console.log(result.stderr)
       st.equal(
         strip(result.stderr),
         [
