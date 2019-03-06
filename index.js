@@ -220,7 +220,7 @@ function validate(exposed, file) {
     // is especially useful because they might be non-markdown files. Here we
     // check if they exist.
     if ((real === undefined || real === null) && !hash && fs) {
-      real = fs.existsSync(reference)
+      real = fs.existsSync(path.join(file.cwd, decodeURI(reference)))
       references[reference] = real
     }
 
@@ -237,7 +237,7 @@ function validate(exposed, file) {
 
         warning += ': `' + hash + '`'
       } else {
-        warning = 'Link to unknown file: `' + reference + '`'
+        warning = 'Link to unknown file: `' + decodeURI(reference) + '`'
         ruleId = fileRuleId
       }
 
