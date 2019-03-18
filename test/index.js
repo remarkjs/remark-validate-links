@@ -524,5 +524,25 @@ test('remark-validate-links', function(t) {
     }, st.error)
   })
 
+  t.test('should support query parameters', function(st) {
+    st.plan(1)
+
+    execa(bin, [
+      '--no-config',
+      '--no-ignore',
+      '--use',
+      '../..=repository:"wooorm/test"',
+      '--use',
+      '../sort',
+      'query-params.md'
+    ]).then(function(result) {
+      st.equal(
+        strip(result.stderr),
+        'query-params.md: no issues found',
+        'should report'
+      )
+    }, st.error)
+  })
+
   t.end()
 })

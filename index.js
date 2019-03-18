@@ -31,6 +31,7 @@ var fileRuleId = 'missing-file'
 cliCompleter.pluginId = sourceId
 
 var parse = url.parse
+var format = url.format
 
 var viewPaths = {
   github: 'blob',
@@ -295,6 +296,10 @@ function gatherReferences(file, tree, info, fileSet) {
     }
 
     uri = parse(link)
+
+    // Drop `?search`
+    uri.search = ''
+    link = format(uri)
 
     if (!fileSet && (uri.hostname || uri.pathname)) {
       return
