@@ -3,46 +3,49 @@
 [![Build][build-badge]][build]
 [![Coverage][coverage-badge]][coverage]
 [![Downloads][downloads-badge]][downloads]
-[![Chat][chat-badge]][chat]
+[![Size][size-badge]][size]
 [![Sponsors][sponsors-badge]][collective]
 [![Backers][backers-badge]][collective]
+[![Chat][chat-badge]][chat]
 
-[**remark**][remark] plugin to validate that Markdown links and images
-reference existing local files and headings.
+[**remark**][remark] plugin to validate that Markdown links and images reference
+existing local files and headings.
 It does not check external URLs (see [`remark-lint-no-dead-urls`][no-dead-urls]
 for that).
 
 For example, this document does not have a heading named `Hello`.
-So if we link to that (`[welcome](#hello)`), this plugin will warn
-about it.
+So if we link to that (`[welcome](#hello)`), this plugin will warn about it.
 
 In addition, when I link to a heading in another document
-(`examples/foo.md#hello`), if this file exists but the heading does not,
-or if the file does not exist, this plugin will also warn.
+(`examples/foo.md#hello`), if this file exists but the heading does not, or if
+the file does not exist, this plugin will also warn.
 
-Linking to other files, such as `license` or `index.js` (when they exist)
-is fine.
+Linking to other files, such as `license` or `index.js` (when they exist) is
+fine.
 
 ## Table of Contents
 
-*   [Installation](#installation)
-*   [Command line](#command-line)
-*   [Programmatic](#programmatic)
+*   [Install](#install)
+*   [Use](#use)
+    *   [CLI](#cli)
+    *   [API](#api)
 *   [Configuration](#configuration)
 *   [Integration](#integration)
 *   [Related](#related)
 *   [Contribute](#contribute)
 *   [License](#license)
 
-## Installation
+## Install
 
 [npm][]:
 
-```bash
+```sh
 npm install remark-validate-links
 ```
 
-## Command line
+## Use
+
+### CLI
 
 Use `remark-validate-links` together with [**remark**][remark]:
 
@@ -76,9 +79,10 @@ readme.md: no issues found
 ⚠ 2 warnings
 ```
 
-## Programmatic
+### API
 
-> Note: The API only checks links to headings.  Other URLs are not checked.
+> Note: The API only checks links to headings.
+> Other URLs are not checked.
 
 Say we have the following file, `example.md`:
 
@@ -97,7 +101,7 @@ This is [not checked](readme.md#bravo).
 
 And our script, `example.js`, looks as follows:
 
-```javascript
+```js
 var vfile = require('to-vfile')
 var report = require('vfile-reporter')
 var remark = require('remark')
@@ -122,16 +126,16 @@ example.md
 ## Configuration
 
 You can pass a `repository`, containing anything `package.json`s
-[`repository`][package-repository] can handle.  If this is omitted,
-`remark-validate-links` will try the `package.json` in your current working
-directory.
+[`repository`][package-repository] can handle.
+If this is not given, `remark-validate-links` will try the `package.json` in
+the current working directory.
 
-```bash
+```sh
 remark --use 'validate-links=repository:"foo/bar"' example.md
 ```
 
 When a repository is given or detected (supporting GitHub, GitLab, and
-Bitbucket), links to the files are normalized to the file-system.
+Bitbucket), links to the files are normalized to the file system.
 For example, `https://github.com/foo/bar/blob/master/example.md` becomes
 `example.md`.
 
@@ -170,11 +174,13 @@ on nodes:
 
 ## Contribute
 
-See [`contributing.md` in `remarkjs/remark`][contributing] for ways to get
-started.
+See [`contributing.md`][contributing] in [`remarkjs/.github`][health] for ways
+to get started.
+See [`support.md`][support] for ways to get help.
 
-This organisation has a [Code of Conduct][coc].  By interacting with this
-repository, organisation, or community you agree to abide by its terms.
+This project has a [Code of Conduct][coc].
+By interacting with this repository, organisation, or community you agree to
+abide by its terms.
 
 ## License
 
@@ -182,7 +188,7 @@ repository, organisation, or community you agree to abide by its terms.
 
 <!-- Definitions -->
 
-[build-badge]: https://img.shields.io/travis/remarkjs/remark-validate-links.svg
+[build-badge]: https://img.shields.io/travis/remarkjs/remark-validate-links/master.svg
 
 [build]: https://travis-ci.org/remarkjs/remark-validate-links
 
@@ -194,9 +200,9 @@ repository, organisation, or community you agree to abide by its terms.
 
 [downloads]: https://www.npmjs.com/package/remark-validate-links
 
-[chat-badge]: https://img.shields.io/badge/join%20the%20community-on%20spectrum-7b16ff.svg
+[size-badge]: https://img.shields.io/bundlephobia/minzip/remark-validate-links.svg
 
-[chat]: https://spectrum.chat/unified/remark
+[size]: https://bundlephobia.com/result?p=remark-validate-links
 
 [sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
 
@@ -204,24 +210,32 @@ repository, organisation, or community you agree to abide by its terms.
 
 [collective]: https://opencollective.com/unified
 
+[chat-badge]: https://img.shields.io/badge/join%20the%20community-on%20spectrum-7b16ff.svg
+
+[chat]: https://spectrum.chat/unified/remark
+
+[npm]: https://docs.npmjs.com/cli/install
+
+[health]: https://github.com/remarkjs/.github
+
+[contributing]: https://github.com/remarkjs/.github/blob/master/contributing.md
+
+[support]: https://github.com/remarkjs/.github/blob/master/support.md
+
+[coc]: https://github.com/remarkjs/.github/blob/master/code-of-conduct.md
+
 [license]: license
 
 [author]: https://wooorm.com
 
-[npm]: https://docs.npmjs.com/cli/install
-
 [remark]: https://github.com/remarkjs/remark
-
-[remark-lint]: https://github.com/remarkjs/remark-lint
-
-[no-dead-urls]: https://github.com/davidtheclark/remark-lint-no-dead-urls
-
-[remark-html]: https://github.com/remarkjs/remark-html
-
-[package-repository]: https://docs.npmjs.com/files/package.json#repository
 
 [cli]: https://github.com/remarkjs/remark/tree/master/packages/remark-cli#readme
 
-[contributing]: https://github.com/remarkjs/remark/blob/master/contributing.md
+[remark-lint]: https://github.com/remarkjs/remark-lint
 
-[coc]: https://github.com/remarkjs/remark/blob/master/code-of-conduct.md
+[remark-html]: https://github.com/remarkjs/remark-html
+
+[no-dead-urls]: https://github.com/davidtheclark/remark-lint-no-dead-urls
+
+[package-repository]: https://docs.npmjs.com/files/package.json#repository
