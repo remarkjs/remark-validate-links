@@ -30,8 +30,10 @@ var fileRuleId = 'missing-file'
 
 cliCompleter.pluginId = sourceId
 
+/* eslint-disable node/no-deprecated-api */
 var parse = url.parse
 var format = url.format
+/* eslint-enable node/no-deprecated-api */
 
 var viewPaths = {
   github: 'blob',
