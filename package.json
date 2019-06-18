@@ -1,21 +1,31 @@
 {
   "name": "remark-validate-links",
   "version": "8.0.2",
-  "description": "Validate links to headings and files in markdown",
+  "description": "remark plugin to validate links to headings and files",
   "license": "MIT",
   "keywords": [
+    "unified",
+    "remark",
+    "plugin",
+    "mdast",
+    "markdown",
     "validate",
     "link",
     "reference",
     "file",
-    "heading",
-    "remark"
+    "heading"
   ],
   "repository": "remarkjs/remark-validate-links",
   "bugs": "https://github.com/remarkjs/remark-validate-links/issues",
   "author": "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)",
   "contributors": [
-    "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)"
+    "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)",
+    "Diogo Nunes <dialex.nunes@gmail.com>",
+    "Jonathan Haines <jonno.haines@gmail.com>",
+    "Merlijn Vos <merlijn@soverin.net>",
+    "Andrew Petro <andrew.w.petro@gmail.com>",
+    "wangshijun <wangshijun2010@gmail.com>",
+    "Anton Rybochkin <anton.rybochkin@axibase.com>"
   ],
   "files": [
     "index.js"
