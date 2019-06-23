@@ -16,7 +16,7 @@ for that).
 For example, this document does not have a heading named `Hello`.
 So if we link to that (`[welcome](#hello)`), this plugin will warn about it.
 
-In addition, when I link to a heading in another document
+In addition, when there’s a link to a heading in another document
 (`examples/foo.md#hello`), if this file exists but the heading does not, or if
 the file does not exist, this plugin will also warn.
 
@@ -79,24 +79,31 @@ readme.md: no issues found
 ⚠ 2 warnings
 ```
 
+> Note: passing a file over stdin(4) may not work as expected, because it is not
+> known where the file originates from.
+
 ### API
 
-> Note: The API only checks links to headings.
-> Other URLs are not checked.
+> Note: The API checks links to headings and files.
+> It does not check headings in other files.
+> In a browser, only local links to headings are checked.
 
 Say we have the following file, `example.md`:
 
 ```markdown
 # Alpha
 
-This [exists](#alpha). This [exists][alpha] too.
+This [exists](#alpha).
 This [one does not](#does-not).
+References and definitions are [checked][alpha] [too][charlie].
 
 # Bravo
 
-This is [not checked](readme.md#bravo).
+Headings in `readme.md` are [not checked](readme.md#bravo).
+But [missing files are reported](missing-example.js).
 
 [alpha]: #alpha
+[charlie]: #charlie
 ```
 
 And our script, `example.js`, looks as follows:
@@ -118,26 +125,38 @@ Now, running `node example` yields:
 
 ```markdown
 example.md
-  4:6-4:31  warning  Link to unknown heading: `does-not`  remark-validate-links  remark-validate-links
+    4:6-4:31  warning  Link to unknown heading: `does-not`         missing-heading  remark-validate-links
+  10:5-10:53  warning  Link to unknown file: `missing-example.js`  missing-file     remark-validate-links
+  13:1-13:20  warning  Link to unknown heading: `charlie`          missing-heading  remark-validate-links
 
-⚠ 1 warning
+⚠ 3 warnings
 ```
 
 ## Configuration
 
-You can pass a `repository`, containing anything `package.json`s
-[`repository`][package-repository] can handle.
-If this is not given, `remark-validate-links` will try the `package.json` in
-the current working directory.
+Typically, you don’t need to configure `remark-validate-links`, as it detects
+local Git repositories.
+If one is detected that references a known Git host, some extra links can be
+checked.
+If one is detected that does not reference a known Git host, local links still
+work as expected.
+If you’re not in a Git repository, you must pass `repository: false` explicitly.
+
+You can pass a `repository` (`string?`, `false`).
+If `repository` is nully, the Git origin remote is detected.
+If the repository resolves to something [npm understands][package-repository]
+as a Git host such as GitHub, GitLab, or Bitbucket, full URLs to that host
+(say, `https://github.com/remarkjs/remark-validate-links/readme.md#install`)
+can also be checked.
 
 ```sh
 remark --use 'validate-links=repository:"foo/bar"' example.md
 ```
 
-When a repository is given or detected (supporting GitHub, GitLab, and
-Bitbucket), links to the files are normalized to the file system.
-For example, `https://github.com/foo/bar/blob/master/example.md` becomes
-`example.md`.
+For this to work, a `root` (`string?`) is also used, referencing the local Git
+root directory (the place where `.git` is).
+If both `root` and `repository` are nully, the Git root is detected.
+If `root` is not given but `repository` is, [`file.cwd`][cwd] is used.
 
 You can define this repository in [configuration files][cli] too.
 An example `.remarkrc` file could look as follows:
@@ -152,6 +171,35 @@ An example `.remarkrc` file could look as follows:
       }
     ]
   ]
+}
+```
+
+If you’re self-hosting a Git server, you can provide URL information directly,
+as `urlConfig` (`Object`).
+
+For this repository, `urlConfig` looks as follows:
+
+```js
+{
+  // Domain of URLs:
+  hostname: 'github.com',
+  // Path prefix before files:
+  prefix: '/remarkjs/remark-validate-links/blob/',
+  // Prefix of headings:
+  headingPrefix: '#',
+  // Whether lines in files can be linked:
+  lines: true
+}
+```
+
+If this project were hosted on Bitbucket, it would be:
+
+```js
+{
+  hostname: 'bitbucket.org',
+  prefix: '/remarkjs/remark-validate-links/src/',
+  headingPrefix: '#markdown-header-',
+  lines: false
 }
 ```
 
@@ -239,3 +287,5 @@ abide by its terms.
 [no-dead-urls]: https://github.com/davidtheclark/remark-lint-no-dead-urls
 
 [package-repository]: https://docs.npmjs.com/files/package.json#repository
+
+[cwd]: https://github.com/vfile/vfile#vfilecwd

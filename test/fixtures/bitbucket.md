@@ -4,6 +4,8 @@ This is a valid relative heading [link](#markdown-header-hello).
 
 This is an invalid relative heading [link](#markdown-header-world).
 
+This is an ignored hash [link](#world).
+
 ## Files
 
 This is a valid relative file [link](https://bitbucket.org/wooorm/test/src/master/examples/bitbucket.md).
@@ -49,6 +51,8 @@ Invalid: [j](examples/world.md#markdown-header-hello).
 Invalid: [k](https://bitbucket.org/wooorm/test/src/master/examples/world.md#markdown-header-hello).
 
 Invalid: [l](https://bitbucket.org/wooorm/test/src/foo-bar/examples/world.md#markdown-header-hello).
+
+This is an ignored hash [j](https://bitbucket.org/wooorm/test/src/foo-bar/examples/bitbucket.md#world).
 
 ## External
 

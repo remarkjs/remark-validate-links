@@ -27,18 +27,22 @@
     "wangshijun <wangshijun2010@gmail.com>",
     "Anton Rybochkin <anton.rybochkin@axibase.com>"
   ],
+  "browser": {
+    "lib/check/check-files.js": "lib/check/check-files.browser.js",
+    "lib/find/find-repo.js": "lib/find/find-repo.browser.js"
+  },
   "files": [
+    "lib/",
     "index.js"
   ],
   "dependencies": {
     "github-slugger": "^1.2.0",
     "hosted-git-info": "^2.5.0",
-    "mdast-util-definitions": "^1.0.0",
     "mdast-util-to-string": "^1.0.4",
     "propose": "0.0.5",
+    "trough": "^1.0.0",
     "unist-util-visit": "^1.0.0",
-    "urljoin": "^0.1.5",
-    "xtend": "^4.0.1"
+    "xtend": "^4.0.0"
   },
   "devDependencies": {
     "execa": "^1.0.0",
@@ -47,6 +51,7 @@
     "remark": "^10.0.0",
     "remark-cli": "^6.0.0",
     "remark-preset-wooorm": "^5.0.0",
+    "rimraf": "^2.0.0",
     "strip-ansi": "^5.0.0",
     "tape": "^4.0.0",
     "to-vfile": "^6.0.0",
@@ -77,11 +82,7 @@
     "prettier": true,
     "esnext": false,
     "rules": {
-      "no-eq-null": "off",
-      "eqeqeq": "off",
-      "guard-for-in": "off",
-      "max-lines": "off",
-      "complexity": "off"
+      "guard-for-in": "off"
     }
   },
   "remarkConfig": {
