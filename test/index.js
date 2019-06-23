@@ -477,7 +477,7 @@ test('remark-validate-links', function(t) {
       },
       function(err) {
         clean()
-        st.ok(/not a git repository/.test(err), 'should fail')
+        st.ok(/not a git repository/i.test(err), 'should fail')
       }
     )
 
