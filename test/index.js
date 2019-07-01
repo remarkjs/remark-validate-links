@@ -841,6 +841,34 @@ test('remark-validate-links', function(t) {
     }, st.error)
   })
 
+  t.test('should recognise links to files an escaped #', function(st) {
+    st.plan(1)
+
+    execa(bin, [
+      '--no-config',
+      '--no-ignore',
+      '--use',
+      '../..=repository:"wooorm/test"',
+      '--use',
+      '../sort',
+      'hash-files.md'
+    ]).then(function(result) {
+      st.equal(
+        strip(result.stderr),
+        [
+          'hash-files.md',
+          '    7:9-7:56  warning  Link to unknown file: `examples/%23missing.js`  missing-file  remark-validate-links',
+          '    9:9-9:71  warning  Link to unknown file: `examples/%23missing.js`  missing-file  remark-validate-links',
+          '  17:1-17:71  warning  Link to unknown file: `examples/%23missing.js`  missing-file  remark-validate-links',
+          '  19:1-19:74  warning  Link to unknown file: `examples/%23missing.js`  missing-file  remark-validate-links',
+          '',
+          '⚠ 4 warnings'
+        ].join('\n'),
+        'should report'
+      )
+    }, st.error)
+  })
+
   t.test('should check images', function(st) {
     st.plan(1)
 
