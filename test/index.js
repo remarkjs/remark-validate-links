@@ -841,6 +841,34 @@ test('remark-validate-links', function(t) {
     }, st.error)
   })
 
+  t.test('should recognise links with encoded URLs', function(st) {
+    st.plan(1)
+
+    execa(bin, [
+      '--no-config',
+      '--no-ignore',
+      '--use',
+      '../..=repository:"wooorm/test"',
+      '--use',
+      '../sort',
+      'weird-characters.md'
+    ]).then(function(result) {
+      st.equal(
+        strip(result.stderr),
+        [
+          'weird-characters.md',
+          '   11:17-11:87  warning  Link to unknown file: `examples/missing#characters.md`. Did you mean `examples/weird#characters.md`              missing-file             remark-validate-links',
+          '   13:17-13:93  warning  Link to unknown file: `examples/missing#character/readme.md`. Did you mean `examples/weird#character/readme.md`  missing-file             remark-validate-links',
+          '  15:17-15:114  warning  Link to unknown heading in `examples/weird#characters.md`: `world`                                               missing-heading-in-file  remark-validate-links',
+          '  17:17-17:120  warning  Link to unknown heading in `examples/weird#character/readme.md`: `world`                                         missing-heading-in-file  remark-validate-links',
+          '',
+          '⚠ 4 warnings'
+        ].join('\n'),
+        'should report'
+      )
+    }, st.error)
+  })
+
   t.test('should check images', function(st) {
     st.plan(1)
 
