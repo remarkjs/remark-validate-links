@@ -928,7 +928,7 @@ test('remark-validate-links', function(t) {
     )
   })
 
-  t.test('should support query parameters', function(st) {
+  t.test('should support case insensitive headings', function(st) {
     st.plan(1)
 
     execa(bin, [
@@ -957,6 +957,26 @@ test('remark-validate-links', function(t) {
         st.error(err, 'should not fail')
       }
     )
+  })
+
+  t.test('should ignore external links', function(st) {
+    st.plan(1)
+
+    execa(bin, [
+      '--no-config',
+      '--no-ignore',
+      '--use',
+      '../..=repository:"wooorm/test"',
+      '--use',
+      '../sort',
+      'external.md'
+    ]).then(function(result) {
+      st.equal(
+        strip(result.stderr),
+        ['external.md: no issues found'].join('\n'),
+        'should report'
+      )
+    }, st.error)
   })
 
   t.test('should support self-hosted Git solutions', function(st) {
