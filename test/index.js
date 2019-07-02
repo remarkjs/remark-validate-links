@@ -973,7 +973,27 @@ test('remark-validate-links', function(t) {
     ]).then(function(result) {
       st.equal(
         strip(result.stderr),
-        ['external.md: no issues found'].join('\n'),
+        'external.md: no issues found',
+        'should report'
+      )
+    }, st.error)
+  })
+
+  t.test('should ignore external links (without repo)', function(st) {
+    st.plan(1)
+
+    execa(bin, [
+      '--no-config',
+      '--no-ignore',
+      '--use',
+      '../..=repository:false',
+      '--use',
+      '../sort',
+      'external.md'
+    ]).then(function(result) {
+      st.equal(
+        strip(result.stderr),
+        'external.md: no issues found',
         'should report'
       )
     }, st.error)
