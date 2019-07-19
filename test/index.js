@@ -124,8 +124,7 @@ test('remark-validate-links', function(t) {
             'FOOOO',
             '  1:1  error  No such file or directory',
             '',
-            '✖ 1 error',
-            ''
+            '✖ 1 error'
           ].join('\n'),
           'should report an error'
         )
@@ -159,8 +158,7 @@ test('remark-validate-links', function(t) {
             'definitions.md',
             '  10:1-10:18  warning  Link to unknown heading: `world`  missing-heading  remark-validate-links',
             '',
-            '2 messages (✖ 1 error, ⚠ 1 warning)',
-            ''
+            '2 messages (✖ 1 error, ⚠ 1 warning)'
           ].join('\n'),
           'should report an error'
         )
@@ -477,7 +475,7 @@ test('remark-validate-links', function(t) {
       },
       function(err) {
         clean()
-        st.ok(/not a git repository/i.test(err), 'should fail')
+        st.ok(/not a git repository/i.test(err.stderr), 'should fail')
       }
     )
 
@@ -509,7 +507,7 @@ test('remark-validate-links', function(t) {
         },
         function(err) {
           clean()
-          st.ok(/Could not find remote origin/.test(err), 'should fail')
+          st.ok(/Could not find remote origin/.test(err.stderr), 'should fail')
         }
       )
 
