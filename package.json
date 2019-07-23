@@ -40,6 +40,7 @@
     "hosted-git-info": "^2.5.0",
     "mdast-util-to-string": "^1.0.4",
     "propose": "0.0.5",
+    "to-vfile": "^6.0.0",
     "trough": "^1.0.0",
     "unist-util-visit": "^1.0.0",
     "xtend": "^4.0.0"
@@ -54,7 +55,6 @@
     "rimraf": "^2.0.0",
     "strip-ansi": "^5.0.0",
     "tape": "^4.0.0",
-    "to-vfile": "^6.0.0",
     "vfile-sort": "^2.0.0",
     "xo": "^0.24.0"
   },
