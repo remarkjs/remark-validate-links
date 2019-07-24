@@ -215,6 +215,15 @@ on nodes:
 *   `node.data.id` — Used, in the future, by other tools to signal
     unique identifiers on nodes
 
+## Security
+
+`remark-validate-links`, in Node, accesses the file system based on user
+content, and this may be dangerous.
+In Node `git remote` and `git rev-parse` also runs for processed files.
+
+The tree is not modified, so there are no openings for
+[cross-site scripting (XSS)][xss] attacks.
+
 ## Related
 
 *   [`remark-lint`][remark-lint] — Markdown code style linter
@@ -289,3 +298,5 @@ abide by its terms.
 [package-repository]: https://docs.npmjs.com/files/package.json#repository
 
 [cwd]: https://github.com/vfile/vfile#vfilecwd
+
+[xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
