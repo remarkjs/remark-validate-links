@@ -65,3 +65,7 @@ Valid: [b](http://example.com).
 Valid: [b](http://example.com/foo/bar/baz).
 
 Valid: [b](http://bitbucket.com/wooorm/test/blob/foo-bar/examples/world.md#hello).
+
+## Top Anchor
+
+This links to the start of the document [link](#readme).
