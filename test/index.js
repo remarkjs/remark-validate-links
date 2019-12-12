@@ -663,8 +663,9 @@ test('remark-validate-links', function(t) {
             '  49:10-49:40  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
             '  51:10-51:38  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
             '  51:10-51:38  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
+            '  71:41-71:56  warning  Link to unknown heading: `readme`                         missing-heading          remark-validate-links',
             '',
-            '⚠ 14 warnings'
+            '⚠ 15 warnings'
           ].join('\n'),
           'should report'
         )
