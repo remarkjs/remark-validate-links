@@ -31,6 +31,7 @@ fine.
     *   [API](#api)
 *   [Configuration](#configuration)
 *   [Integration](#integration)
+*   [Security](#security)
 *   [Related](#related)
 *   [Contribute](#contribute)
 *   [License](#license)
