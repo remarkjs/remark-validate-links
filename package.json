@@ -17,6 +17,10 @@
   ],
   "repository": "remarkjs/remark-validate-links",
   "bugs": "https://github.com/remarkjs/remark-validate-links/issues",
+  "funding": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/unified"
+  },
   "author": "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)",
   "contributors": [
     "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)",
