@@ -1004,6 +1004,45 @@ test('remark-validate-links', function(t) {
     }
   })
 
+  t.test('should support folders', function(st) {
+    st.plan(1)
+
+    childProcess.exec(
+      [
+        bin,
+        '--no-config',
+        '--no-ignore',
+        '--use',
+        '"../..=repository:\\"wooorm/test\\""',
+        '--use',
+        '../sort',
+        'folder.md'
+      ].join(' '),
+      onexec
+    )
+
+    function onexec(err, stdout, stderr) {
+      st.deepEqual(
+        [err, strip(stderr)],
+        [
+          null,
+          [
+            'folder.md',
+            '    9:1-9:40  warning  Link to unknown heading in `folder/readme.markdown`: `missing`  missing-heading-in-file  remark-validate-links',
+            '  17:1-17:24  warning  Link to unknown heading in `folder`: `missing`                  missing-heading-in-file  remark-validate-links',
+            '  21:1-21:25  warning  Link to unknown file: `missing`                                 missing-file             remark-validate-links',
+            '  21:1-21:25  warning  Link to unknown heading in `missing`: `missing`                 missing-heading-in-file  remark-validate-links',
+            '  23:1-23:39  warning  Link to unknown heading in `folder-without-readme`: `missing`   missing-heading-in-file  remark-validate-links',
+            '',
+            '⚠ 5 warnings',
+            ''
+          ].join('\n')
+        ],
+        'should work'
+      )
+    }
+  })
+
   t.test('should check images', function(st) {
     st.plan(1)
 
