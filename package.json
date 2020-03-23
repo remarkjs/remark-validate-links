@@ -42,7 +42,7 @@
   ],
   "dependencies": {
     "github-slugger": "^1.0.0",
-    "hosted-git-info": "^2.5.0",
+    "hosted-git-info": "^3.0.0",
     "mdast-util-to-string": "^1.0.0",
     "propose": "0.0.5",
     "to-vfile": "^6.0.0",
