@@ -13,20 +13,20 @@ var links = require('..')
 
 process.chdir(path.resolve(process.cwd(), 'test', 'fixtures'))
 
-test.onFinish(function() {
+test.onFinish(function () {
   process.chdir(path.resolve(process.cwd(), '..', '..'))
 })
 
 var bin = path.join('..', '..', 'node_modules', '.bin', 'remark')
 
-test('remark-validate-links', function(t) {
-  t.test('should work on the API', function(st) {
+test('remark-validate-links', function (t) {
+  t.test('should work on the API', function (st) {
     st.plan(1)
 
     remark()
       .use(links)
       .use(sort)
-      .process(vfile.readSync('github.md'), function(err, file) {
+      .process(vfile.readSync('github.md'), function (err, file) {
         st.deepEqual(
           [err].concat(file.messages.map(String)),
           [
@@ -42,7 +42,7 @@ test('remark-validate-links', function(t) {
       })
   })
 
-  t.test('should ignore invalid repositories', function(st) {
+  t.test('should ignore invalid repositories', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -77,7 +77,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should throw on Gist repositories', function(st) {
+  t.test('should throw on Gist repositories', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -112,7 +112,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should ignore unfound files (#1)', function(st) {
+  t.test('should ignore unfound files (#1)', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -147,7 +147,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should ignore unfound files (#2)', function(st) {
+  t.test('should ignore unfound files (#2)', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -186,7 +186,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should work if there are no links', function(st) {
+  t.test('should work if there are no links', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -212,7 +212,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should work with stdin', function(st) {
+  t.test('should work with stdin', function (st) {
     st.plan(1)
 
     var subprocess = childProcess.exec(
@@ -248,7 +248,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should work when not all files are given', function(st) {
+  t.test('should work when not all files are given', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -291,7 +291,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should work when all files are given', function(st) {
+  t.test('should work when all files are given', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -342,7 +342,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should work with definitions', function(st) {
+  t.test('should work with definitions', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -377,7 +377,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should work on GitHub URLs when given a repo', function(st) {
+  t.test('should work on GitHub URLs when given a repo', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -445,7 +445,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should work when with Git directory', function(st) {
+  t.test('should work when with Git directory', function (st) {
     st.plan(1)
 
     childProcess.exec('git init', oninit)
@@ -538,7 +538,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should fail w/o Git repository', function(st) {
+  t.test('should fail w/o Git repository', function (st) {
     st.plan(1)
 
     fs.renameSync('../../.git', '../../.git.bak')
@@ -563,7 +563,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should fail w/o Git repository w/o remote', function(st) {
+  t.test('should fail w/o Git repository w/o remote', function (st) {
     st.plan(1)
 
     childProcess.exec('git init', oninit)
@@ -592,7 +592,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should work w/o Git repository w/ repo', function(st) {
+  t.test('should work w/o Git repository w/ repo', function (st) {
     st.plan(1)
 
     fs.renameSync('../../.git', '../../.git.bak')
@@ -630,7 +630,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should work w/o Git repository w/ remote', function(st) {
+  t.test('should work w/o Git repository w/ remote', function (st) {
     st.plan(1)
 
     fs.renameSync('../../.git', '../../.git.bak')
@@ -666,7 +666,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should work w/o Git repository w/ remote and root', function(st) {
+  t.test('should work w/o Git repository w/ remote and root', function (st) {
     st.plan(1)
 
     fs.renameSync('../../.git', '../../.git.bak')
@@ -702,7 +702,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should work with `repository:false`', function(st) {
+  t.test('should work with `repository:false`', function (st) {
     st.plan(1)
 
     fs.renameSync('../../.git', '../../.git.bak')
@@ -757,7 +757,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should work when finding non-hosted Git remotes', function(st) {
+  t.test('should work when finding non-hosted Git remotes', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -792,7 +792,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should support a GitLab shortcode', function(st) {
+  t.test('should support a GitLab shortcode', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -843,7 +843,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should support a Bitbucket shortcode', function(st) {
+  t.test('should support a Bitbucket shortcode', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -894,7 +894,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should suggest similar links', function(st) {
+  t.test('should suggest similar links', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -930,7 +930,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should recognise links to particular lines', function(st) {
+  t.test('should recognise links to particular lines', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -966,7 +966,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should recognise links with encoded URLs', function(st) {
+  t.test('should recognise links with encoded URLs', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -1004,7 +1004,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should support folders', function(st) {
+  t.test('should support folders', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -1043,7 +1043,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should check images', function(st) {
+  t.test('should check images', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -1082,7 +1082,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should support query parameters', function(st) {
+  t.test('should support query parameters', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -1117,7 +1117,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should support case insensitive headings', function(st) {
+  t.test('should support case insensitive headings', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -1153,7 +1153,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should ignore external links', function(st) {
+  t.test('should ignore external links', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -1179,7 +1179,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should ignore external links (without repo)', function(st) {
+  t.test('should ignore external links (without repo)', function (st) {
     st.plan(1)
 
     childProcess.exec(
@@ -1205,7 +1205,7 @@ test('remark-validate-links', function(t) {
     }
   })
 
-  t.test('should support self-hosted Git solutions', function(st) {
+  t.test('should support self-hosted Git solutions', function (st) {
     st.plan(1)
 
     childProcess.exec('git init', oninit)

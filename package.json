@@ -41,9 +41,9 @@
     "index.js"
   ],
   "dependencies": {
-    "github-slugger": "^1.2.0",
+    "github-slugger": "^1.0.0",
     "hosted-git-info": "^2.5.0",
-    "mdast-util-to-string": "^1.0.4",
+    "mdast-util-to-string": "^1.0.0",
     "propose": "0.0.5",
     "to-vfile": "^6.0.0",
     "trough": "^1.0.0",
@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "nyc": "^15.0.0",
-    "prettier": "^1.0.0",
+    "prettier": "^2.0.0",
     "remark": "^11.0.0",
     "remark-cli": "^7.0.0",
     "remark-preset-wooorm": "^6.0.0",
@@ -60,7 +60,7 @@
     "strip-ansi": "^6.0.0",
     "tape": "^4.0.0",
     "vfile-sort": "^2.0.0",
-    "xo": "^0.25.0"
+    "xo": "^0.28.0"
   },
   "scripts": {
     "format": "remark *.md -qfo && prettier --write \"**/*.js\" && xo --fix",
