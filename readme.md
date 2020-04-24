@@ -144,7 +144,7 @@ work as expected.
 If you’re not in a Git repository, you must pass `repository: false` explicitly.
 
 You can pass a `repository` (`string?`, `false`).
-If `repository` is nully, the Git origin remote is detected.
+If `repository` is nullish, the Git origin remote is detected.
 If the repository resolves to something [npm understands][package-repository]
 as a Git host such as GitHub, GitLab, or Bitbucket, full URLs to that host
 (say, `https://github.com/remarkjs/remark-validate-links/readme.md#install`)
@@ -156,7 +156,7 @@ remark --use 'validate-links=repository:"foo/bar"' example.md
 
 For this to work, a `root` (`string?`) is also used, referencing the local Git
 root directory (the place where `.git` is).
-If both `root` and `repository` are nully, the Git root is detected.
+If both `root` and `repository` are nullish, the Git root is detected.
 If `root` is not given but `repository` is, [`file.cwd`][cwd] is used.
 
 You can define this repository in [configuration files][cli] too.
