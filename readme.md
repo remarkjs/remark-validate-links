@@ -10,8 +10,10 @@
 
 [**remark**][remark] plugin to validate that Markdown links and images reference
 existing local files and headings.
-It does not check external URLs (see [`remark-lint-no-dead-urls`][no-dead-urls]
-for that).
+It does not check:
+
+* External URLs (see [`remark-lint-no-dead-urls`][no-dead-urls])
+* References (see [`remark-lint-no-undefined-references`][no-undef-refs])
 
 For example, this document does not have a heading named `Hello`.
 So if we link to that (`[welcome](#hello)`), this plugin will warn about it.
@@ -96,11 +98,11 @@ Say we have the following file, `example.md`:
 
 This [exists](#alpha).
 This [one does not](#does-not).
-References and definitions are [checked][alpha] [too][charlie].
 
 # Bravo
 
 Headings in `readme.md` are [not checked](readme.md#bravo).
+References are [not checked][foxtrot].
 But [missing files are reported](missing-example.js).
 
 [alpha]: #alpha
@@ -301,3 +303,5 @@ abide by its terms.
 [cwd]: https://github.com/vfile/vfile#vfilecwd
 
 [xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
+
+[no-undef-refs]: https://github.com/remarkjs/remark-lint/tree/master/packages/remark-lint-no-undefined-references
