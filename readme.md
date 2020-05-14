@@ -12,8 +12,8 @@
 existing local files and headings.
 It does not check:
 
-* External URLs (see [`remark-lint-no-dead-urls`][no-dead-urls])
-* References (see [`remark-lint-no-undefined-references`][no-undef-refs])
+*   External URLs (see [`remark-lint-no-dead-urls`][no-dead-urls])
+*   References (see [`remark-lint-no-undefined-references`][no-undef-refs])
 
 For example, this document does not have a heading named `Hello`.
 So if we link to that (`[welcome](#hello)`), this plugin will warn about it.
@@ -96,14 +96,17 @@ Say we have the following file, `example.md`:
 ```markdown
 # Alpha
 
+Links are checked:
+
 This [exists](#alpha).
 This [one does not](#does-not).
 
 # Bravo
 
-Headings in `readme.md` are [not checked](readme.md#bravo).
-References are [not checked][foxtrot].
-But [missing files are reported](missing-example.js).
+Headings in `readme.md` are [checked](readme.md#nosuchheading).
+And [missing files are reported](missing-example.js).
+
+References are also checked:
 
 [alpha]: #alpha
 [charlie]: #charlie
@@ -128,11 +131,12 @@ Now, running `node example` yields:
 
 ```markdown
 example.md
-    4:6-4:31  warning  Link to unknown heading: `does-not`         missing-heading  remark-validate-links
-  10:5-10:53  warning  Link to unknown file: `missing-example.js`  missing-file     remark-validate-links
-  13:1-13:20  warning  Link to unknown heading: `charlie`          missing-heading  remark-validate-links
+     6:6-6:31  warning  Link to unknown heading: `does-not`                      missing-heading          remark-validate-links
+  10:29-10:63  warning  Link to unknown heading in `readme.md`: `nosuchheading`  missing-heading-in-file  remark-validate-links
+   11:5-11:53  warning  Link to unknown file: `missing-example.js`               missing-file             remark-validate-links
+   16:1-16:20  warning  Link to unknown heading: `charlie`                       missing-heading          remark-validate-links
 
-⚠ 3 warnings
+⚠ 4 warnings
 ```
 
 ## Configuration
