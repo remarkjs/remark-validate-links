@@ -58,9 +58,9 @@
     "remark-preset-wooorm": "^7.0.0",
     "rimraf": "^3.0.0",
     "strip-ansi": "^6.0.0",
-    "tape": "^4.0.0",
+    "tape": "^5.0.0",
     "vfile-sort": "^2.0.0",
-    "xo": "^0.29.0"
+    "xo": "^0.32.0"
   },
   "scripts": {
     "format": "remark *.md -qfo && prettier --write \"**/*.js\" && xo --fix",
@@ -86,6 +86,8 @@
     "prettier": true,
     "esnext": false,
     "rules": {
+      "unicorn/prefer-optional-catch-binding": "off",
+      "unicorn/no-fn-reference-in-iterator": "off",
       "unicorn/prefer-includes": "off",
       "guard-for-in": "off"
     }
