@@ -1043,6 +1043,41 @@ test('remark-validate-links', function (t) {
     }
   })
 
+  t.test('should warn on files as folders', function (st) {
+    st.plan(1)
+
+    childProcess.exec(
+      [
+        bin,
+        '--no-config',
+        '--no-ignore',
+        '--use',
+        '../..',
+        '--use',
+        '../sort',
+        'file-as-folder.md'
+      ].join(' '),
+      onexec
+    )
+
+    function onexec(err, stdout, stderr) {
+      st.deepEqual(
+        [err, strip(stderr)],
+        [
+          null,
+          [
+            'file-as-folder.md',
+            '  1:1-1:28  warning  Link to unknown file: `file-as-folder.md/other`. Did you mean `file-as-folder.md`  missing-file  remark-validate-links',
+            '',
+            '⚠ 1 warning',
+            ''
+          ].join('\n')
+        ],
+        'should work'
+      )
+    }
+  })
+
   t.test('should check images', function (st) {
     st.plan(1)
 
