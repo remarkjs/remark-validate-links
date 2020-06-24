@@ -10,20 +10,22 @@
 
 [**remark**][remark] plugin to validate that Markdown links and images reference
 existing local files and headings.
-It does not check external URLs (see [`remark-lint-no-dead-urls`][no-dead-urls]
-for that).
 
 For example, this document does not have a heading named `Hello`.
-So if we link to that (`[welcome](#hello)`), this plugin will warn about it.
+So if we’d link to it (`[welcome](#hello)`), we’d get a warning.
 
 In addition, when there’s a link to a heading in another document
-(`examples/foo.md#hello`), if this file exists but the heading does not, or if
-the file does not exist, this plugin will also warn.
+(`examples/foo.md#hello`), if that file exists but the heading does not, or if
+that file does not exist, we’d also get a warning.
 
 Linking to other files, such as `license` or `index.js` (when they exist) is
 fine.
 
-## Table of Contents
+This plugin does not check external URLs (see
+[`remark-lint-no-dead-urls`][no-dead-urls]) or undefined references
+(see [`remark-lint-no-undefined-references`][no-undef-refs]).
+
+## Contents
 
 *   [Install](#install)
 *   [Use](#use)
@@ -63,7 +65,7 @@ Read more [whoops, this does not exist](#world).
 
 This doesn’t exist either [whoops!](readme.md#foo).
 
-But this does exist: [LICENSE](LICENSE).
+But this does exist: [license](license).
 
 So does this: [README](readme.md#installation).
 ```
@@ -94,17 +96,22 @@ Say we have the following file, `example.md`:
 ```markdown
 # Alpha
 
+Links are checked:
+
 This [exists](#alpha).
 This [one does not](#does-not).
-References and definitions are [checked][alpha] [too][charlie].
 
 # Bravo
 
-Headings in `readme.md` are [not checked](readme.md#bravo).
-But [missing files are reported](missing-example.js).
+Headings in `readme.md` are [checked](readme.md#nosuchheading).
+And [missing files are reported](missing-example.js).
+
+Definitions are also checked:
 
 [alpha]: #alpha
 [charlie]: #charlie
+
+References w/o definitions are not checked: [delta]
 ```
 
 And our script, `example.js`, looks as follows:
@@ -117,7 +124,7 @@ var links = require('remark-validate-links')
 
 remark()
   .use(links)
-  .process(vfile.readSync('example.md'), function(err, file) {
+  .process(vfile.readSync('example.md'), function (err, file) {
     console.error(report(err || file))
   })
 ```
@@ -126,19 +133,22 @@ Now, running `node example` yields:
 
 ```markdown
 example.md
-    4:6-4:31  warning  Link to unknown heading: `does-not`         missing-heading  remark-validate-links
-  10:5-10:53  warning  Link to unknown file: `missing-example.js`  missing-file     remark-validate-links
-  13:1-13:20  warning  Link to unknown heading: `charlie`          missing-heading  remark-validate-links
+    6:6-6:31  warning  Link to unknown heading: `does-not`         missing-heading  remark-validate-links
+  11:5-11:53  warning  Link to unknown file: `missing-example.js`  missing-file     remark-validate-links
+  16:1-16:20  warning  Link to unknown heading: `charlie`          missing-heading  remark-validate-links
 
 ⚠ 3 warnings
 ```
+
+(Note that `readme.md#nosuchheading` is not warned about, because the API
+does not check headings in other Markdown files).
 
 ## Configuration
 
 Typically, you don’t need to configure `remark-validate-links`, as it detects
 local Git repositories.
-If one is detected that references a known Git host, some extra links can be
-checked.
+If one is detected that references a known Git host (GitHub, GitLab,
+or Bitbucket), some extra links can be checked.
 If one is detected that does not reference a known Git host, local links still
 work as expected.
 If you’re not in a Git repository, you must pass `repository: false` explicitly.
@@ -295,6 +305,8 @@ abide by its terms.
 [remark-html]: https://github.com/remarkjs/remark-html
 
 [no-dead-urls]: https://github.com/davidtheclark/remark-lint-no-dead-urls
+
+[no-undef-refs]: https://github.com/remarkjs/remark-lint/tree/master/packages/remark-lint-no-undefined-references
 
 [package-repository]: https://docs.npmjs.com/files/package.json#repository
 
