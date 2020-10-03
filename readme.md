@@ -25,6 +25,12 @@ This plugin does not check external URLs (see
 [`remark-lint-no-dead-urls`][no-dead-urls]) or undefined references
 (see [`remark-lint-no-undefined-references`][no-undef-refs]).
 
+## Note!
+
+This plugin is ready for the new parser in remark
+([`remarkjs/remark#536`](https://github.com/remarkjs/remark/pull/536)).
+No change is needed: it works exactly the same now as it did before!
+
 ## Contents
 
 *   [Install](#install)
