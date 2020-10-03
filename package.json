@@ -60,7 +60,7 @@
     "strip-ansi": "^6.0.0",
     "tape": "^5.0.0",
     "vfile-sort": "^2.0.0",
-    "xo": "^0.32.0"
+    "xo": "^0.33.0"
   },
   "scripts": {
     "format": "remark . -qfo --ignore-pattern test/ && prettier . --write && xo --fix",
