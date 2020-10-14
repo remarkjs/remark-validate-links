@@ -53,9 +53,9 @@
   "devDependencies": {
     "nyc": "^15.0.0",
     "prettier": "^2.0.0",
-    "remark": "^13.0.0-alpha.0",
-    "remark-cli": "^9.0.0-alpha.0",
-    "remark-preset-wooorm": "^7.0.0",
+    "remark": "^13.0.0",
+    "remark-cli": "^9.0.0",
+    "remark-preset-wooorm": "^8.0.0",
     "rimraf": "^3.0.0",
     "strip-ansi": "^6.0.0",
     "tape": "^5.0.0",
@@ -63,7 +63,7 @@
     "xo": "^0.33.0"
   },
   "scripts": {
-    "format": "remark . -qfo --ignore-pattern test/ && prettier . --write && xo --fix",
+    "format": "remark . -qfo --ignore-pattern test/ && prettier . -w --loglevel warn && xo --fix",
     "test-api": "node test",
     "test-coverage": "nyc --reporter lcov tape test/index.js",
     "test": "npm run format && npm run test-coverage"
