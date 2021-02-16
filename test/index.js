@@ -26,9 +26,9 @@ test('remark-validate-links', function (t) {
     remark()
       .use(links)
       .use(sort)
-      .process(vfile.readSync('github.md'), function (err, file) {
+      .process(vfile.readSync('github.md'), function (error, file) {
         st.deepEqual(
-          [err].concat(file.messages.map(String)),
+          [error].concat(file.messages.map(String)),
           [
             null,
             'github.md:5:37-5:51: Link to unknown heading: `world`',
@@ -59,9 +59,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -94,9 +94,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -129,9 +129,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [/command failed/i.test(err), strip(stderr)],
+        [/command failed/i.test(error), strip(stderr)],
         [
           true,
           [
@@ -165,9 +165,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [/command failed/i.test(err), strip(stderr)],
+        [/command failed/i.test(error), strip(stderr)],
         [
           true,
           [
@@ -203,9 +203,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [null, 'empty.md: no issues found\n'],
         'should work'
       )
@@ -230,9 +230,9 @@ test('remark-validate-links', function (t) {
 
     fs.createReadStream('github.md').pipe(subprocess.stdin)
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -265,9 +265,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -309,9 +309,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -359,9 +359,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -395,9 +395,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -450,9 +450,9 @@ test('remark-validate-links', function (t) {
 
     childProcess.exec('git init', oninit)
 
-    function oninit(err) {
-      if (err) {
-        t.ifErr(err)
+    function oninit(error) {
+      if (error) {
+        t.ifErr(error)
       } else {
         childProcess.exec(
           'git remote add origin git@github.com:wooorm/test.git',
@@ -461,10 +461,10 @@ test('remark-validate-links', function (t) {
       }
     }
 
-    function onremote(err) {
-      if (err) {
+    function onremote(error) {
+      if (error) {
         clean()
-        t.ifErr(err)
+        t.ifErr(error)
       } else {
         childProcess.exec(
           [
@@ -483,10 +483,10 @@ test('remark-validate-links', function (t) {
       }
     }
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       clean()
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -557,9 +557,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err) {
+    function onexec(error) {
       fs.renameSync('../../.git.bak', '../../.git')
-      st.ok(/not a git repository/i.test(err), 'should fail')
+      st.ok(/not a git repository/i.test(error), 'should fail')
     }
   })
 
@@ -568,9 +568,9 @@ test('remark-validate-links', function (t) {
 
     childProcess.exec('git init', oninit)
 
-    function oninit(err) {
-      if (err) {
-        t.ifErr(err)
+    function oninit(error) {
+      if (error) {
+        t.ifErr(error)
       } else {
         childProcess.exec(
           [
@@ -586,9 +586,9 @@ test('remark-validate-links', function (t) {
       }
     }
 
-    function onexec(err) {
+    function onexec(error) {
       rimraf.sync('./.git')
-      st.ok(/Could not find remote origin/.test(err), 'should fail')
+      st.ok(/Could not find remote origin/.test(error), 'should fail')
     }
   })
 
@@ -611,10 +611,10 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       fs.renameSync('../../.git.bak', '../../.git')
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -647,10 +647,10 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       fs.renameSync('../../.git.bak', '../../.git')
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -683,10 +683,10 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       fs.renameSync('../../.git.bak', '../../.git')
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -722,10 +722,10 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       fs.renameSync('../../.git.bak', '../../.git')
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -774,9 +774,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -809,9 +809,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -860,9 +860,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -911,9 +911,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -947,9 +947,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -983,9 +983,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -1021,9 +1021,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -1060,9 +1060,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -1095,9 +1095,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -1134,9 +1134,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -1169,9 +1169,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
@@ -1205,9 +1205,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [null, 'external.md: no issues found\n'],
         'should work'
       )
@@ -1231,9 +1231,9 @@ test('remark-validate-links', function (t) {
       onexec
     )
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [null, 'external.md: no issues found\n'],
         'should work'
       )
@@ -1245,9 +1245,9 @@ test('remark-validate-links', function (t) {
 
     childProcess.exec('git init', oninit)
 
-    function oninit(err) {
-      if (err) {
-        t.ifErr(err)
+    function oninit(error) {
+      if (error) {
+        t.ifErr(error)
       } else {
         childProcess.exec(
           'git remote add origin git@gitlab.acme.company:acme/project.git',
@@ -1256,10 +1256,10 @@ test('remark-validate-links', function (t) {
       }
     }
 
-    function onremote(err) {
-      if (err) {
+    function onremote(error) {
+      if (error) {
         clean()
-        t.ifErr(err)
+        t.ifErr(error)
       } else {
         childProcess.exec(
           [
@@ -1275,10 +1275,10 @@ test('remark-validate-links', function (t) {
       }
     }
 
-    function onexec(err, stdout, stderr) {
+    function onexec(error, stdout, stderr) {
       clean()
       st.deepEqual(
-        [err, strip(stderr)],
+        [error, strip(stderr)],
         [
           null,
           [
