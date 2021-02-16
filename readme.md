@@ -262,9 +262,9 @@ abide by its terms.
 
 <!-- Definitions -->
 
-[build-badge]: https://img.shields.io/travis/remarkjs/remark-validate-links/main.svg
+[build-badge]: https://github.com/remarkjs/remark-validate-links/workflows/main/badge.svg
 
-[build]: https://travis-ci.org/remarkjs/remark-validate-links
+[build]: https://github.com/remarkjs/remark-validate-links/actions
 
 [coverage-badge]: https://img.shields.io/codecov/c/github/remarkjs/remark-validate-links.svg
 
