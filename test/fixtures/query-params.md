@@ -1,6 +1,6 @@
 # Query params
 
-Link to relative heading ![link](?foo=bar#query-params)
+Link to relative heading [link](?foo=bar#query-params)
 
 Link to an ![image](./examples/image.jpg?foo=bar)
 

@@ -14,6 +14,8 @@ Absolute ![image reference][abs]
 
 Relative with whitespace ![image reference][rel-whitespace]
 
+Relative with heading ![image](./examples/image.jpg#metadata)
+
 <!-- Invalid: -->
 
 Relative ![missing image](./examples/missing.jpg)
