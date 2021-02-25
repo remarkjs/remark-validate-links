@@ -1141,7 +1141,7 @@ test('remark-validate-links', function (t) {
           null,
           [
             'query-params.md',
-            '  9:33-9:55  warning  Link to unknown heading: `query-params?`. Did you mean `query-params`  missing-heading  remark-validate-links',
+            '  11:33-11:55  warning  Link to unknown heading: `query-params?`. Did you mean `query-params`  missing-heading  remark-validate-links',
             '',
             '⚠ 1 warning',
             ''
