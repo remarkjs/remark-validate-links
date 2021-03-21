@@ -42,6 +42,37 @@ test('remark-validate-links', function (t) {
       })
   })
 
+  t.test(
+    'should support landmarks and references to prototypal values',
+    function (st) {
+      st.plan(1)
+
+      remark()
+        .use(links)
+        .use(sort)
+        .process(
+          '# \\_\\_proto__\n# constructor\n# toString\n[](#__proto__), [](#constructor), [](#toString)',
+          function (error, file) {
+            st.deepEqual(
+              [
+                error,
+                Object.keys(file.data.remarkValidateLinksLandmarks['']),
+                Object.keys(file.data.remarkValidateLinksReferences['']),
+                file.messages
+              ],
+              [
+                null,
+                ['', '__proto__', 'constructor', 'tostring'],
+                ['', '__proto__', 'constructor', 'tostring'],
+                []
+              ],
+              'should work'
+            )
+          }
+        )
+    }
+  )
+
   t.test('should ignore invalid repositories', function (st) {
     st.plan(1)
 

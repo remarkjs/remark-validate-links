@@ -47,8 +47,7 @@
     "propose": "0.0.5",
     "to-vfile": "^6.0.0",
     "trough": "^1.0.0",
-    "unist-util-visit": "^2.0.0",
-    "xtend": "^4.0.0"
+    "unist-util-visit": "^2.0.0"
   },
   "devDependencies": {
     "nyc": "^15.0.0",
