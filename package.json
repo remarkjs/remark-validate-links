@@ -32,14 +32,17 @@
     "wangshijun <wangshijun2010@gmail.com>",
     "Anton Rybochkin <anton.rybochkin@axibase.com>"
   ],
-  "browser": {
-    "./lib/check/check-files.js": "./lib/check/check-files.browser.js",
-    "./lib/find/find-repo.js": "./lib/find/find-repo.browser.js"
-  },
+  "sideEffects": false,
+  "type": "module",
+  "main": "index.js",
   "files": [
     "lib/",
     "index.js"
   ],
+  "browser": {
+    "./lib/check/check-files.js": "./lib/check/check-files.browser.js",
+    "./lib/find/find-repo.js": "./lib/find/find-repo.browser.js"
+  },
   "dependencies": {
     "github-slugger": "^1.0.0",
     "hosted-git-info": "^3.0.0",

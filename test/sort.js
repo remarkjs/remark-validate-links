@@ -1,13 +1,9 @@
-'use strict'
+import sort from 'vfile-sort'
 
-var vfileSort = require('vfile-sort')
-
-module.exports = sort
-
-function sort() {
+export default function unifiedSort() {
   return transform
 }
 
 function transform(tree, file) {
-  vfileSort(file)
+  sort(file)
 }

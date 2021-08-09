@@ -1,15 +1,13 @@
-'use strict'
-
-var fs = require('fs')
-var path = require('path')
-var childProcess = require('child_process')
-var test = require('tape')
-var vfile = require('to-vfile')
-var remark = require('remark')
-var strip = require('strip-ansi')
-var rimraf = require('rimraf')
-var sort = require('./sort')
-var links = require('..')
+import fs from 'fs'
+import path from 'path'
+import childProcess from 'child_process'
+import test from 'tape'
+import vfile from 'to-vfile'
+import remark from 'remark'
+import strip from 'strip-ansi'
+import rimraf from 'rimraf'
+import sort from './sort.js'
+import links from '../index.js'
 
 process.chdir(path.resolve(process.cwd(), 'test', 'fixtures'))
 
