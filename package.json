@@ -62,7 +62,7 @@
     "strip-ansi": "^7.0.0",
     "tape": "^5.0.0",
     "vfile-sort": "^3.0.0",
-    "xo": "^0.38.0"
+    "xo": "^0.39.0"
   },
   "scripts": {
     "format": "remark . -qfo --ignore-pattern test/ && prettier . -w --loglevel warn && xo --fix",
@@ -79,17 +79,7 @@
     "trailingComma": "none"
   },
   "xo": {
-    "prettier": true,
-    "esnext": false,
-    "rules": {
-      "complexity": "off",
-      "guard-for-in": "off",
-      "unicorn/no-array-callback-reference": "off",
-      "unicorn/no-array-for-each": "off",
-      "unicorn/prefer-number-properties": "off",
-      "unicorn/prefer-optional-catch-binding": "off",
-      "unicorn/prefer-includes": "off"
-    }
+    "prettier": true
   },
   "remarkConfig": {
     "plugins": [
