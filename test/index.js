@@ -2,8 +2,8 @@ import fs from 'fs'
 import path from 'path'
 import childProcess from 'child_process'
 import test from 'tape'
-import vfile from 'to-vfile'
-import remark from 'remark'
+import {readSync} from 'to-vfile'
+import {remark} from 'remark'
 import strip from 'strip-ansi'
 import rimraf from 'rimraf'
 import sort from './sort.js'
@@ -24,7 +24,7 @@ test('remark-validate-links', function (t) {
     remark()
       .use(links)
       .use(sort)
-      .process(vfile.readSync('github.md'), function (error, file) {
+      .process(readSync('github.md'), function (error, file) {
         st.deepEqual(
           [error].concat(file.messages.map(String)),
           [
@@ -80,9 +80,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '"../..=repository:\\"invalid:shortcode\\""',
+        '"../../index.js=repository:\\"invalid:shortcode\\""',
         '--use',
-        '../sort',
+        '../sort.js',
         'small.md'
       ].join(' '),
       onexec
@@ -115,9 +115,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '"../..=repository:\\"gist:wooorm/8504606\\""',
+        '"../../index.js=repository:\\"gist:wooorm/8504606\\""',
         '--use',
-        '../sort',
+        '../sort.js',
         'small.md'
       ].join(' '),
       onexec
@@ -150,9 +150,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '../..',
+        '../../index.js',
         '--use',
-        '../sort',
+        '../sort.js',
         'FOOOO'
       ].join(' '),
       onexec
@@ -185,9 +185,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '../..',
+        '../../index.js',
         '--use',
-        '../sort',
+        '../sort.js',
         'definitions.md',
         'FOOOO'
       ].join(' '),
@@ -224,9 +224,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '../..',
+        '../../index.js',
         '--use',
-        '../sort',
+        '../sort.js',
         'empty.md'
       ].join(' '),
       onexec
@@ -250,9 +250,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '../..',
+        '../../index.js',
         '--use',
-        '../sort'
+        '../sort.js'
       ].join(' '),
       onexec
     )
@@ -286,9 +286,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '../..',
+        '../../index.js',
         '--use',
-        '../sort',
+        '../sort.js',
         'github.md'
       ].join(' '),
       onexec
@@ -329,9 +329,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '../..',
+        '../../index.js',
         '--use',
-        '../sort',
+        '../sort.js',
         'github.md',
         'examples/github.md'
       ].join(' '),
@@ -380,9 +380,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '../..',
+        '../../index.js',
         '--use',
-        '../sort',
+        '../sort.js',
         'definitions.md'
       ].join(' '),
       onexec
@@ -415,9 +415,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '"../..=repository:\\"wooorm/test\\""',
+        '"../../index.js=repository:\\"wooorm/test\\""',
         '--use',
-        '../sort',
+        '../sort.js',
         'github.md',
         'examples/github.md'
       ].join(' '),
@@ -501,9 +501,9 @@ test('remark-validate-links', function (t) {
             '--no-config',
             '--no-ignore',
             '--use',
-            '../..',
+            '../../index.js',
             '--use',
-            '../sort',
+            '../sort.js',
             'github.md',
             'examples/github.md'
           ].join(' '),
@@ -578,9 +578,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '../..',
+        '../../index.js',
         '--use',
-        '../sort',
+        '../sort.js',
         'github.md'
       ].join(' '),
       onexec
@@ -607,7 +607,7 @@ test('remark-validate-links', function (t) {
             '--no-config',
             '--no-ignore',
             '--use',
-            '../..',
+            '../../index.js',
             'github.md'
           ].join(' '),
           onexec
@@ -632,9 +632,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '"../..=repository:\\"wooorm/test\\""',
+        '"../../index.js=repository:\\"wooorm/test\\""',
         '--use',
-        '../sort',
+        '../sort.js',
         'small.md'
       ].join(' '),
       onexec
@@ -670,7 +670,7 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '"../..=repository:{remote:\\"wooorm/test\\"}"',
+        '"../../index.js=repository:{remote:\\"wooorm/test\\"}"',
         'small.md'
       ].join(' '),
       onexec
@@ -706,7 +706,7 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '"../..=repository:\\"wooorm/test\\",root:\\"../\\""',
+        '"../../index.js=repository:\\"wooorm/test\\",root:\\"../\\""',
         'small.md'
       ].join(' '),
       onexec
@@ -742,9 +742,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '"../..=repository:false"',
+        '"../../index.js=repository:false"',
         '--use',
-        '../sort',
+        '../sort.js',
         'github.md',
         'examples/github.md'
       ].join(' '),
@@ -795,9 +795,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '"../..=repository:\\"ssh://git@domain.com/user/project.git\\""',
+        '"../../index.js=repository:\\"ssh://git@domain.com/user/project.git\\""',
         '--use',
-        '../sort',
+        '../sort.js',
         'small.md'
       ].join(' '),
       onexec
@@ -830,9 +830,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '"../..=repository:\\"gitlab:wooorm/test\\""',
+        '"../../index.js=repository:\\"gitlab:wooorm/test\\""',
         '--use',
-        '../sort',
+        '../sort.js',
         'gitlab.md'
       ].join(' '),
       onexec
@@ -881,9 +881,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '"../..=repository:\\"bitbucket:wooorm/test\\""',
+        '"../../index.js=repository:\\"bitbucket:wooorm/test\\""',
         '--use',
-        '../sort',
+        '../sort.js',
         'bitbucket.md'
       ].join(' '),
       onexec
@@ -932,9 +932,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '../..',
+        '../../index.js',
         '--use',
-        '../sort',
+        '../sort.js',
         'suggestions.md'
       ].join(' '),
       onexec
@@ -968,9 +968,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '"../..=repository:\\"wooorm/test\\""',
+        '"../../index.js=repository:\\"wooorm/test\\""',
         '--use',
-        '../sort',
+        '../sort.js',
         'line-links.md'
       ].join(' '),
       onexec
@@ -1004,9 +1004,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '"../..=repository:\\"wooorm/test\\""',
+        '"../../index.js=repository:\\"wooorm/test\\""',
         '--use',
-        '../sort',
+        '../sort.js',
         'weird-characters.md'
       ].join(' '),
       onexec
@@ -1042,9 +1042,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '"../..=repository:\\"wooorm/test\\""',
+        '"../../index.js=repository:\\"wooorm/test\\""',
         '--use',
-        '../sort',
+        '../sort.js',
         'folder.md'
       ].join(' '),
       onexec
@@ -1081,9 +1081,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '../..',
+        '../../index.js',
         '--use',
-        '../sort',
+        '../sort.js',
         'file-as-folder.md'
       ].join(' '),
       onexec
@@ -1116,9 +1116,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '"../..=repository:\\"wooorm/test\\""',
+        '"../../index.js=repository:\\"wooorm/test\\""',
         '--use',
-        '../sort',
+        '../sort.js',
         'images.md'
       ].join(' '),
       onexec
@@ -1155,9 +1155,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '"../..=repository:\\"wooorm/test\\""',
+        '"../../index.js=repository:\\"wooorm/test\\""',
         '--use',
-        '../sort',
+        '../sort.js',
         'query-params.md'
       ].join(' '),
       onexec
@@ -1190,9 +1190,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '../..',
+        '../../index.js',
         '--use',
-        '../sort',
+        '../sort.js',
         'case-insensitive-headings.md'
       ].join(' '),
       onexec
@@ -1226,9 +1226,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '"../..=repository:\\"wooorm/test\\""',
+        '"../../index.js=repository:\\"wooorm/test\\""',
         '--use',
-        '../sort',
+        '../sort.js',
         'external.md'
       ].join(' '),
       onexec
@@ -1252,9 +1252,9 @@ test('remark-validate-links', function (t) {
         '--no-config',
         '--no-ignore',
         '--use',
-        '../..=repository:false',
+        '../../index.js=repository:false',
         '--use',
-        '../sort',
+        '../sort.js',
         'external.md'
       ].join(' '),
       onexec
@@ -1296,7 +1296,7 @@ test('remark-validate-links', function (t) {
             '--no-config',
             '--no-ignore',
             '--use',
-            '"../..=urlConfig:{hostname:\\"gitlab.acme.com\\",prefix:\\"/acme/project/blob/\\",headingPrefix:\\"#\\",lines:true}"',
+            '"../../index.js=urlConfig:{hostname:\\"gitlab.acme.com\\",prefix:\\"/acme/project/blob/\\",headingPrefix:\\"#\\",lines:true}"',
             'self-hosted.md'
           ].join(' '),
           onexec

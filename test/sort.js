@@ -1,4 +1,4 @@
-import sort from 'vfile-sort'
+import {sort} from 'vfile-sort'
 
 export default function unifiedSort() {
   return transform

@@ -45,23 +45,23 @@
   },
   "dependencies": {
     "github-slugger": "^1.0.0",
-    "hosted-git-info": "^3.0.0",
-    "mdast-util-to-string": "^1.0.0",
+    "hosted-git-info": "^4.0.0",
+    "mdast-util-to-string": "^3.0.0",
     "propose": "0.0.5",
-    "to-vfile": "^6.0.0",
-    "trough": "^1.0.0",
-    "unist-util-visit": "^2.0.0"
+    "to-vfile": "^7.0.0",
+    "trough": "^2.0.0",
+    "unist-util-visit": "^4.0.0"
   },
   "devDependencies": {
     "c8": "^7.0.0",
     "prettier": "^2.0.0",
-    "remark": "^13.0.0",
-    "remark-cli": "^9.0.0",
+    "remark": "^14.0.0",
+    "remark-cli": "^10.0.0",
     "remark-preset-wooorm": "^8.0.0",
     "rimraf": "^3.0.0",
-    "strip-ansi": "^6.0.0",
+    "strip-ansi": "^7.0.0",
     "tape": "^5.0.0",
-    "vfile-sort": "^2.0.0",
+    "vfile-sort": "^3.0.0",
     "xo": "^0.38.0"
   },
   "scripts": {
