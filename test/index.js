@@ -26,7 +26,9 @@ test('remark-validate-links', (t) => {
       .use(sort)
       .process(readSync('github.md'), (error, file) => {
         st.deepEqual(
-          [error].concat(file.messages.map((d) => String(d))),
+          [error].concat(
+            (file || {messages: []}).messages.map((d) => String(d))
+          ),
           [
             null,
             'github.md:5:37-5:51: Link to unknown heading: `world`',
