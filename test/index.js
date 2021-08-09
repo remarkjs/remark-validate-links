@@ -1,14 +1,15 @@
-import fs from 'fs'
-import path from 'path'
-import {promisify} from 'util'
-import childProcess from 'child_process'
+import fs from 'node:fs'
+import path from 'node:path'
+import process from 'node:process'
+import {promisify} from 'node:util'
+import childProcess from 'node:child_process'
 import test from 'tape'
 import {readSync} from 'to-vfile'
 import {remark} from 'remark'
 import strip from 'strip-ansi'
 import rimraf from 'rimraf'
-import sort from './sort.js'
 import links from '../index.js'
+import sort from './sort.js'
 
 const exec = promisify(childProcess.exec)
 
