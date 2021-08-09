@@ -46,6 +46,9 @@ No change is needed: it works exactly the same now as it did before!
 
 ## Install
 
+This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c):
+Node 12+ is needed to use it and it must be `import`ed instead of `require`d.
+
 [npm][]:
 
 ```sh
@@ -97,6 +100,9 @@ readme.md: no issues found
 > It does not check headings in other files.
 > In a browser, only local links to headings are checked.
 
+This package exports no identifiers.
+The default export is `remarkValidateLinks`.
+
 Say we have the following file, `example.md`:
 
 ```markdown
@@ -120,18 +126,20 @@ Definitions are also checked:
 References w/o definitions are not checked: [delta]
 ```
 
-And our script, `example.js`, looks as follows:
+And our module, `example.js`, looks as follows:
 
 ```js
-var vfile = require('to-vfile')
-var report = require('vfile-reporter')
-var remark = require('remark')
-var links = require('remark-validate-links')
+import {readSync} from 'to-vfile'
+import {reporter} from 'vfile-reporter'
+import {remark} from 'remark'
+import remarkValidateLinks from 'remark-validate-links'
+
+const file = readSync('example.md')
 
 remark()
-  .use(links)
-  .process(vfile.readSync('example.md'), function (err, file) {
-    console.error(report(err || file))
+  .use(remarkValidateLinks)
+  .process(file, (file) => {
+    console.error(reporter(file))
   })
 ```
 
