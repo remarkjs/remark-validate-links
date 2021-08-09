@@ -1,9 +1,8 @@
 import {sort} from 'vfile-sort'
 
+/** @type {import('unified').Plugin<void[]>} */
 export default function unifiedSort() {
-  return transform
-}
-
-function transform(tree, file) {
-  sort(file)
+  return (_, file) => {
+    sort(file)
+  }
 }

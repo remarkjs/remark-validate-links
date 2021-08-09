@@ -35,8 +35,10 @@
   "sideEffects": false,
   "type": "module",
   "main": "index.js",
+  "types": "index.d.ts",
   "files": [
     "lib/",
+    "index.d.ts",
     "index.js"
   ],
   "browser": {
@@ -44,15 +46,24 @@
     "./lib/find/find-repo.js": "./lib/find/find-repo.browser.js"
   },
   "dependencies": {
+    "@types/mdast": "^3.0.0",
     "github-slugger": "^1.0.0",
     "hosted-git-info": "^4.0.0",
     "mdast-util-to-string": "^3.0.0",
     "propose": "0.0.5",
     "to-vfile": "^7.0.0",
     "trough": "^2.0.0",
-    "unist-util-visit": "^4.0.0"
+    "unified": "^10.0.0",
+    "unified-engine": "^9.0.0",
+    "unist-util-visit": "^4.0.0",
+    "vfile": "^5.0.0"
   },
   "devDependencies": {
+    "@types/github-slugger": "^1.0.0",
+    "@types/hast": "^2.0.0",
+    "@types/hosted-git-info": "^3.0.0",
+    "@types/rimraf": "^3.0.1",
+    "@types/tape": "^4.0.0",
     "c8": "^7.0.0",
     "prettier": "^2.0.0",
     "remark": "^14.0.0",
@@ -61,14 +72,17 @@
     "rimraf": "^3.0.0",
     "strip-ansi": "^7.0.0",
     "tape": "^5.0.0",
+    "type-coverage": "^2.0.0",
+    "typescript": "^4.0.0",
     "vfile-sort": "^3.0.0",
     "xo": "^0.39.0"
   },
   "scripts": {
+    "build": "rimraf \"lib/**/*.d.ts\" \"test/**/*.d.ts\" \"*.d.ts\" && tsc && type-coverage",
     "format": "remark . -qfo --ignore-pattern test/ && prettier . -w --loglevel warn && xo --fix",
     "test-api": "node --conditions development test/index.js",
     "test-coverage": "c8 --check-coverage --branches 100 --functions 100 --lines 100 --statements 100 --reporter lcov npm run test-api",
-    "test": "npm run format && npm run test-coverage"
+    "test": "npm run build && npm run format && npm run test-coverage"
   },
   "prettier": {
     "tabWidth": 2,
@@ -85,5 +99,11 @@
     "plugins": [
       "preset-wooorm"
     ]
+  },
+  "typeCoverage": {
+    "atLeast": 100,
+    "detail": true,
+    "strict": true,
+    "ignoreCatch": true
   }
 }
