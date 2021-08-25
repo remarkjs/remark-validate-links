@@ -870,6 +870,24 @@ test('remark-validate-links', async (t) => {
       '"../../index.js=repository:\\"wooorm/test\\""',
       '--use',
       '../sort.js',
+      'image-alts.md'
+    ].join(' ')
+  ))
+
+  t.deepEqual(
+    strip(stderr),
+    'image-alts.md: no issues found\n',
+    'should slug image alts correctly'
+  )
+  ;({stderr} = await exec(
+    [
+      bin,
+      '--no-config',
+      '--no-ignore',
+      '--use',
+      '"../../index.js=repository:\\"wooorm/test\\""',
+      '--use',
+      '../sort.js',
       'query-params.md'
     ].join(' ')
   ))
