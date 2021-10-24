@@ -1,3 +1,7 @@
+/**
+ * @typedef {import('node:child_process').ExecException & {stdout: string, stderr: string}} ExecError
+ */
+
 import fs from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
@@ -98,8 +102,9 @@ test('remark-validate-links', async (t) => {
       ].join(' ')
     )
   } catch (error) {
+    const exception = /** @type {ExecError} */ (error)
     t.deepEqual(
-      strip(error.stderr),
+      strip(exception.stderr),
       [
         'small.md',
         '  5:13-5:27  warning  Link to unknown heading: `world`  missing-heading  remark-validate-links',
@@ -125,8 +130,9 @@ test('remark-validate-links', async (t) => {
       ].join(' ')
     )
   } catch (error) {
+    const exception = /** @type {ExecError} */ (error)
     t.deepEqual(
-      [/command failed/i.test(error), strip(error.stderr)],
+      [/command failed/i.test(String(exception)), strip(exception.stderr)],
       [
         true,
         [
@@ -156,8 +162,9 @@ test('remark-validate-links', async (t) => {
       ].join(' ')
     )
   } catch (error) {
+    const exception = /** @type {ExecError} */ (error)
     t.deepEqual(
-      [/command failed/i.test(error), strip(error.stderr)],
+      [/command failed/i.test(String(exception)), strip(exception.stderr)],
       [
         true,
         [
@@ -455,8 +462,12 @@ test('remark-validate-links', async (t) => {
       ].join(' ')
     )
   } catch (error) {
+    const exception = /** @type {ExecError} */ (error)
     fs.renameSync('../../.git.bak', '../../.git')
-    t.ok(/not a git repository/i.test(error), 'should fail w/o Git repository')
+    t.ok(
+      /not a git repository/i.test(String(exception)),
+      'should fail w/o Git repository'
+    )
   }
 
   await exec('git init')
@@ -473,9 +484,10 @@ test('remark-validate-links', async (t) => {
       ].join(' ')
     )
   } catch (error) {
+    const exception = /** @type {ExecError} */ (error)
     rimraf.sync('./.git')
     t.ok(
-      /Could not find remote origin/.test(error),
+      /Could not find remote origin/.test(String(exception)),
       'should fail w/o Git repository w/o remote'
     )
   }
