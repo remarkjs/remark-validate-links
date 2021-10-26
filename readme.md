@@ -132,7 +132,7 @@ example.md
 ⚠ 3 warnings
 ```
 
-(Note that `readme.md#nosuchheading` is not warned about, because the API does
+(Note that `readme.md#no-such-heading` is not warned about, because the API does
 not check headings in other Markdown files).
 
 ## API
