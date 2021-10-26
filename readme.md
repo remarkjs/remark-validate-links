@@ -92,7 +92,7 @@ This [one does not](#does-not).
 
 # Bravo
 
-Headings in `readme.md` are [checked](readme.md#nosuchheading).
+Headings in `readme.md` are [checked](readme.md#no-such-heading).
 And [missing files are reported](missing-example.js).
 
 Definitions are also checked:
