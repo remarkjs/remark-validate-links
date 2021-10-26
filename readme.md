@@ -40,8 +40,11 @@ links to files (`license` or `index.js`) are also checked.
 This package is a [unified][] ([remark][]) plugin to check local links in a Git
 repo.
 
-unified is an AST (abstract syntax tree) based transform project.
-**remark** is everything unified that relates to markdown.
+**unified** is a project that transforms content with abstract syntax trees
+(ASTs).
+**remark** adds support for markdown to unified.
+**mdast** is the markdown AST that remark uses.
+This is a remark plugin that inspects mdast.
 
 ## When should I use this?
 
