@@ -8,100 +8,77 @@
 [![Backers][backers-badge]][collective]
 [![Chat][chat-badge]][chat]
 
-[**remark**][remark] plugin to validate that Markdown links and images reference
-existing local files and headings.
+[**remark**][remark] plugin to check that markdown links and images point to
+existing local files and headings in a Git repo.
 
 For example, this document does not have a heading named `Hello`.
 So if we’d link to it (`[welcome](#hello)`), we’d get a warning.
-
-In addition, when there’s a link to a heading in another document
-(`examples/foo.md#hello`), if that file exists but the heading does not, or if
-that file does not exist, we’d also get a warning.
-
-Linking to other files, such as `license` or `index.js` (when they exist) is
-fine.
-
+Links to headings in other markdown documents (`examples/foo.md#hello`) and
+links to files (`license` or `index.js`) are also checked.
 This plugin does not check external URLs (see
 [`remark-lint-no-dead-urls`][no-dead-urls]) or undefined references
 (see [`remark-lint-no-undefined-references`][no-undef-refs]).
 
-## Note!
-
-This plugin is ready for the new parser in remark
-([`remarkjs/remark#536`](https://github.com/remarkjs/remark/pull/536)).
-No change is needed: it works exactly the same now as it did before!
-
 ## Contents
 
+*   [What is this?](#what-is-this)
+*   [When should I use this?](#when-should-i-use-this)
 *   [Install](#install)
 *   [Use](#use)
-    *   [CLI](#cli)
-    *   [API](#api)
-*   [Configuration](#configuration)
+*   [API](#api)
+    *   [`unified().use(remarkValidateLinks[, options])`](#unifieduseremarkvalidatelinks-options)
+*   [Examples](#examples)
+    *   [Example: CLI](#example-cli)
+    *   [Example: CLI in npm scripts](#example-cli-in-npm-scripts)
 *   [Integration](#integration)
+*   [Types](#types)
+*   [Compatibility](#compatibility)
 *   [Security](#security)
 *   [Related](#related)
 *   [Contribute](#contribute)
 *   [License](#license)
 
+## What is this?
+
+This package is a [unified][] ([remark][]) plugin to check local links in a Git
+repo.
+
+unified is an AST (abstract syntax tree) based transform project.
+**remark** is everything unified that relates to markdown.
+
+## When should I use this?
+
+This project is useful if you have a Git repo, such as this one, with docs in
+markdown and links to headings and other files, and want to check whether
+they’re correct.
+Compared to other links checkers, this project can work offline (making it fast
+en prone to fewer false positives), and is specifically made for local links in
+Git repos.
+
 ## Install
 
-This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c):
-Node 12+ is needed to use it and it must be `import`ed instead of `require`d.
-
-[npm][]:
+This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c).
+In Node.js (12.20+, 14.14+, 16.0+), install with [npm][]:
 
 ```sh
 npm install remark-validate-links
 ```
 
+In Deno with [Skypack][]:
+
+```js
+import remarkValidateLinks from 'https://cdn.skypack.dev/remark-validate-links@11?dts'
+```
+
+In browsers with [Skypack][]:
+
+```html
+<script type="module">
+  import remarkValidateLinks from 'https://cdn.skypack.dev/remark-validate-links@11?min'
+</script>
+```
+
 ## Use
-
-### CLI
-
-Use `remark-validate-links` together with [**remark**][remark]:
-
-```bash
-npm install --global remark-cli remark-validate-links
-```
-
-Let’s say `readme.md` is this document, and `example.md` looks as follows:
-
-```markdown
-# Hello
-
-Read more [whoops, this does not exist](#world).
-
-This doesn’t exist either [whoops!](readme.md#foo).
-
-But this does exist: [license](license).
-
-So does this: [README](readme.md#installation).
-```
-
-Now, running `remark -u validate-links .` yields:
-
-```text
-example.md
-  3:11-3:48  warning  Link to unknown heading: `world`               missing-heading          remark-validate-links
-  5:27-5:51  warning  Link to unknown heading in `readme.md`: `foo`  missing-heading-in-file  remark-validate-links
-
-readme.md: no issues found
-
-⚠ 2 warnings
-```
-
-> Note: passing a file over stdin(4) may not work as expected, because it is not
-> known where the file originates from.
-
-### API
-
-> Note: The API checks links to headings and files.
-> It does not check headings in other files.
-> In a browser, only local links to headings are checked.
-
-This package exports no identifiers.
-The default export is `remarkValidateLinks`.
 
 Say we have the following file, `example.md`:
 
@@ -126,21 +103,22 @@ Definitions are also checked:
 References w/o definitions are not checked: [delta]
 ```
 
-And our module, `example.js`, looks as follows:
+And a module, `example.js`:
 
 ```js
-import {readSync} from 'to-vfile'
-import {reporter} from 'vfile-reporter'
+import {read} from 'to-vfile'
 import {remark} from 'remark'
 import remarkValidateLinks from 'remark-validate-links'
 
-const file = readSync('example.md')
+main()
 
-remark()
-  .use(remarkValidateLinks)
-  .process(file, (file) => {
-    console.error(reporter(file))
-  })
+async function main() {
+  const file = await remark()
+    .use(remarkValidateLinks)
+    .process(await read('example.md'))
+
+  console.log(reporter(file))
+}
 ```
 
 Now, running `node example` yields:
@@ -154,55 +132,55 @@ example.md
 ⚠ 3 warnings
 ```
 
-(Note that `readme.md#nosuchheading` is not warned about, because the API
-does not check headings in other Markdown files).
+(Note that `readme.md#nosuchheading` is not warned about, because the API does
+not check headings in other Markdown files).
 
-## Configuration
+## API
+
+This package exports no identifiers.
+The default export is `remarkValidateLinks`.
+
+### `unified().use(remarkValidateLinks[, options])`
+
+Check that markdown links and images point to existing local files and headings
+in a Git repo.
+
+> ⚠️ **Important**: The API in Node.js checks links to headings and files but
+> whether headings in other files exist.
+> The API in browsers only checks links to headings in the same file.
+> The CLI can check everything.
+
+##### `options`
 
 Typically, you don’t need to configure `remark-validate-links`, as it detects
 local Git repositories.
-If one is detected that references a known Git host (GitHub, GitLab,
-or Bitbucket), some extra links can be checked.
-If one is detected that does not reference a known Git host, local links still
-work as expected.
-If you’re not in a Git repository, you must pass `repository: false` explicitly.
 
-You can pass a `repository` (`string?`, `false`).
+###### `options.repository`
+
+URL to hosted Git (`string?` or `false`).
 If `repository` is nullish, the Git origin remote is detected.
-If the repository resolves to something [npm understands][package-repository]
-as a Git host such as GitHub, GitLab, or Bitbucket, full URLs to that host
-(say, `https://github.com/remarkjs/remark-validate-links/readme.md#install`)
-can also be checked.
+If the repository resolves to something [npm understands][package-repository] as
+a Git host such as GitHub, GitLab, or Bitbucket, then full URLs to that host
+(say, `https://github.com/remarkjs/remark-validate-links/readme.md#install`) can
+also be checked.
+If you’re not in a Git repository, you must pass `repository: false`
+explicitly.
 
-```sh
-remark --use 'validate-links=repository:"foo/bar"' example.md
-```
+###### `options.root`
 
-For this to work, a `root` (`string?`) is also used, referencing the local Git
-root directory (the place where `.git` is).
+A `root` (`string?`) can also be passed, referencing the local Git root
+directory (the folder that contains `.git`).
 If both `root` and `repository` are nullish, the Git root is detected.
 If `root` is not given but `repository` is, [`file.cwd`][cwd] is used.
 
-You can define this repository in [configuration files][cli] too.
-An example `.remarkrc` file could look as follows:
+###### `options.urlConfig`
 
-```json
-{
-  "plugins": [
-    [
-      "validate-links",
-      {
-        "repository": "foo/bar"
-      }
-    ]
-  ]
-}
-```
-
-If you’re self-hosting a Git server, you can provide URL information directly,
-as `urlConfig` (`Object`).
-
-For this repository, `urlConfig` looks as follows:
+If you’re using GitHub Enterprise or self-hosting a Git server, you can provide
+URL information as `urlConfig` (`Object`).
+This is not needed if you’re using a public GitHub, GitLab, or Bitbucket
+project.
+For this repository (`remarkjs/remark-validate-links` on GitHub) `urlConfig`
+looks as follows:
 
 ```js
 {
@@ -212,6 +190,8 @@ For this repository, `urlConfig` looks as follows:
   prefix: '/remarkjs/remark-validate-links/blob/',
   // Prefix of headings:
   headingPrefix: '#',
+  // Hash to top of markdown documents:
+  topAnchor: '#readme',
   // Whether lines in files can be linked:
   lines: true
 }
@@ -228,17 +208,115 @@ If this project were hosted on Bitbucket, it would be:
 }
 ```
 
+## Examples
+
+### Example: CLI
+
+It’s recommended to use `remark-validate-links` on the CLI with
+[`remark-cli`][cli].
+Install both with [npm][]:
+
+```sh
+npm install remark-cli remark-validate-links --save-dev
+```
+
+Let’s say we have a `readme.md` (this current document) and an `example.md`
+with the following text:
+
+```markdown
+# Hello
+
+Read more [whoops, this does not exist](#world).
+
+This doesn’t exist either [whoops!](readme.md#foo).
+
+But this does exist: [license](license).
+
+So does this: [readme](readme.md#install).
+```
+
+Now, running `./node_modules/.bin/remark --use remark-validate-links .` yields:
+
+```txt
+example.md
+  3:11-3:48  warning  Link to unknown heading: `world`               missing-heading          remark-validate-links
+  5:27-5:51  warning  Link to unknown heading in `readme.md`: `foo`  missing-heading-in-file  remark-validate-links
+
+readme.md: no issues found
+
+⚠ 2 warnings
+```
+
+### Example: CLI in npm scripts
+
+You can use `remark-validate-links` and [`remark-cli`][cli] in an npm script to
+check and format markdown in your project.
+Install both with [npm][]:
+
+```sh
+npm install remark-cli remark-validate-links --save-dev
+```
+
+Then, add a format script and configuration to `package.json`:
+
+```js
+{
+  // …
+  "scripts": {
+    // …
+    "format": "remark . --quiet --frail --output",
+    // …
+  },
+  "remarkConfig": {
+    "plugins": [
+      "remark-validate-links"
+    ]
+  },
+  // …
+}
+```
+
+> 💡 **Tip**: Add other tools such as prettier or ESLint to check and format
+> other files.
+>
+> 💡 **Tip**: Run `./node_modules/.bin/remark --help` for help with
+> `remark-cli`.
+
+Now you check and format markdown in your project with:
+
+```sh
+npm run format
+```
+
 ## Integration
 
 `remark-validate-links` can detect anchors on nodes through several properties
 on nodes:
 
-*   `node.data.hProperties.name` — Used by [`remark-html`][remark-html]
+*   `node.data.hProperties.name` — Used by
+    [`mdast-util-to-hast`][mdast-util-to-hast]
     to create a `name` attribute, which anchors can link to
-*   `node.data.hProperties.id` — Used by [`remark-html`][remark-html]
+*   `node.data.hProperties.id` — Used by
+    [`mdast-util-to-hast`][mdast-util-to-hast]
     to create an `id` attribute, which anchors can link to
-*   `node.data.id` — Used, in the future, by other tools to signal
+*   `node.data.id` — Used potentially in the future by other tools to signal
     unique identifiers on nodes
+
+## Types
+
+This package is fully typed with [TypeScript][].
+It exports an `Options` type, which specifies the interface of the accepted
+options, and an `UrlConfig` type, which specifies the interface of its
+corresponding option.
+
+## Compatibility
+
+Projects maintained by the unified collective are compatible with all maintained
+versions of Node.js.
+As of now, that is Node.js 12.20+, 14.14+, and 16.0+.
+Our projects sometimes work with older versions, but this is not guaranteed.
+
+This plugin works with `unified` 6+, `remark` 7+, and `remark-cli` 8+.
 
 ## Security
 
@@ -251,8 +329,10 @@ The tree is not modified, so there are no openings for
 
 ## Related
 
-*   [`remark-lint`][remark-lint] — Markdown code style linter
-*   [`remark-lint-no-dead-urls`][no-dead-urls] — Ensure external links are alive
+*   [`remark-lint`][remark-lint]
+    — markdown code style linter
+*   [`remark-lint-no-dead-urls`][no-dead-urls]
+    — check that external links are alive
 
 ## Contribute
 
@@ -298,6 +378,8 @@ abide by its terms.
 
 [npm]: https://docs.npmjs.com/cli/install
 
+[skypack]: https://www.skypack.dev
+
 [health]: https://github.com/remarkjs/.github
 
 [contributing]: https://github.com/remarkjs/.github/blob/HEAD/contributing.md
@@ -310,13 +392,17 @@ abide by its terms.
 
 [author]: https://wooorm.com
 
+[unified]: https://github.com/unifiedjs/unified
+
 [remark]: https://github.com/remarkjs/remark
+
+[typescript]: https://www.typescriptlang.org
 
 [cli]: https://github.com/remarkjs/remark/tree/HEAD/packages/remark-cli#readme
 
 [remark-lint]: https://github.com/remarkjs/remark-lint
 
-[remark-html]: https://github.com/remarkjs/remark-html
+[mdast-util-to-hast]: https://github.com/syntax-tree/mdast-util-to-hast#notes
 
 [no-dead-urls]: https://github.com/davidtheclark/remark-lint-no-dead-urls
 
