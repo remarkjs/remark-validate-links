@@ -15,9 +15,6 @@ For example, this document does not have a heading named `Hello`.
 So if we’d link to it (`[welcome](#hello)`), we’d get a warning.
 Links to headings in other markdown documents (`examples/foo.md#hello`) and
 links to files (`license` or `index.js`) are also checked.
-This plugin does not check external URLs (see
-[`remark-lint-no-dead-urls`][no-dead-urls]) or undefined references
-(see [`remark-lint-no-undefined-references`][no-undef-refs]).
 
 ## Contents
 
@@ -54,6 +51,9 @@ they’re correct.
 Compared to other links checkers, this project can work offline (making it fast
 en prone to fewer false positives), and is specifically made for local links in
 Git repos.
+This plugin does not check external URLs (see
+[`remark-lint-no-dead-urls`][no-dead-urls]) or undefined references
+(see [`remark-lint-no-undefined-references`][no-undef-refs]).
 
 ## Install
 
