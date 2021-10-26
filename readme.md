@@ -175,10 +175,9 @@ If `root` is not given but `repository` is, [`file.cwd`][cwd] is used.
 
 ###### `options.urlConfig`
 
-If you’re using GitHub Enterprise or self-hosting a Git server, you can provide
-URL information as `urlConfig` (`Object`).
-This is not needed if you’re using a public GitHub, GitLab, or Bitbucket
-project.
+If your project is hosted on `github.com`, `gitlab.com`, or `bitbucket.org`,
+this plugin can automatically detect the url configuration.
+Otherwise, use `urlConfig` to specify this manually.
 For this repository (`remarkjs/remark-validate-links` on GitHub) `urlConfig`
 looks as follows:
 
