@@ -1017,41 +1017,18 @@ test('links to other branches', async (t) => {
       '"../../index.js=repository:\\"wooorm/test#main\\""',
       '--use',
       '../sort.js',
-      'github.md',
-      'examples/github.md'
+      'other-branches.md'
     ].join(' ')
   )
   t.deepEqual(
     strip(stderr),
     [
-      'examples/github.md',
-      '     5:37-5:51  warning  Link to unknown heading: `world`                          missing-heading          remark-validate-links',
-      '   15:34-15:91  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-      '   19:10-19:29  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-      '   29:10-29:33  warning  Link to unknown heading in `../github.md`: `world`        missing-heading-in-file  remark-validate-links',
-      '   31:10-31:71  warning  Link to unknown heading in `../github.md`: `world`        missing-heading-in-file  remark-validate-links',
-      '   35:10-35:32  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-      '   35:10-35:32  warning  Link to unknown heading in `../world.md`: `hello`         missing-heading-in-file  remark-validate-links',
-      '   37:10-37:70  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-      '   37:10-37:70  warning  Link to unknown heading in `../world.md`: `hello`         missing-heading-in-file  remark-validate-links',
+      'other-branches.md',
+      '  5:3-5:100  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
+      '   7:3-7:96  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
+      '   7:3-7:96  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
       '',
-      'github.md',
-      '     5:37-5:51  warning  Link to unknown heading: `world`                          missing-heading          remark-validate-links',
-      '  21:34-21:100  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-      '   23:34-23:82  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-      '   27:10-27:37  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-      '   29:10-29:35  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-      '   41:10-41:41  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-      '   43:10-43:39  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-      '   45:10-45:80  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-      '   49:10-49:40  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-      '   49:10-49:40  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
-      '   51:10-51:38  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-      '   51:10-51:38  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
-      '   53:10-53:79  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-      '   53:10-53:79  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
-      '',
-      '⚠ 23 warnings',
+      '⚠ 3 warnings',
       ''
     ].join('\n'),
     'should ignore links to other branches'
