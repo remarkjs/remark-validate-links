@@ -164,8 +164,15 @@ URL to hosted Git (`string?` or `false`).
 If `repository` is nullish, the Git origin remote is detected.
 If the repository resolves to something [npm understands][package-repository] as
 a Git host such as GitHub, GitLab, or Bitbucket, then full URLs to that host
-(say, `https://github.com/remarkjs/remark-validate-links/readme.md#install`) can
-also be checked.
+(say,
+<https://github.com/remarkjs/remark-validate-links/blob/main/readme.md#install>)
+can also be checked.
+If it resolves to a branch (e.g.
+<https://github.com/remarkjs/remark-validate-links.git#main>) then links to
+other branches are ignored --- otherwise the plugin checks links to all branches
+as if they pointed to the current branch.
+When the repository is automatically detected the plugin checks links to all
+branches.
 If you’re not in a Git repository, you must pass `repository: false`
 explicitly.
 
