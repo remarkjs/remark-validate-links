@@ -1006,31 +1006,3 @@ test('remark-validate-links', async (t) => {
 
   t.end()
 })
-
-test('links to other branches', async (t) => {
-  const {stderr} = await exec(
-    [
-      bin,
-      '--no-config',
-      '--no-ignore',
-      '--use',
-      '"../../index.js=repository:\\"wooorm/test#main\\""',
-      '--use',
-      '../sort.js',
-      'other-branches.md'
-    ].join(' ')
-  )
-  t.deepEqual(
-    strip(stderr),
-    [
-      'other-branches.md',
-      '  5:3-5:100  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-      '   7:3-7:96  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-      '   7:3-7:96  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
-      '',
-      '⚠ 3 warnings',
-      ''
-    ].join('\n'),
-    'should ignore links to other branches'
-  )
-})
