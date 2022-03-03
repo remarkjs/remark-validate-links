@@ -12,6 +12,10 @@ jobs:
         with:
           node-version: ${{matrix.node}}
       - run: npm install
+      - name: Cherry pick https://github.com/remarkjs/remark-lint/pull/283
+        run: |
+          curl https://patch-diff.githubusercontent.com/raw/remarkjs/remark-lint/pull/283.patch |
+          git apply -p 3 --ignore-space-change --directory node_modules/unified-lint-rule
       - run: npm test
       - uses: codecov/codecov-action@v1
     strategy:
