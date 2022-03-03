@@ -447,50 +447,37 @@ test('remark-validate-links', async (t) => {
   rimraf.sync('./.git')
 
   fs.renameSync('../../.git', '../../.git.bak')
-
-  try {
-    await exec(
-      [
-        bin,
-        '--no-config',
-        '--no-ignore',
-        '--use',
-        '../../index.js',
-        '--use',
-        '../sort.js',
-        'github.md'
-      ].join(' ')
-    )
-  } catch (error) {
-    const exception = /** @type {ExecError} */ (error)
-    fs.renameSync('../../.git.bak', '../../.git')
-    t.ok(
-      /not a git repository/i.test(String(exception)),
-      'should fail w/o Git repository'
-    )
-  }
+  ;({stderr} = await exec(
+    [
+      bin,
+      '--no-config',
+      '--no-ignore',
+      '--use',
+      '../../index.js',
+      '--use',
+      '../sort.js',
+      'github.md'
+    ].join(' ')
+  ))
+  fs.renameSync('../../.git.bak', '../../.git')
+  t.ok(/not a git repository/i.test(stderr), 'should fail w/o Git repository')
 
   await exec('git init')
-
-  try {
-    await exec(
-      [
-        bin,
-        '--no-config',
-        '--no-ignore',
-        '--use',
-        '../../index.js',
-        'github.md'
-      ].join(' ')
-    )
-  } catch (error) {
-    const exception = /** @type {ExecError} */ (error)
-    rimraf.sync('./.git')
-    t.ok(
-      /Could not find remote origin/.test(String(exception)),
-      'should fail w/o Git repository w/o remote'
-    )
-  }
+  ;({stderr} = await exec(
+    [
+      bin,
+      '--no-config',
+      '--no-ignore',
+      '--use',
+      '../../index.js',
+      'github.md'
+    ].join(' ')
+  ))
+  rimraf.sync('./.git')
+  t.ok(
+    /Could not find remote origin/.test(stderr),
+    'should fail w/o Git repository w/o remote'
+  )
 
   fs.renameSync('../../.git', '../../.git.bak')
   ;({stderr} = await exec(
