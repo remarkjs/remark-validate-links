@@ -26,10 +26,12 @@ test.onFinish(() => {
 const bin = path.join('..', '..', 'node_modules', '.bin', 'remark')
 
 test('remark-validate-links', async (t) => {
+  const vfile = await remark()
+    .use(links)
+    .use(sort)
+    .process(readSync('github.md'))
   t.deepEqual(
-    (
-      await remark().use(links).use(sort).process(readSync('github.md'))
-    ).messages.map((d) => String(d)),
+    vfile.messages.map(String),
     [
       'github.md:5:37-5:51: Link to unknown heading: `world`',
       'github.md:27:10-27:37: Link to unknown file: `examples/world.md`',
