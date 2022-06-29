@@ -3,6 +3,4 @@
  * @typedef {import('./lib/index.js').Options} Options
  */
 
-import remarkValidateLinks from './lib/index.js'
-
-export default remarkValidateLinks
+export {default} from './lib/index.js'
