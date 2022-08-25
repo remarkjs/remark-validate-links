@@ -729,16 +729,6 @@ test('remark-validate-links', async (t) => {
     ].join('\n'),
     'should support a Bitbucket shortcode'
   )
-
-  const withSuggestions = await remark()
-    .use(links)
-    .use(sort)
-    .process(readSync('suggestions.md'))
-  t.deepEqual(
-    withSuggestions.messages.map((message) => message.expected),
-    [['hello']],
-    'should support suggestions'
-  )
   ;({stderr} = await exec(
     [
       bin,
