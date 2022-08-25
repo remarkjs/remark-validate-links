@@ -41,6 +41,17 @@ test('remark-validate-links', async (t) => {
     ],
     'should work on the API'
   )
+  t.deepEqual(
+    vfile.messages.map((message) => message.url),
+    [
+      'https://github.com/remarkjs/remark-validate-links#readme',
+      'https://github.com/remarkjs/remark-validate-links#readme',
+      'https://github.com/remarkjs/remark-validate-links#readme',
+      'https://github.com/remarkjs/remark-validate-links#readme',
+      'https://github.com/remarkjs/remark-validate-links#readme'
+    ],
+    'should add message urls'
+  )
 
   const file = await remark()
     .use(links)
