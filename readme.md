@@ -149,7 +149,7 @@ Check that markdown links and images point to existing local files and headings
 in a Git repo.
 
 > ⚠️ **Important**: The API in Node.js checks links to headings and files but
-> doesn't check whether headings in other files exist.
+> does not check whether headings in other files exist.
 > The API in browsers only checks links to headings in the same file.
 > The CLI can check everything.
 
