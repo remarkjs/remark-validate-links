@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@types/mdast": "^3.0.0",
-    "github-slugger": "^1.0.0",
+    "github-slugger": "^2.0.0",
     "hosted-git-info": "^5.0.0",
     "mdast-util-to-string": "^3.0.0",
     "propose": "0.0.5",
@@ -59,7 +59,6 @@
     "vfile": "^5.0.0"
   },
   "devDependencies": {
-    "@types/github-slugger": "^1.0.0",
     "@types/hast": "^2.0.0",
     "@types/hosted-git-info": "^3.0.0",
     "@types/rimraf": "^3.0.1",
@@ -75,7 +74,7 @@
     "type-coverage": "^2.0.0",
     "typescript": "^4.0.0",
     "vfile-sort": "^3.0.0",
-    "xo": "^0.52.0"
+    "xo": "^0.53.0"
   },
   "scripts": {
     "build": "rimraf \"lib/**/*.d.ts\" \"test/**/*.d.ts\" \"*.d.ts\" && tsc && type-coverage",
@@ -93,7 +92,10 @@
     "trailingComma": "none"
   },
   "xo": {
-    "prettier": true
+    "prettier": true,
+    "rules": {
+      "unicorn/prefer-logical-operator-over-ternary": "off"
+    }
   },
   "remarkConfig": {
     "plugins": [
