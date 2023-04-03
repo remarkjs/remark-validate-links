@@ -76,6 +76,17 @@ test('remark-validate-links', async (t) => {
     'should support landmarks and references to prototypal values'
   )
 
+  const fileHtml = await remark()
+    .use(links)
+    .use(sort)
+    .process('# a <!-- b --> c\n# a <!-- b -->\n# a\n[](#a--c) [](#a-), [](#a)')
+
+  t.deepEqual(
+    fileHtml.messages.map(String),
+    [],
+    'should slug headings with HTML correctly'
+  )
+
   let {stderr} = await exec(
     [
       bin,
