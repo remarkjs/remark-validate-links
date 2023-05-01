@@ -48,7 +48,7 @@
   "dependencies": {
     "@types/mdast": "^3.0.0",
     "github-slugger": "^2.0.0",
-    "hosted-git-info": "^5.0.0",
+    "hosted-git-info": "^6.0.0",
     "mdast-util-to-string": "^3.2.0",
     "propose": "0.0.5",
     "to-vfile": "^7.0.0",
