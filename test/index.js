@@ -886,11 +886,11 @@ test('remark-validate-links', async (t) => {
     strip(stderr),
     [
       'images.md',
-      '  21:10-21:50  warning  Link to unknown file: `examples/missing.jpg`. Did you mean `examples/image.jpg`  missing-file  remark-validate-links',
-      '  23:12-23:42  warning  Link to unknown file: `examples/missing.jpg`. Did you mean `examples/image.jpg`  missing-file  remark-validate-links',
-      '  25:10-25:89  warning  Link to unknown file: `examples/missing.jpg`. Did you mean `examples/image.jpg`  missing-file  remark-validate-links',
-      '   37:1-37:38  warning  Link to unknown file: `examples/missing.jpg`. Did you mean `examples/image.jpg`  missing-file  remark-validate-links',
-      '   39:1-39:77  warning  Link to unknown file: `examples/missing.jpg`. Did you mean `examples/image.jpg`  missing-file  remark-validate-links',
+      '  23:10-23:50  warning  Link to unknown file: `examples/missing.jpg`. Did you mean `examples/image.jpg`  missing-file  remark-validate-links',
+      '  25:12-25:42  warning  Link to unknown file: `examples/missing.jpg`. Did you mean `examples/image.jpg`  missing-file  remark-validate-links',
+      '  27:10-27:89  warning  Link to unknown file: `examples/missing.jpg`. Did you mean `examples/image.jpg`  missing-file  remark-validate-links',
+      '   39:1-39:38  warning  Link to unknown file: `examples/missing.jpg`. Did you mean `examples/image.jpg`  missing-file  remark-validate-links',
+      '   41:1-41:77  warning  Link to unknown file: `examples/missing.jpg`. Did you mean `examples/image.jpg`  missing-file  remark-validate-links',
       '',
       '⚠ 5 warnings',
       ''

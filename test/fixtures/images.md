@@ -16,6 +16,8 @@ Relative with whitespace ![image reference][rel-whitespace]
 
 Relative with heading ![image](./examples/image.jpg#metadata)
 
+Relative reference with heading ![image reference][rel-heading]
+
 <!-- Invalid: -->
 
 Relative ![missing image](./examples/missing.jpg)
@@ -39,3 +41,5 @@ Absolute ![missing image reference][abs-missing]
 [abs-missing]: https://github.com/wooorm/test/blob/main/examples/missing.jpg
 
 [rel-whitespace]: "./examples/image with space.jpg"
+
+[rel-heading]: ./examples/image.jpg#metadata
