@@ -501,7 +501,7 @@ test('remark-validate-links', async function (t) {
       assert.fail()
     } catch (error) {
       const cause = /** @type {ExecError} */ (error)
-      assert.ok(/not a git repository/i.test(String(cause)))
+      assert.match(String(cause), /not a git repository/i)
     } finally {
       await fs.rename(gitBakUrl, gitUrl)
     }
@@ -525,7 +525,10 @@ test('remark-validate-links', async function (t) {
     } catch (error) {
       const cause = /** @type {ExecError} */ (error)
       await fs.rm('./.git', {recursive: true})
-      assert.ok(/Could not find remote origin/.test(String(cause)))
+      assert.match(
+        String(cause),
+        /Cannot find remote `origin` of local Git repo/
+      )
     }
   })
 
