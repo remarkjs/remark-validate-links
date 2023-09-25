@@ -34,17 +34,22 @@
   ],
   "sideEffects": false,
   "type": "module",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "exports": "./index.js",
+  "imports": {
+    "#check-files": {
+      "node": "./lib/check-files.node.js",
+      "default": "./lib/check-files.default.js"
+    },
+    "#find-repo": {
+      "node": "./lib/find-repo.node.js",
+      "default": "./lib/find-repo.default.js"
+    }
+  },
   "files": [
     "lib/",
     "index.d.ts",
     "index.js"
   ],
-  "browser": {
-    "./lib/check-files.js": "./lib/check-files.browser.js",
-    "./lib/find-repo.js": "./lib/find-repo.browser.js"
-  },
   "dependencies": {
     "@types/mdast": "^4.0.0",
     "github-slugger": "^2.0.0",

@@ -16,9 +16,9 @@ import {fileURLToPath} from 'node:url'
 import test from 'node:test'
 import {promisify} from 'node:util'
 import {remark} from 'remark'
+import remarkValidateLinks from 'remark-validate-links'
 import strip from 'strip-ansi'
 import {read} from 'to-vfile'
-import remarkValidateLinks from '../index.js'
 import sort from './sort.js'
 
 const exec = promisify(execCallback)
@@ -36,9 +36,10 @@ test('remark-validate-links', async function (t) {
   process.chdir(fileURLToPath(fakeBaseUrl))
 
   await t.test('should expose the public api', async function () {
-    assert.deepEqual(Object.keys(await import('../index.js')).sort(), [
-      'default'
-    ])
+    assert.deepEqual(
+      Object.keys(await import('remark-validate-links')).sort(),
+      ['default']
+    )
   })
 
   await t.test('should work on the API', async function () {
