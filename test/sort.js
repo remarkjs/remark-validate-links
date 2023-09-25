@@ -1,8 +1,16 @@
-import {sort} from 'vfile-sort'
+/**
+ * @typedef {import('mdast').Root} Root
+ * @typedef {import('vfile').VFile} VFile
+ */
 
-/** @type {import('unified').Plugin<void[]>} */
+import {compareMessage} from 'vfile-sort'
+
 export default function unifiedSort() {
+  /**
+   * @param {Root} _
+   * @param {VFile} file
+   */
   return (_, file) => {
-    sort(file)
+    file.messages.sort(compareMessage)
   }
 }

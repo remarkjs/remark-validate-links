@@ -4,17 +4,17 @@
   "description": "remark plugin to validate links to headings and files",
   "license": "MIT",
   "keywords": [
-    "unified",
+    "file",
+    "heading",
+    "link",
+    "markdown",
+    "mdast",
+    "plugin",
+    "reference",
     "remark",
     "remark-plugin",
-    "plugin",
-    "mdast",
-    "markdown",
-    "validate",
-    "link",
-    "reference",
-    "file",
-    "heading"
+    "unified",
+    "validate"
   ],
   "repository": "remarkjs/remark-validate-links",
   "bugs": "https://github.com/remarkjs/remark-validate-links/issues",
@@ -46,66 +46,74 @@
     "./lib/find/find-repo.js": "./lib/find/find-repo.browser.js"
   },
   "dependencies": {
-    "@types/mdast": "^3.0.0",
+    "@types/mdast": "^4.0.0",
     "github-slugger": "^2.0.0",
-    "hosted-git-info": "^6.0.0",
-    "mdast-util-to-string": "^3.2.0",
+    "hosted-git-info": "^7.0.0",
+    "mdast-util-to-string": "^4.0.0",
     "propose": "0.0.5",
-    "to-vfile": "^7.0.0",
+    "to-vfile": "^8.0.0",
     "trough": "^2.0.0",
-    "unified": "^10.0.0",
-    "unified-engine": "^10.0.1",
-    "unist-util-visit": "^4.0.0",
-    "vfile": "^5.0.0"
+    "unified": "^11.0.0",
+    "unified-engine": "^11.0.0",
+    "unist-util-visit": "^5.0.0",
+    "vfile": "^6.0.0"
   },
   "devDependencies": {
-    "@types/hast": "^2.0.0",
+    "@types/hast": "^3.0.0",
     "@types/hosted-git-info": "^3.0.0",
-    "@types/rimraf": "^3.0.1",
-    "@types/tape": "^4.0.0",
-    "c8": "^7.0.0",
-    "prettier": "^2.0.0",
-    "remark": "^14.0.0",
+    "@types/node": "^20.0.0",
+    "c8": "^8.0.0",
+    "prettier": "^3.0.0",
+    "remark": "^15.0.0",
     "remark-cli": "^11.0.0",
     "remark-preset-wooorm": "^9.0.0",
-    "rimraf": "^3.0.0",
     "strip-ansi": "^7.0.0",
-    "tape": "^5.0.0",
     "type-coverage": "^2.0.0",
     "typescript": "^5.0.0",
-    "vfile-sort": "^3.0.0",
-    "xo": "^0.54.0"
+    "vfile-sort": "^4.0.0",
+    "xo": "^0.56.0"
   },
   "scripts": {
-    "build": "rimraf \"lib/**/*.d.ts\" \"test/**/*.d.ts\" \"*.d.ts\" && tsc && type-coverage",
-    "format": "remark . -qfo --ignore-pattern test/ && prettier . -w --loglevel warn && xo --fix",
+    "build": "tsc --build --clean && tsc --build && type-coverage",
+    "format": "remark . --frail --output --quiet && prettier . --log-level warn --write && xo --fix",
+    "prepack": "npm run build && npm run format",
+    "test": "npm run build && npm run format && npm run test-coverage",
     "test-api": "node --conditions development test/index.js",
-    "test-coverage": "c8 --check-coverage --branches 100 --functions 100 --lines 100 --statements 100 --reporter lcov npm run test-api",
-    "test": "npm run build && npm run format && npm run test-coverage"
+    "test-coverage": "c8 --100 --reporter lcov npm run test-api"
   },
   "prettier": {
-    "tabWidth": 2,
-    "useTabs": false,
-    "singleQuote": true,
     "bracketSpacing": false,
+    "singleQuote": true,
     "semi": false,
-    "trailingComma": "none"
-  },
-  "xo": {
-    "prettier": true,
-    "rules": {
-      "unicorn/prefer-logical-operator-over-ternary": "off"
-    }
+    "tabWidth": 2,
+    "trailingComma": "none",
+    "useTabs": false
   },
   "remarkConfig": {
     "plugins": [
-      "preset-wooorm"
+      "remark-preset-wooorm"
     ]
   },
   "typeCoverage": {
     "atLeast": 100,
     "detail": true,
-    "strict": true,
-    "ignoreCatch": true
+    "ignoreCatch": true,
+    "strict": true
+  },
+  "xo": {
+    "overrides": [
+      {
+        "files": [
+          "test/**/*.js"
+        ],
+        "rules": {
+          "no-await-in-loop": "off"
+        }
+      }
+    ],
+    "prettier": true,
+    "rules": {
+      "unicorn/prefer-logical-operator-over-ternary": "off"
+    }
   }
 }
