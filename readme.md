@@ -343,7 +343,7 @@ versions of Node.js.
 When we cut a new major release, we drop support for unmaintained versions of
 Node.
 This means we try to keep the current release line,
-`remark-validate-links@^14`, compatible with Node.js 14.
+`remark-validate-links@^15`, compatible with Node.js 16.
 
 This plugin works with `unified` version 6+, `remark` version 7+, and
 `remark-cli` version 8+.
