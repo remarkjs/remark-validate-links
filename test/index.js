@@ -48,11 +48,11 @@ test('remark-validate-links', async function (t) {
       .process(await read('github.md'))
 
     assert.deepEqual(file.messages.map(String), [
-      'github.md:5:37-5:51: Link to unknown heading: `world`',
-      'github.md:27:10-27:37: Link to unknown file: `examples/world.md`',
-      'github.md:29:10-29:35: Link to unknown file: `examples/world.md`',
-      'github.md:49:10-49:40: Link to unknown file: `examples/world.md`',
-      'github.md:51:10-51:38: Link to unknown file: `examples/world.md`'
+      'github.md:5:37-5:51: Cannot find heading for `#world`',
+      'github.md:27:10-27:37: Cannot find file `examples/world.md`',
+      'github.md:29:10-29:35: Cannot find file `examples/world.md`',
+      'github.md:49:10-49:40: Cannot find file `examples/world.md`',
+      'github.md:51:10-51:38: Cannot find file `examples/world.md`'
     ])
 
     assert.ok(
@@ -108,7 +108,7 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'small.md',
-        '  5:13-5:27  warning  Link to unknown heading: `world`  missing-heading  remark-validate-links',
+        '5:13-5:27 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
         '',
         '⚠ 1 warning',
         ''
@@ -134,7 +134,7 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'small.md',
-        '  5:13-5:27  warning  Link to unknown heading: `world`  missing-heading  remark-validate-links',
+        '5:13-5:27 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
         '',
         '⚠ 1 warning',
         ''
@@ -161,10 +161,12 @@ test('remark-validate-links', async function (t) {
       const cause = /** @type {ExecError} */ (error)
       assert.match(String(cause), /command failed/i)
       assert.equal(
-        strip(cause.stderr),
+        cleanError(strip(cause.stderr)),
         [
           'FOOOO',
-          '  1:1  error  No such file or directory',
+          ' error No such file or folder',
+          '  [cause]:',
+          '    Error: ENOENT:…',
           '',
           '✖ 1 error',
           ''
@@ -193,13 +195,15 @@ test('remark-validate-links', async function (t) {
       const cause = /** @type {ExecError} */ (error)
       assert.match(String(cause), /command failed/i)
       assert.equal(
-        strip(cause.stderr),
+        cleanError(strip(cause.stderr)),
         [
-          'FOOOO',
-          '         1:1  error    No such file or directory',
-          '',
           'definitions.md',
-          '  10:1-10:18  warning  Link to unknown heading: `world`  missing-heading  remark-validate-links',
+          '1:1-1:1 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
+          '',
+          'FOOOO',
+          '           error   No such file or folder',
+          '  [cause]:',
+          '    Error: ENOENT:…',
           '',
           '2 messages (✖ 1 error, ⚠ 1 warning)',
           ''
@@ -248,7 +252,7 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         '<stdin>',
-        '  5:37-5:51  warning  Link to unknown heading: `world`  missing-heading  remark-validate-links',
+        '5:37-5:51 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
         '',
         '⚠ 1 warning',
         ''
@@ -274,15 +278,15 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'github.md',
-        '    5:37-5:51  warning  Link to unknown heading: `world`                          missing-heading          remark-validate-links',
-        '  27:10-27:37  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '  29:10-29:35  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '  41:10-41:41  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-        '  43:10-43:39  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-        '  49:10-49:40  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '  49:10-49:40  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
-        '  51:10-51:38  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '  51:10-51:38  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
+        '5:37-5:51   warning Cannot find heading for `#world`                         missing-heading         remark-validate-links:missing-heading',
+        '27:10-27:37 warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '29:10-29:35 warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '41:10-41:41 warning Cannot find heading for `#world` in `examples/github.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '43:10-43:39 warning Cannot find heading for `#world` in `examples/github.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '49:10-49:40 warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '49:10-49:40 warning Cannot find heading for `#hello` in `examples/world.md`  missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '51:10-51:38 warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '51:10-51:38 warning Cannot find heading for `#hello` in `examples/world.md`  missing-heading-in-file remark-validate-links:missing-heading-in-file',
         '',
         '⚠ 9 warnings',
         ''
@@ -309,22 +313,22 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'examples/github.md',
-        '    5:37-5:51  warning  Link to unknown heading: `world`                          missing-heading          remark-validate-links',
-        '  19:10-19:29  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-        '  29:10-29:33  warning  Link to unknown heading in `../github.md`: `world`        missing-heading-in-file  remark-validate-links',
-        '  35:10-35:32  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-        '  35:10-35:32  warning  Link to unknown heading in `../world.md`: `hello`         missing-heading-in-file  remark-validate-links',
+        '5:37-5:51   warning Cannot find heading for `#world`                         missing-heading         remark-validate-links:missing-heading',
+        '19:10-19:29 warning Cannot find file `../world.md`                           missing-file            remark-validate-links:missing-file',
+        '29:10-29:33 warning Cannot find heading for `#world` in `../github.md`       missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '35:10-35:32 warning Cannot find file `../world.md`                           missing-file            remark-validate-links:missing-file',
+        '35:10-35:32 warning Cannot find heading for `#hello` in `../world.md`        missing-heading-in-file remark-validate-links:missing-heading-in-file',
         '',
         'github.md',
-        '    5:37-5:51  warning  Link to unknown heading: `world`                          missing-heading          remark-validate-links',
-        '  27:10-27:37  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '  29:10-29:35  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '  41:10-41:41  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-        '  43:10-43:39  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-        '  49:10-49:40  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '  49:10-49:40  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
-        '  51:10-51:38  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '  51:10-51:38  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
+        '5:37-5:51   warning Cannot find heading for `#world`                         missing-heading         remark-validate-links:missing-heading',
+        '27:10-27:37 warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '29:10-29:35 warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '41:10-41:41 warning Cannot find heading for `#world` in `examples/github.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '43:10-43:39 warning Cannot find heading for `#world` in `examples/github.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '49:10-49:40 warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '49:10-49:40 warning Cannot find heading for `#hello` in `examples/world.md`  missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '51:10-51:38 warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '51:10-51:38 warning Cannot find heading for `#hello` in `examples/world.md`  missing-heading-in-file remark-validate-links:missing-heading-in-file',
         '',
         '⚠ 14 warnings',
         ''
@@ -350,7 +354,7 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'definitions.md',
-        '  10:1-10:18  warning  Link to unknown heading: `world`  missing-heading  remark-validate-links',
+        '10:1-10:18 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
         '',
         '⚠ 1 warning',
         ''
@@ -379,39 +383,39 @@ test('remark-validate-links', async function (t) {
         strip(result.stderr),
         [
           'examples/github.md',
-          '     5:37-5:51  warning  Link to unknown heading: `world`                          missing-heading          remark-validate-links',
-          '   15:34-15:91  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-          '   17:12-17:72  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-          '   19:10-19:29  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-          '   29:10-29:33  warning  Link to unknown heading in `../github.md`: `world`        missing-heading-in-file  remark-validate-links',
-          '   31:10-31:71  warning  Link to unknown heading in `../github.md`: `world`        missing-heading-in-file  remark-validate-links',
-          '   33:10-33:74  warning  Link to unknown heading in `../github.md`: `world`        missing-heading-in-file  remark-validate-links',
-          '   35:10-35:32  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-          '   35:10-35:32  warning  Link to unknown heading in `../world.md`: `hello`         missing-heading-in-file  remark-validate-links',
-          '   37:10-37:70  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-          '   37:10-37:70  warning  Link to unknown heading in `../world.md`: `hello`         missing-heading-in-file  remark-validate-links',
-          '   39:10-39:73  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-          '   39:10-39:73  warning  Link to unknown heading in `../world.md`: `hello`         missing-heading-in-file  remark-validate-links',
+          '5:37-5:51    warning Cannot find heading for `#world`                         missing-heading         remark-validate-links:missing-heading',
+          '15:34-15:91  warning Cannot find file `../world.md`                           missing-file            remark-validate-links:missing-file',
+          '17:12-17:72  warning Cannot find file `../world.md`                           missing-file            remark-validate-links:missing-file',
+          '19:10-19:29  warning Cannot find file `../world.md`                           missing-file            remark-validate-links:missing-file',
+          '29:10-29:33  warning Cannot find heading for `#world` in `../github.md`       missing-heading-in-file remark-validate-links:missing-heading-in-file',
+          '31:10-31:71  warning Cannot find heading for `#world` in `../github.md`       missing-heading-in-file remark-validate-links:missing-heading-in-file',
+          '33:10-33:74  warning Cannot find heading for `#world` in `../github.md`       missing-heading-in-file remark-validate-links:missing-heading-in-file',
+          '35:10-35:32  warning Cannot find file `../world.md`                           missing-file            remark-validate-links:missing-file',
+          '35:10-35:32  warning Cannot find heading for `#hello` in `../world.md`        missing-heading-in-file remark-validate-links:missing-heading-in-file',
+          '37:10-37:70  warning Cannot find file `../world.md`                           missing-file            remark-validate-links:missing-file',
+          '37:10-37:70  warning Cannot find heading for `#hello` in `../world.md`        missing-heading-in-file remark-validate-links:missing-heading-in-file',
+          '39:10-39:73  warning Cannot find file `../world.md`                           missing-file            remark-validate-links:missing-file',
+          '39:10-39:73  warning Cannot find heading for `#hello` in `../world.md`        missing-heading-in-file remark-validate-links:missing-heading-in-file',
           '',
           'github.md',
-          '     5:37-5:51  warning  Link to unknown heading: `world`                          missing-heading          remark-validate-links',
-          '  21:34-21:100  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-          '   23:34-23:82  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-          '   25:12-25:81  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-          '   27:10-27:37  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-          '   29:10-29:35  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-          '   41:10-41:41  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-          '   43:10-43:39  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-          '   45:10-45:80  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-          '   47:10-47:83  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-          '   49:10-49:40  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-          '   49:10-49:40  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
-          '   51:10-51:38  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-          '   51:10-51:38  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
-          '   53:10-53:79  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-          '   53:10-53:79  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
-          '   55:10-55:82  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-          '   55:10-55:82  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
+          '5:37-5:51    warning Cannot find heading for `#world`                         missing-heading         remark-validate-links:missing-heading',
+          '21:34-21:100 warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+          '23:34-23:82  warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+          '25:12-25:81  warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+          '27:10-27:37  warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+          '29:10-29:35  warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+          '41:10-41:41  warning Cannot find heading for `#world` in `examples/github.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+          '43:10-43:39  warning Cannot find heading for `#world` in `examples/github.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+          '45:10-45:80  warning Cannot find heading for `#world` in `examples/github.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+          '47:10-47:83  warning Cannot find heading for `#world` in `examples/github.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+          '49:10-49:40  warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+          '49:10-49:40  warning Cannot find heading for `#hello` in `examples/world.md`  missing-heading-in-file remark-validate-links:missing-heading-in-file',
+          '51:10-51:38  warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+          '51:10-51:38  warning Cannot find heading for `#hello` in `examples/world.md`  missing-heading-in-file remark-validate-links:missing-heading-in-file',
+          '53:10-53:79  warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+          '53:10-53:79  warning Cannot find heading for `#hello` in `examples/world.md`  missing-heading-in-file remark-validate-links:missing-heading-in-file',
+          '55:10-55:82  warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+          '55:10-55:82  warning Cannot find heading for `#hello` in `examples/world.md`  missing-heading-in-file remark-validate-links:missing-heading-in-file',
           '',
           '⚠ 31 warnings',
           ''
@@ -441,39 +445,39 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'examples/github.md',
-        '     5:37-5:51  warning  Link to unknown heading: `world`                          missing-heading          remark-validate-links',
-        '   15:34-15:91  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-        '   17:12-17:72  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-        '   19:10-19:29  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-        '   29:10-29:33  warning  Link to unknown heading in `../github.md`: `world`        missing-heading-in-file  remark-validate-links',
-        '   31:10-31:71  warning  Link to unknown heading in `../github.md`: `world`        missing-heading-in-file  remark-validate-links',
-        '   33:10-33:74  warning  Link to unknown heading in `../github.md`: `world`        missing-heading-in-file  remark-validate-links',
-        '   35:10-35:32  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-        '   35:10-35:32  warning  Link to unknown heading in `../world.md`: `hello`         missing-heading-in-file  remark-validate-links',
-        '   37:10-37:70  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-        '   37:10-37:70  warning  Link to unknown heading in `../world.md`: `hello`         missing-heading-in-file  remark-validate-links',
-        '   39:10-39:73  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-        '   39:10-39:73  warning  Link to unknown heading in `../world.md`: `hello`         missing-heading-in-file  remark-validate-links',
+        '5:37-5:51    warning Cannot find heading for `#world`                         missing-heading         remark-validate-links:missing-heading',
+        '15:34-15:91  warning Cannot find file `../world.md`                           missing-file            remark-validate-links:missing-file',
+        '17:12-17:72  warning Cannot find file `../world.md`                           missing-file            remark-validate-links:missing-file',
+        '19:10-19:29  warning Cannot find file `../world.md`                           missing-file            remark-validate-links:missing-file',
+        '29:10-29:33  warning Cannot find heading for `#world` in `../github.md`       missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '31:10-31:71  warning Cannot find heading for `#world` in `../github.md`       missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '33:10-33:74  warning Cannot find heading for `#world` in `../github.md`       missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '35:10-35:32  warning Cannot find file `../world.md`                           missing-file            remark-validate-links:missing-file',
+        '35:10-35:32  warning Cannot find heading for `#hello` in `../world.md`        missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '37:10-37:70  warning Cannot find file `../world.md`                           missing-file            remark-validate-links:missing-file',
+        '37:10-37:70  warning Cannot find heading for `#hello` in `../world.md`        missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '39:10-39:73  warning Cannot find file `../world.md`                           missing-file            remark-validate-links:missing-file',
+        '39:10-39:73  warning Cannot find heading for `#hello` in `../world.md`        missing-heading-in-file remark-validate-links:missing-heading-in-file',
         '',
         'github.md',
-        '     5:37-5:51  warning  Link to unknown heading: `world`                          missing-heading          remark-validate-links',
-        '  21:34-21:100  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '   23:34-23:82  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '   25:12-25:81  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '   27:10-27:37  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '   29:10-29:35  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '   41:10-41:41  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-        '   43:10-43:39  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-        '   45:10-45:80  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-        '   47:10-47:83  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-        '   49:10-49:40  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '   49:10-49:40  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
-        '   51:10-51:38  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '   51:10-51:38  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
-        '   53:10-53:79  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '   53:10-53:79  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
-        '   55:10-55:82  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '   55:10-55:82  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
+        '5:37-5:51    warning Cannot find heading for `#world`                         missing-heading         remark-validate-links:missing-heading',
+        '21:34-21:100 warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '23:34-23:82  warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '25:12-25:81  warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '27:10-27:37  warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '29:10-29:35  warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '41:10-41:41  warning Cannot find heading for `#world` in `examples/github.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '43:10-43:39  warning Cannot find heading for `#world` in `examples/github.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '45:10-45:80  warning Cannot find heading for `#world` in `examples/github.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '47:10-47:83  warning Cannot find heading for `#world` in `examples/github.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '49:10-49:40  warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '49:10-49:40  warning Cannot find heading for `#hello` in `examples/world.md`  missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '51:10-51:38  warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '51:10-51:38  warning Cannot find heading for `#hello` in `examples/world.md`  missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '53:10-53:79  warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '53:10-53:79  warning Cannot find heading for `#hello` in `examples/world.md`  missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '55:10-55:82  warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '55:10-55:82  warning Cannot find heading for `#hello` in `examples/world.md`  missing-heading-in-file remark-validate-links:missing-heading-in-file',
         '',
         '⚠ 31 warnings',
         ''
@@ -482,7 +486,7 @@ test('remark-validate-links', async function (t) {
   })
 
   await t.test('should fail w/o Git repository', async function () {
-    await fs.rm('./.git', {recursive: true})
+    await fs.rm('./.git', {force: true, recursive: true})
     await fs.rename(gitUrl, gitBakUrl)
 
     try {
@@ -554,7 +558,7 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'small.md',
-        '  5:13-5:27  warning  Link to unknown heading: `world`  missing-heading  remark-validate-links',
+        '5:13-5:27 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
         '',
         '⚠ 1 warning',
         ''
@@ -582,7 +586,7 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'small.md',
-        '  5:13-5:27  warning  Link to unknown heading: `world`  missing-heading  remark-validate-links',
+        '5:13-5:27 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
         '',
         '⚠ 1 warning',
         ''
@@ -612,7 +616,7 @@ test('remark-validate-links', async function (t) {
         strip(result.stderr),
         [
           'small.md',
-          '  5:13-5:27  warning  Link to unknown heading: `world`  missing-heading  remark-validate-links',
+          '5:13-5:27 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
           '',
           '⚠ 1 warning',
           ''
@@ -644,23 +648,23 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'examples/github.md',
-        '    5:37-5:51  warning  Link to unknown heading: `world`                          missing-heading          remark-validate-links',
-        '  19:10-19:29  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-        '  29:10-29:33  warning  Link to unknown heading in `../github.md`: `world`        missing-heading-in-file  remark-validate-links',
-        '  35:10-35:32  warning  Link to unknown file: `../world.md`                       missing-file             remark-validate-links',
-        '  35:10-35:32  warning  Link to unknown heading in `../world.md`: `hello`         missing-heading-in-file  remark-validate-links',
+        '5:37-5:51   warning Cannot find heading for `#world`                         missing-heading         remark-validate-links:missing-heading',
+        '19:10-19:29 warning Cannot find file `../world.md`                           missing-file            remark-validate-links:missing-file',
+        '29:10-29:33 warning Cannot find heading for `#world` in `../github.md`       missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '35:10-35:32 warning Cannot find file `../world.md`                           missing-file            remark-validate-links:missing-file',
+        '35:10-35:32 warning Cannot find heading for `#hello` in `../world.md`        missing-heading-in-file remark-validate-links:missing-heading-in-file',
         '',
         'github.md',
-        '    5:37-5:51  warning  Link to unknown heading: `world`                          missing-heading          remark-validate-links',
-        '  27:10-27:37  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '  29:10-29:35  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '  41:10-41:41  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-        '  43:10-43:39  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
-        '  49:10-49:40  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '  49:10-49:40  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
-        '  51:10-51:38  warning  Link to unknown file: `examples/world.md`                 missing-file             remark-validate-links',
-        '  51:10-51:38  warning  Link to unknown heading in `examples/world.md`: `hello`   missing-heading-in-file  remark-validate-links',
-        '  71:41-71:56  warning  Link to unknown heading: `readme`                         missing-heading          remark-validate-links',
+        '5:37-5:51   warning Cannot find heading for `#world`                         missing-heading         remark-validate-links:missing-heading',
+        '27:10-27:37 warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '29:10-29:35 warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '41:10-41:41 warning Cannot find heading for `#world` in `examples/github.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '43:10-43:39 warning Cannot find heading for `#world` in `examples/github.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '49:10-49:40 warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '49:10-49:40 warning Cannot find heading for `#hello` in `examples/world.md`  missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '51:10-51:38 warning Cannot find file `examples/world.md`                     missing-file            remark-validate-links:missing-file',
+        '51:10-51:38 warning Cannot find heading for `#hello` in `examples/world.md`  missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '71:41-71:56 warning Cannot find heading for `#readme`                        missing-heading         remark-validate-links:missing-heading',
         '',
         '⚠ 15 warnings',
         ''
@@ -688,7 +692,7 @@ test('remark-validate-links', async function (t) {
         strip(result.stderr),
         [
           'small.md',
-          '  5:13-5:27  warning  Link to unknown heading: `world`  missing-heading  remark-validate-links',
+          '5:13-5:27 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
           '',
           '⚠ 1 warning',
           ''
@@ -715,23 +719,23 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'gitlab.md',
-        '     5:37-5:51  warning  Link to unknown heading: `world`                                              missing-heading          remark-validate-links',
-        '  19:34-19:100  warning  Link to unknown file: `examples/world.md`. Did you mean `examples/gitlab.md`  missing-file             remark-validate-links',
-        '   21:12-21:81  warning  Link to unknown file: `examples/world.md`. Did you mean `examples/gitlab.md`  missing-file             remark-validate-links',
-        '   23:10-23:37  warning  Link to unknown file: `examples/world.md`. Did you mean `examples/gitlab.md`  missing-file             remark-validate-links',
-        '   25:10-25:35  warning  Link to unknown file: `examples/world.md`. Did you mean `examples/gitlab.md`  missing-file             remark-validate-links',
-        '   37:10-37:41  warning  Link to unknown heading in `examples/gitlab.md`: `world`                      missing-heading-in-file  remark-validate-links',
-        '   39:10-39:39  warning  Link to unknown heading in `examples/gitlab.md`: `world`                      missing-heading-in-file  remark-validate-links',
-        '   41:10-41:80  warning  Link to unknown heading in `examples/gitlab.md`: `world`                      missing-heading-in-file  remark-validate-links',
-        '   43:10-43:83  warning  Link to unknown heading in `examples/gitlab.md`: `world`                      missing-heading-in-file  remark-validate-links',
-        '   45:10-45:40  warning  Link to unknown file: `examples/world.md`. Did you mean `examples/gitlab.md`  missing-file             remark-validate-links',
-        '   45:10-45:40  warning  Link to unknown heading in `examples/world.md`: `hello`                       missing-heading-in-file  remark-validate-links',
-        '   47:10-47:38  warning  Link to unknown file: `examples/world.md`. Did you mean `examples/gitlab.md`  missing-file             remark-validate-links',
-        '   47:10-47:38  warning  Link to unknown heading in `examples/world.md`: `hello`                       missing-heading-in-file  remark-validate-links',
-        '   49:10-49:79  warning  Link to unknown file: `examples/world.md`. Did you mean `examples/gitlab.md`  missing-file             remark-validate-links',
-        '   49:10-49:79  warning  Link to unknown heading in `examples/world.md`: `hello`                       missing-heading-in-file  remark-validate-links',
-        '   51:10-51:82  warning  Link to unknown file: `examples/world.md`. Did you mean `examples/gitlab.md`  missing-file             remark-validate-links',
-        '   51:10-51:82  warning  Link to unknown heading in `examples/world.md`: `hello`                       missing-heading-in-file  remark-validate-links',
+        '5:37-5:51    warning Cannot find heading for `#world`                                        missing-heading         remark-validate-links:missing-heading',
+        '19:34-19:100 warning Cannot find file `examples/world.md`; did you mean `examples/gitlab.md` missing-file            remark-validate-links:missing-file',
+        '21:12-21:81  warning Cannot find file `examples/world.md`; did you mean `examples/gitlab.md` missing-file            remark-validate-links:missing-file',
+        '23:10-23:37  warning Cannot find file `examples/world.md`; did you mean `examples/gitlab.md` missing-file            remark-validate-links:missing-file',
+        '25:10-25:35  warning Cannot find file `examples/world.md`; did you mean `examples/gitlab.md` missing-file            remark-validate-links:missing-file',
+        '37:10-37:41  warning Cannot find heading for `#world` in `examples/gitlab.md`                missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '39:10-39:39  warning Cannot find heading for `#world` in `examples/gitlab.md`                missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '41:10-41:80  warning Cannot find heading for `#world` in `examples/gitlab.md`                missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '43:10-43:83  warning Cannot find heading for `#world` in `examples/gitlab.md`                missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '45:10-45:40  warning Cannot find file `examples/world.md`; did you mean `examples/gitlab.md` missing-file            remark-validate-links:missing-file',
+        '45:10-45:40  warning Cannot find heading for `#hello` in `examples/world.md`                 missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '47:10-47:38  warning Cannot find file `examples/world.md`; did you mean `examples/gitlab.md` missing-file            remark-validate-links:missing-file',
+        '47:10-47:38  warning Cannot find heading for `#hello` in `examples/world.md`                 missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '49:10-49:79  warning Cannot find file `examples/world.md`; did you mean `examples/gitlab.md` missing-file            remark-validate-links:missing-file',
+        '49:10-49:79  warning Cannot find heading for `#hello` in `examples/world.md`                 missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '51:10-51:82  warning Cannot find file `examples/world.md`; did you mean `examples/gitlab.md` missing-file            remark-validate-links:missing-file',
+        '51:10-51:82  warning Cannot find heading for `#hello` in `examples/world.md`                 missing-heading-in-file remark-validate-links:missing-heading-in-file',
         '',
         '⚠ 17 warnings',
         ''
@@ -757,23 +761,23 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'bitbucket.md',
-        '     5:37-5:67  warning  Link to unknown heading: `world`                             missing-heading          remark-validate-links',
-        '  21:34-21:102  warning  Link to unknown file: `examples/world.md`                    missing-file             remark-validate-links',
-        '   23:12-23:83  warning  Link to unknown file: `examples/world.md`                    missing-file             remark-validate-links',
-        '   25:10-25:37  warning  Link to unknown file: `examples/world.md`                    missing-file             remark-validate-links',
-        '   27:10-27:35  warning  Link to unknown file: `examples/world.md`                    missing-file             remark-validate-links',
-        '   39:10-39:60  warning  Link to unknown heading in `examples/bitbucket.md`: `world`  missing-heading-in-file  remark-validate-links',
-        '   41:10-41:58  warning  Link to unknown heading in `examples/bitbucket.md`: `world`  missing-heading-in-file  remark-validate-links',
-        '  43:10-43:101  warning  Link to unknown heading in `examples/bitbucket.md`: `world`  missing-heading-in-file  remark-validate-links',
-        '  45:10-45:104  warning  Link to unknown heading in `examples/bitbucket.md`: `world`  missing-heading-in-file  remark-validate-links',
-        '   47:10-47:56  warning  Link to unknown file: `examples/world.md`                    missing-file             remark-validate-links',
-        '   47:10-47:56  warning  Link to unknown heading in `examples/world.md`: `hello`      missing-heading-in-file  remark-validate-links',
-        '   49:10-49:54  warning  Link to unknown file: `examples/world.md`                    missing-file             remark-validate-links',
-        '   49:10-49:54  warning  Link to unknown heading in `examples/world.md`: `hello`      missing-heading-in-file  remark-validate-links',
-        '   51:10-51:97  warning  Link to unknown file: `examples/world.md`                    missing-file             remark-validate-links',
-        '   51:10-51:97  warning  Link to unknown heading in `examples/world.md`: `hello`      missing-heading-in-file  remark-validate-links',
-        '  53:10-53:100  warning  Link to unknown file: `examples/world.md`                    missing-file             remark-validate-links',
-        '  53:10-53:100  warning  Link to unknown heading in `examples/world.md`: `hello`      missing-heading-in-file  remark-validate-links',
+        '5:37-5:67    warning Cannot find heading for `#world`                            missing-heading         remark-validate-links:missing-heading',
+        '21:34-21:102 warning Cannot find file `examples/world.md`                        missing-file            remark-validate-links:missing-file',
+        '23:12-23:83  warning Cannot find file `examples/world.md`                        missing-file            remark-validate-links:missing-file',
+        '25:10-25:37  warning Cannot find file `examples/world.md`                        missing-file            remark-validate-links:missing-file',
+        '27:10-27:35  warning Cannot find file `examples/world.md`                        missing-file            remark-validate-links:missing-file',
+        '39:10-39:60  warning Cannot find heading for `#world` in `examples/bitbucket.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '41:10-41:58  warning Cannot find heading for `#world` in `examples/bitbucket.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '43:10-43:101 warning Cannot find heading for `#world` in `examples/bitbucket.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '45:10-45:104 warning Cannot find heading for `#world` in `examples/bitbucket.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '47:10-47:56  warning Cannot find file `examples/world.md`                        missing-file            remark-validate-links:missing-file',
+        '47:10-47:56  warning Cannot find heading for `#hello` in `examples/world.md`     missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '49:10-49:54  warning Cannot find file `examples/world.md`                        missing-file            remark-validate-links:missing-file',
+        '49:10-49:54  warning Cannot find heading for `#hello` in `examples/world.md`     missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '51:10-51:97  warning Cannot find file `examples/world.md`                        missing-file            remark-validate-links:missing-file',
+        '51:10-51:97  warning Cannot find heading for `#hello` in `examples/world.md`     missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '53:10-53:100 warning Cannot find file `examples/world.md`                        missing-file            remark-validate-links:missing-file',
+        '53:10-53:100 warning Cannot find heading for `#hello` in `examples/world.md`     missing-heading-in-file remark-validate-links:missing-heading-in-file',
         '',
         '⚠ 17 warnings',
         ''
@@ -799,8 +803,8 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'suggestions.md',
-        '  3:22-3:37  warning  Link to unknown heading: `helloo`. Did you mean `hello`                  missing-heading          remark-validate-links',
-        '  7:17-7:39  warning  Link to unknown heading in `github.md`: `fiiiles`. Did you mean `files`  missing-heading-in-file  remark-validate-links',
+        '3:22-3:37 warning Cannot find heading for `#helloo`; did you mean `hello`                 missing-heading         remark-validate-links:missing-heading',
+        '7:17-7:39 warning Cannot find heading for `#fiiiles` in `github.md`; did you mean `files` missing-heading-in-file remark-validate-links:missing-heading-in-file',
         '',
         '⚠ 2 warnings',
         ''
@@ -826,8 +830,8 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'line-links.md',
-        '  5:9-5:61  warning  Link to unknown file: `examples/missing.js`  missing-file  remark-validate-links',
-        '  9:1-9:69  warning  Link to unknown file: `examples/missing.js`  missing-file  remark-validate-links',
+        '5:9-5:61 warning Cannot find file `examples/missing.js` missing-file remark-validate-links:missing-file',
+        '9:1-9:69 warning Cannot find file `examples/missing.js` missing-file remark-validate-links:missing-file',
         '',
         '⚠ 2 warnings',
         ''
@@ -853,10 +857,10 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'weird-characters.md',
-        '   11:17-11:87  warning  Link to unknown file: `examples/missing#characters.md`. Did you mean `examples/weird#characters.md`              missing-file             remark-validate-links',
-        '   13:17-13:93  warning  Link to unknown file: `examples/missing#character/readme.md`. Did you mean `examples/weird#character/readme.md`  missing-file             remark-validate-links',
-        '  15:17-15:114  warning  Link to unknown heading in `examples/weird#characters.md`: `world`                                               missing-heading-in-file  remark-validate-links',
-        '  17:17-17:120  warning  Link to unknown heading in `examples/weird#character/readme.md`: `world`                                         missing-heading-in-file  remark-validate-links',
+        '11:17-11:87  warning Cannot find file `examples/missing#characters.md`; did you mean `examples/weird#characters.md`             missing-file            remark-validate-links:missing-file',
+        '13:17-13:93  warning Cannot find file `examples/missing#character/readme.md`; did you mean `examples/weird#character/readme.md` missing-file            remark-validate-links:missing-file',
+        '15:17-15:114 warning Cannot find heading for `#world` in `examples/weird#characters.md`                                         missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '17:17-17:120 warning Cannot find heading for `#world` in `examples/weird#character/readme.md`                                   missing-heading-in-file remark-validate-links:missing-heading-in-file',
         '',
         '⚠ 4 warnings',
         ''
@@ -882,11 +886,11 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'folder.md',
-        '    9:1-9:40  warning  Link to unknown heading in `folder/readme.markdown`: `missing`  missing-heading-in-file  remark-validate-links',
-        '  17:1-17:24  warning  Link to unknown heading in `folder`: `missing`                  missing-heading-in-file  remark-validate-links',
-        '  21:1-21:25  warning  Link to unknown file: `missing`                                 missing-file             remark-validate-links',
-        '  21:1-21:25  warning  Link to unknown heading in `missing`: `missing`                 missing-heading-in-file  remark-validate-links',
-        '  23:1-23:39  warning  Link to unknown heading in `folder-without-readme`: `missing`   missing-heading-in-file  remark-validate-links',
+        '9:1-9:40   warning Cannot find heading for `#missing` in `folder/readme.markdown` missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '17:1-17:24 warning Cannot find heading for `#missing` in `folder`                 missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '21:1-21:25 warning Cannot find file `missing`                                     missing-file            remark-validate-links:missing-file',
+        '21:1-21:25 warning Cannot find heading for `#missing` in `missing`                missing-heading-in-file remark-validate-links:missing-heading-in-file',
+        '23:1-23:39 warning Cannot find heading for `#missing` in `folder-without-readme`  missing-heading-in-file remark-validate-links:missing-heading-in-file',
         '',
         '⚠ 5 warnings',
         ''
@@ -912,7 +916,7 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'file-as-folder.md',
-        '  1:1-1:28  warning  Link to unknown file: `file-as-folder.md/other`. Did you mean `file-as-folder.md`  missing-file  remark-validate-links',
+        '1:1-1:28 warning Cannot find file `file-as-folder.md/other`; did you mean `file-as-folder.md` missing-file remark-validate-links:missing-file',
         '',
         '⚠ 1 warning',
         ''
@@ -938,11 +942,11 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'images.md',
-        '  21:10-21:50  warning  Link to unknown file: `examples/missing.jpg`. Did you mean `examples/image.jpg`  missing-file  remark-validate-links',
-        '  23:12-23:42  warning  Link to unknown file: `examples/missing.jpg`. Did you mean `examples/image.jpg`  missing-file  remark-validate-links',
-        '  25:10-25:89  warning  Link to unknown file: `examples/missing.jpg`. Did you mean `examples/image.jpg`  missing-file  remark-validate-links',
-        '   37:1-37:38  warning  Link to unknown file: `examples/missing.jpg`. Did you mean `examples/image.jpg`  missing-file  remark-validate-links',
-        '   39:1-39:77  warning  Link to unknown file: `examples/missing.jpg`. Did you mean `examples/image.jpg`  missing-file  remark-validate-links',
+        '21:10-21:50 warning Cannot find file `examples/missing.jpg`; did you mean `examples/image.jpg` missing-file remark-validate-links:missing-file',
+        '23:12-23:42 warning Cannot find file `examples/missing.jpg`; did you mean `examples/image.jpg` missing-file remark-validate-links:missing-file',
+        '25:10-25:89 warning Cannot find file `examples/missing.jpg`; did you mean `examples/image.jpg` missing-file remark-validate-links:missing-file',
+        '37:1-37:38  warning Cannot find file `examples/missing.jpg`; did you mean `examples/image.jpg` missing-file remark-validate-links:missing-file',
+        '39:1-39:77  warning Cannot find file `examples/missing.jpg`; did you mean `examples/image.jpg` missing-file remark-validate-links:missing-file',
         '',
         '⚠ 5 warnings',
         ''
@@ -985,7 +989,7 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'query-params.md',
-        '  11:33-11:55  warning  Link to unknown heading: `query-params?`. Did you mean `query-params`  missing-heading  remark-validate-links',
+        '11:33-11:55 warning Cannot find heading for `#query-params?`; did you mean `query-params` missing-heading remark-validate-links:missing-heading',
         '',
         '⚠ 1 warning',
         ''
@@ -1011,8 +1015,8 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'case-insensitive-headings.md',
-        '  5:13-5:27  warning  Link to unknown heading: `world`                          missing-heading          remark-validate-links',
-        '  9:16-9:48  warning  Link to unknown heading in `examples/github.md`: `world`  missing-heading-in-file  remark-validate-links',
+        '5:13-5:27 warning Cannot find heading for `#world`                         missing-heading         remark-validate-links:missing-heading',
+        '9:16-9:48 warning Cannot find heading for `#world` in `examples/github.md` missing-heading-in-file remark-validate-links:missing-heading-in-file',
         '',
         '⚠ 2 warnings',
         ''
@@ -1075,7 +1079,7 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         'self-hosted.md',
-        '  5:1-5:80  warning  Link to unknown heading: `world`  missing-heading  remark-validate-links',
+        '5:1-5:80 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
         '',
         '⚠ 1 warning',
         ''
@@ -1087,3 +1091,33 @@ test('remark-validate-links', async function (t) {
 
   process.chdir(fileURLToPath(baseUrl))
 })
+
+// From `unified-engine`.
+/**
+ * Clean an error so that it’s easier to test.
+ *
+ * This particularly removed error cause messages, which change across Node
+ * versions.
+ * It also drops file paths, which differ across platforms.
+ *
+ * @param {string} value
+ *   Error, report, or stack.
+ * @param {number | undefined} [max=Infinity]
+ *   Lines to include.
+ * @returns {string}
+ *   Clean error.
+ */
+export function cleanError(value, max) {
+  return (
+    value
+      // Clean syscal errors
+      .replace(/( *Error: [A-Z]+:)[^\n]*/g, '$1…')
+
+      .replace(/\(.+[/\\]/g, '(')
+      .replace(/file:.+\//g, '')
+      .replace(/\d+:\d+/g, '1:1')
+      .split('\n')
+      .slice(0, max || Number.POSITIVE_INFINITY)
+      .join('\n')
+  )
+}
