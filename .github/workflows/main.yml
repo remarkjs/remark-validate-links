@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: dcodeIO/setup-node-nvm@master
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{matrix.node}}
       - run: npm install
@@ -17,5 +17,5 @@ jobs:
     strategy:
       matrix:
         node:
-          - lts/fermium
+          - lts/gallium
           - node
