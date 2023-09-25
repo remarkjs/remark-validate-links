@@ -3,18 +3,21 @@
 [![Build][build-badge]][build]
 [![Coverage][coverage-badge]][coverage]
 [![Downloads][downloads-badge]][downloads]
-[![Size][size-badge]][size]
 [![Sponsors][sponsors-badge]][collective]
 [![Backers][backers-badge]][collective]
 [![Chat][chat-badge]][chat]
 
-[**remark**][remark] plugin to check that markdown links and images point to
-existing local files and headings in a Git repo.
+**[remark][]** plugin to check that markdown links and images point to existing
+local files and headings in a Git repo.
 
 For example, this document does not have a heading named `Hello`.
 So if we’d link to it (`[welcome](#hello)`), we’d get a warning.
 Links to headings in other markdown documents (`examples/foo.md#hello`) and
 links to files (`license` or `index.js`) are also checked.
+
+This is specifically for Git repos.
+Like this one.
+Not for say a website.
 
 ## Contents
 
@@ -24,6 +27,8 @@ links to files (`license` or `index.js`) are also checked.
 *   [Use](#use)
 *   [API](#api)
     *   [`unified().use(remarkValidateLinks[, options])`](#unifieduseremarkvalidatelinks-options)
+    *   [`Options`](#options)
+    *   [`UrlConfig`](#urlconfig)
 *   [Examples](#examples)
     *   [Example: CLI](#example-cli)
     *   [Example: CLI in npm scripts](#example-cli-in-npm-scripts)
@@ -40,12 +45,6 @@ links to files (`license` or `index.js`) are also checked.
 This package is a [unified][] ([remark][]) plugin to check local links in a Git
 repo.
 
-**unified** is a project that transforms content with abstract syntax trees
-(ASTs).
-**remark** adds support for markdown to unified.
-**mdast** is the markdown AST that remark uses.
-This is a remark plugin that inspects mdast.
-
 ## When should I use this?
 
 This project is useful if you have a Git repo, such as this one, with docs in
@@ -55,13 +54,14 @@ Compared to other links checkers, this project can work offline (making it fast
 en prone to fewer false positives), and is specifically made for local links in
 Git repos.
 This plugin does not check external URLs (see
-[`remark-lint-no-dead-urls`][no-dead-urls]) or undefined references
-(see [`remark-lint-no-undefined-references`][no-undef-refs]).
+[`remark-lint-no-dead-urls`][remark-lint-no-dead-urls]) or undefined references
+(see
+[`remark-lint-no-undefined-references`][remark-lint-no-undefined-references]).
 
 ## Install
 
-This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c).
-In Node.js (version 14.14+, or 16.0+), install with [npm][]:
+This package is [ESM only][esm].
+In Node.js (version 16+), install with [npm][]:
 
 ```sh
 npm install remark-validate-links
@@ -83,7 +83,7 @@ In browsers with [`esm.sh`][esmsh]:
 
 ## Use
 
-Say we have the following file, `example.md`:
+Say we have the following file `example.md` in this project:
 
 ```markdown
 # Alpha
@@ -91,7 +91,7 @@ Say we have the following file, `example.md`:
 Links are checked:
 
 This [exists](#alpha).
-This [one does not](#does-not).
+This [one does not](#apha).
 
 # Bravo
 
@@ -106,42 +106,40 @@ Definitions are also checked:
 References w/o definitions are not checked: [delta]
 ```
 
-And a module, `example.js`:
+…and a module `example.js`:
 
 ```js
-import {read} from 'to-vfile'
 import {remark} from 'remark'
 import remarkValidateLinks from 'remark-validate-links'
+import {read} from 'to-vfile'
+import {reporter} from 'vfile-reporter'
 
-main()
+const file = await remark()
+  .use(remarkValidateLinks)
+  .process(await read('example.md'))
 
-async function main() {
-  const file = await remark()
-    .use(remarkValidateLinks)
-    .process(await read('example.md'))
-
-  console.log(reporter(file))
-}
+console.log(reporter(file))
 ```
 
-Now, running `node example` yields:
+…then running `node example.js` yields:
 
 ```markdown
 example.md
-    6:6-6:31  warning  Link to unknown heading: `does-not`         missing-heading  remark-validate-links
-  11:5-11:53  warning  Link to unknown file: `missing-example.js`  missing-file     remark-validate-links
-  16:1-16:20  warning  Link to unknown heading: `charlie`          missing-heading  remark-validate-links
+6:6-6:27   warning Cannot find heading for `#apha`; did you mean `alpha` missing-heading remark-validate-links:missing-heading
+11:5-11:53 warning Cannot find file `missing-example.js`                 missing-file    remark-validate-links:missing-file
+16:1-16:20 warning Cannot find heading for `#charlie`                    missing-heading remark-validate-links:missing-heading
 
 ⚠ 3 warnings
 ```
 
-(Note that `readme.md#no-such-heading` is not warned about, because the API does
-not check headings in other Markdown files).
+> 👉 **Note**: `readme.md#no-such-heading` is not warned about on the API, as it
+> does not check headings in other markdown files.
+> The remark CLI is able to do that.
 
 ## API
 
 This package exports no identifiers.
-The default export is `remarkValidateLinks`.
+The default export is [`remarkValidateLinks`][api-remark-validate-links].
 
 ### `unified().use(remarkValidateLinks[, options])`
 
@@ -153,34 +151,59 @@ in a Git repo.
 > The API in browsers only checks links to headings in the same file.
 > The CLI can check everything.
 
-##### `options`
+###### Parameters
 
-Typically, you don’t need to configure `remark-validate-links`, as it detects
-local Git repositories.
+*   `options` ([`Options`][api-options], optional)
+    — configuration
 
-###### `options.repository`
+###### Returns
 
-URL to hosted Git (`string?` or `false`).
-If `repository` is nullish, the Git origin remote is detected.
-If the repository resolves to something [npm understands][package-repository] as
-a Git host such as GitHub, GitLab, or Bitbucket, then full URLs to that host
-(say, `https://github.com/remarkjs/remark-validate-links/readme.md#install`) can
-also be checked.
-If you’re not in a Git repository, you must pass `repository: false`
-explicitly.
+Transform ([`Transformer`][unified-transformer]).
 
-###### `options.root`
+### `Options`
 
-A `root` (`string?`) can also be passed, referencing the local Git root
-directory (the folder that contains `.git`).
-If both `root` and `repository` are nullish, the Git root is detected.
-If `root` is not given but `repository` is, [`file.cwd`][cwd] is used.
+Configuration (TypeScript type).
 
-###### `options.urlConfig`
+###### Fields
 
-If your project is hosted on `github.com`, `gitlab.com`, or `bitbucket.org`,
-this plugin can automatically detect the url configuration.
-Otherwise, use `urlConfig` to specify this manually.
+*   `repository` (`string` or `false`, default: detected from Git remote)
+    — URL to hosted Git;
+    if you’re not in a Git repository, you must pass `false`;
+    if the repository resolves to something npm understands as a Git host such
+    as GitHub, GitLab, or Bitbucket, full URLs to that host (say,
+    `https://github.com/remarkjs/remark-validate-links/readme.md#install`) are
+    checked
+*   `root` (`string`, default: local Git folder)
+    — path to Git root folder;
+    if both `root` and `repository` are nullish, the Git root is detected;
+    if `root` is not given but `repository` is, `file.cwd` is used
+*   `urlConfig` ([`UrlConfig`][api-url-config], default: detected from repo)
+    — config on how hosted Git works;
+    `github.com`, `gitlab.com`, or `bitbucket.org` work automatically;
+    otherwise, pass `urlConfig` manually
+
+### `UrlConfig`
+
+Hosted Git info (TypeScript type).
+
+###### Fields
+
+*   `headingPrefix` (`string`, optional, example: `'#'`, `'#markdown-header-'`)
+    — prefix of headings
+*   `hostname` (`string`, optional, example: `'github.com'`,
+    `'bitbucket.org'`)
+    — domain of URLs
+*   `lines` (`boolean`, default: `false`)
+    — whether lines in files can be linked
+*   `path` (`string`, optional, example:
+    `'/remarkjs/remark-validate-links/blob/'`,
+    `'/remarkjs/remark-validate-links/src/'`)
+    — path prefix before files
+*   `topAnchor` (`string`, optional, example: `#readme`)
+    — hash to top of readme
+
+###### Notes
+
 For this repository (`remarkjs/remark-validate-links` on GitHub) `urlConfig`
 looks as follows:
 
@@ -215,7 +238,7 @@ If this project were hosted on Bitbucket, it would be:
 ### Example: CLI
 
 It’s recommended to use `remark-validate-links` on the CLI with
-[`remark-cli`][cli].
+[`remark-cli`][remark-cli].
 Install both with [npm][]:
 
 ```sh
@@ -239,6 +262,8 @@ So does this: [readme](readme.md#install).
 
 Now, running `./node_modules/.bin/remark --use remark-validate-links .` yields:
 
+<!-- To do: regenerate. -->
+
 ```txt
 example.md
   3:11-3:48  warning  Link to unknown heading: `world`               missing-heading          remark-validate-links
@@ -251,8 +276,8 @@ readme.md: no issues found
 
 ### Example: CLI in npm scripts
 
-You can use `remark-validate-links` and [`remark-cli`][cli] in an npm script to
-check and format markdown in your project.
+You can use `remark-validate-links` and [`remark-cli`][remark-cli] in an npm
+script to check and format markdown in your project.
 Install both with [npm][]:
 
 ```sh
@@ -307,16 +332,18 @@ on nodes:
 ## Types
 
 This package is fully typed with [TypeScript][].
-It exports an `Options` type, which specifies the interface of the accepted
-options, and an `UrlConfig` type, which specifies the interface of its
-corresponding option.
+It exports the additional types [`Options`][api-options] and
+[`UrlConfig`][api-url-config].
 
 ## Compatibility
 
-Projects maintained by the unified collective are compatible with all maintained
+Projects maintained by the unified collective are compatible with maintained
 versions of Node.js.
-As of now, that is Node.js 14.14+, and 16.0+.
-Our projects sometimes work with older versions, but this is not guaranteed.
+
+When we cut a new major release, we drop support for unmaintained versions of
+Node.
+This means we try to keep the current release line,
+`remark-validate-links@^14`, compatible with Node.js 14.
 
 This plugin works with `unified` version 6+, `remark` version 7+, and
 `remark-cli` version 8+.
@@ -328,13 +355,13 @@ content, and this may be dangerous.
 In Node `git remote` and `git rev-parse` also runs for processed files.
 
 The tree is not modified, so there are no openings for
-[cross-site scripting (XSS)][xss] attacks.
+[cross-site scripting (XSS)][wiki-xss] attacks.
 
 ## Related
 
 *   [`remark-lint`][remark-lint]
     — markdown code style linter
-*   [`remark-lint-no-dead-urls`][no-dead-urls]
+*   [`remark-lint-no-dead-urls`][remark-lint-no-dead-urls]
     — check that external links are alive
 
 ## Contribute
@@ -365,10 +392,6 @@ abide by its terms.
 
 [downloads]: https://www.npmjs.com/package/remark-validate-links
 
-[size-badge]: https://img.shields.io/bundlephobia/minzip/remark-validate-links.svg
-
-[size]: https://bundlephobia.com/result?p=remark-validate-links
-
 [sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
 
 [backers-badge]: https://opencollective.com/unified/backers/badge.svg
@@ -381,38 +404,44 @@ abide by its terms.
 
 [npm]: https://docs.npmjs.com/cli/install
 
+[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+
 [esmsh]: https://esm.sh
 
 [health]: https://github.com/remarkjs/.github
 
-[contributing]: https://github.com/remarkjs/.github/blob/HEAD/contributing.md
+[contributing]: https://github.com/remarkjs/.github/blob/main/contributing.md
 
-[support]: https://github.com/remarkjs/.github/blob/HEAD/support.md
+[support]: https://github.com/remarkjs/.github/blob/main/support.md
 
-[coc]: https://github.com/remarkjs/.github/blob/HEAD/code-of-conduct.md
+[coc]: https://github.com/remarkjs/.github/blob/main/code-of-conduct.md
 
 [license]: license
 
 [author]: https://wooorm.com
 
-[unified]: https://github.com/unifiedjs/unified
+[mdast-util-to-hast]: https://github.com/syntax-tree/mdast-util-to-hast#notes
 
 [remark]: https://github.com/remarkjs/remark
 
-[typescript]: https://www.typescriptlang.org
-
-[cli]: https://github.com/remarkjs/remark/tree/HEAD/packages/remark-cli#readme
+[remark-cli]: https://github.com/remarkjs/remark/tree/main/packages/remark-cli#readme
 
 [remark-lint]: https://github.com/remarkjs/remark-lint
 
-[mdast-util-to-hast]: https://github.com/syntax-tree/mdast-util-to-hast#notes
+[remark-lint-no-dead-urls]: https://github.com/remarkjs/remark-lint-no-dead-urls
 
-[no-dead-urls]: https://github.com/davidtheclark/remark-lint-no-dead-urls
+[remark-lint-no-undefined-references]: https://github.com/remarkjs/remark-lint/tree/master/packages/remark-lint-no-undefined-references
 
-[no-undef-refs]: https://github.com/remarkjs/remark-lint/tree/master/packages/remark-lint-no-undefined-references
+[typescript]: https://www.typescriptlang.org
 
-[package-repository]: https://docs.npmjs.com/files/package.json#repository
+[unified]: https://github.com/unifiedjs/unified
 
-[cwd]: https://github.com/vfile/vfile#vfilecwd
+[unified-transformer]: https://github.com/unifiedjs/unified#transformer
 
-[xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
+[wiki-xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
+
+[api-options]: #options
+
+[api-remark-validate-links]: #unifieduseremarkvalidatelinks-options
+
+[api-url-config]: #urlconfig
