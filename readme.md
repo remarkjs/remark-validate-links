@@ -70,14 +70,14 @@ npm install remark-validate-links
 In Deno with [`esm.sh`][esmsh]:
 
 ```js
-import remarkValidateLinks from 'https://esm.sh/remark-validate-links@11'
+import remarkValidateLinks from 'https://esm.sh/remark-validate-links@13'
 ```
 
 In browsers with [`esm.sh`][esmsh]:
 
 ```html
 <script type="module">
-  import remarkValidateLinks from 'https://esm.sh/remark-validate-links@11?bundle'
+  import remarkValidateLinks from 'https://esm.sh/remark-validate-links@13?bundle'
 </script>
 ```
 
@@ -343,7 +343,7 @@ versions of Node.js.
 When we cut a new major release, we drop support for unmaintained versions of
 Node.
 This means we try to keep the current release line,
-`remark-validate-links@^15`, compatible with Node.js 16.
+`remark-validate-links@^13`, compatible with Node.js 16.
 
 This plugin works with `unified` version 6+, `remark` version 7+, and
 `remark-cli` version 8+.
