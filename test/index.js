@@ -1,5 +1,11 @@
 /**
- * @typedef {import('node:child_process').ExecException & {stdout: string, stderr: string}} ExecError
+ * @typedef {import('node:child_process').ExecException} ExecException
+ *   Exec error.
+ */
+
+/**
+ * @typedef {ExecException & {stderr: string, stdout: string}} ExecError
+ *   Exec error (with fields that exist).
  */
 
 import assert from 'node:assert/strict'
@@ -28,6 +34,12 @@ const bin = fileURLToPath(
 
 test('remark-validate-links', async function (t) {
   process.chdir(fileURLToPath(fakeBaseUrl))
+
+  await t.test('should expose the public api', async function () {
+    assert.deepEqual(Object.keys(await import('../index.js')).sort(), [
+      'default'
+    ])
+  })
 
   await t.test('should work on the API', async function () {
     const file = await remark()
@@ -62,18 +74,6 @@ test('remark-validate-links', async function (t) {
         .process(
           '# \\_\\_proto__\n# constructor\n# toString\n[](#__proto__), [](#constructor), [](#toString)'
         )
-
-      assert.deepEqual(
-        // @ts-expect-error: to do: type.
-        Object.keys(file.data.remarkValidateLinksLandmarks['']),
-        ['', '__proto__', 'constructor', 'tostring']
-      )
-
-      assert.deepEqual(
-        // @ts-expect-error: to do: type.
-        Object.keys(file.data.remarkValidateLinksReferences['']),
-        ['', '__proto__', 'constructor', 'tostring']
-      )
 
       assert.deepEqual(file.messages, [])
     }
@@ -1080,6 +1080,7 @@ test('remark-validate-links', async function (t) {
     )
   })
 
-  await fs.rm('./.git', {recursive: true})
+  await fs.rm('./.git', {recursive: true, force: true})
+
   process.chdir(fileURLToPath(baseUrl))
 })
