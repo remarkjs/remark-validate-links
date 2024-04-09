@@ -28,7 +28,7 @@ const fakeBaseUrl = new URL('fixtures/', import.meta.url)
 
 const gitUrl = new URL('../.git', import.meta.url)
 const gitBakUrl = new URL('../.git.bak', import.meta.url)
-const bin = fileURLToPath(
+const binary = fileURLToPath(
   new URL('../node_modules/.bin/remark', import.meta.url)
 )
 
@@ -94,7 +94,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should ignore invalid repositories', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -120,7 +120,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should not fail on Gist repositories', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -147,7 +147,7 @@ test('remark-validate-links', async function (t) {
     try {
       await exec(
         [
-          bin,
+          binary,
           '--no-config',
           '--no-ignore',
           '--use',
@@ -180,7 +180,7 @@ test('remark-validate-links', async function (t) {
     try {
       await exec(
         [
-          bin,
+          binary,
           '--no-config',
           '--no-ignore',
           '--use',
@@ -216,7 +216,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should work if there are no links', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -233,7 +233,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should work with stdin', async function () {
     const promise = exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -264,7 +264,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should work when not all files are given', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -298,7 +298,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should work when all files are given', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -340,7 +340,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should work with definitions', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -368,7 +368,7 @@ test('remark-validate-links', async function (t) {
     async function () {
       const result = await exec(
         [
-          bin,
+          binary,
           '--no-config',
           '--no-ignore',
           '--use',
@@ -430,7 +430,7 @@ test('remark-validate-links', async function (t) {
     await exec('git remote add origin git@github.com:wooorm/test.git')
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -493,7 +493,7 @@ test('remark-validate-links', async function (t) {
     try {
       await exec(
         [
-          bin,
+          binary,
           '--no-config',
           '--no-ignore',
           '--use',
@@ -518,7 +518,7 @@ test('remark-validate-links', async function (t) {
     try {
       await exec(
         [
-          bin,
+          binary,
           '--no-config',
           '--no-ignore',
           '--use',
@@ -542,7 +542,7 @@ test('remark-validate-links', async function (t) {
 
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -572,7 +572,7 @@ test('remark-validate-links', async function (t) {
 
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -602,7 +602,7 @@ test('remark-validate-links', async function (t) {
 
       const result = await exec(
         [
-          bin,
+          binary,
           '--no-config',
           '--no-ignore',
           '--use',
@@ -631,7 +631,7 @@ test('remark-validate-links', async function (t) {
 
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -678,7 +678,7 @@ test('remark-validate-links', async function (t) {
     async function () {
       const result = await exec(
         [
-          bin,
+          binary,
           '--no-config',
           '--no-ignore',
           '--use',
@@ -705,7 +705,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should support a GitLab shortcode', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -747,7 +747,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should support a Bitbucket shortcode', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -789,7 +789,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should suggest similar links', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -816,7 +816,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should recognise links to particular lines', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -843,7 +843,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should recognise links with encoded URLs', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -872,7 +872,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should support folders', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -902,7 +902,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should warn on files as folders', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -928,7 +928,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should check images', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -958,7 +958,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should slug image alts correctly', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -975,7 +975,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should support query parameters', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -1001,7 +1001,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should support case insensitive headings', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -1028,7 +1028,7 @@ test('remark-validate-links', async function (t) {
   await t.test('should ignore external links', async function () {
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
@@ -1047,7 +1047,7 @@ test('remark-validate-links', async function (t) {
     async function () {
       const result = await exec(
         [
-          bin,
+          binary,
           '--no-config',
           '--no-ignore',
           '--use',
@@ -1067,7 +1067,7 @@ test('remark-validate-links', async function (t) {
     await exec('git remote add origin git@gitlab.acme.company:acme/project.git')
     const result = await exec(
       [
-        bin,
+        binary,
         '--no-config',
         '--no-ignore',
         '--use',
