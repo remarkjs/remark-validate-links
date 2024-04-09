@@ -1,6 +1,6 @@
 {
   "name": "remark-validate-links",
-  "version": "13.0.0",
+  "version": "13.0.1",
   "description": "remark plugin to validate links to headings and files",
   "license": "MIT",
   "keywords": [
