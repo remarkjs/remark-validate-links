@@ -65,23 +65,22 @@
     "vfile": "^6.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "c8": "^9.0.0",
+    "@types/node": "^22.0.0",
+    "c8": "^10.0.0",
     "prettier": "^3.0.0",
     "remark": "^15.0.0",
     "remark-cli": "^12.0.0",
-    "remark-preset-wooorm": "^9.0.0",
+    "remark-preset-wooorm": "^10.0.0",
     "strip-ansi": "^7.0.0",
     "to-vfile": "^8.0.0",
     "type-coverage": "^2.0.0",
     "typescript": "^5.0.0",
     "vfile-sort": "^4.0.0",
-    "xo": "^0.58.0"
+    "xo": "^0.59.0"
   },
   "scripts": {
     "build": "tsc --build --clean && tsc --build && type-coverage",
-    "#": "remark . --frail --output --quiet",
-    "format": "prettier . --log-level warn --write && xo --fix",
+    "format": "remark --frail --output --quiet -- . && prettier --log-level warn --write -- . && xo --fix",
     "prepack": "npm run build && npm run format",
     "test": "npm run build && npm run format && npm run test-coverage",
     "test-api": "node --conditions development test/index.js",

@@ -21,24 +21,24 @@ Not for say a website.
 
 ## Contents
 
-*   [What is this?](#what-is-this)
-*   [When should I use this?](#when-should-i-use-this)
-*   [Install](#install)
-*   [Use](#use)
-*   [API](#api)
-    *   [`unified().use(remarkValidateLinks[, options])`](#unifieduseremarkvalidatelinks-options)
-    *   [`Options`](#options)
-    *   [`UrlConfig`](#urlconfig)
-*   [Examples](#examples)
-    *   [Example: CLI](#example-cli)
-    *   [Example: CLI in npm scripts](#example-cli-in-npm-scripts)
-*   [Integration](#integration)
-*   [Types](#types)
-*   [Compatibility](#compatibility)
-*   [Security](#security)
-*   [Related](#related)
-*   [Contribute](#contribute)
-*   [License](#license)
+* [What is this?](#what-is-this)
+* [When should I use this?](#when-should-i-use-this)
+* [Install](#install)
+* [Use](#use)
+* [API](#api)
+  * [`unified().use(remarkValidateLinks[, options])`](#unifieduseremarkvalidatelinks-options)
+  * [`Options`](#options)
+  * [`UrlConfig`](#urlconfig)
+* [Examples](#examples)
+  * [Example: CLI](#example-cli)
+  * [Example: CLI in npm scripts](#example-cli-in-npm-scripts)
+* [Integration](#integration)
+* [Types](#types)
+* [Compatibility](#compatibility)
+* [Security](#security)
+* [Related](#related)
+* [Contribute](#contribute)
+* [License](#license)
 
 ## What is this?
 
@@ -153,8 +153,8 @@ in a Git repo.
 
 ###### Parameters
 
-*   `options` ([`Options`][api-options], optional)
-    — configuration
+* `options` ([`Options`][api-options], optional)
+  — configuration
 
 ###### Returns
 
@@ -166,21 +166,21 @@ Configuration (TypeScript type).
 
 ###### Fields
 
-*   `repository` (`string` or `false`, default: detected from Git remote)
-    — URL to hosted Git;
-    if you’re not in a Git repository, you must pass `false`;
-    if the repository resolves to something npm understands as a Git host such
-    as GitHub, GitLab, or Bitbucket, full URLs to that host (say,
-    `https://github.com/remarkjs/remark-validate-links/readme.md#install`) are
-    checked
-*   `root` (`string`, default: local Git folder)
-    — path to Git root folder;
-    if both `root` and `repository` are nullish, the Git root is detected;
-    if `root` is not given but `repository` is, `file.cwd` is used
-*   `urlConfig` ([`UrlConfig`][api-url-config], default: detected from repo)
-    — config on how hosted Git works;
-    `github.com`, `gitlab.com`, or `bitbucket.org` work automatically;
-    otherwise, pass `urlConfig` manually
+* `repository` (`string` or `false`, default: detected from Git remote)
+  — URL to hosted Git;
+  if you’re not in a Git repository, you must pass `false`;
+  if the repository resolves to something npm understands as a Git host such
+  as GitHub, GitLab, or Bitbucket, full URLs to that host (say,
+  `https://github.com/remarkjs/remark-validate-links/readme.md#install`) are
+  checked
+* `root` (`string`, default: local Git folder)
+  — path to Git root folder;
+  if both `root` and `repository` are nullish, the Git root is detected;
+  if `root` is not given but `repository` is, `file.cwd` is used
+* `urlConfig` ([`UrlConfig`][api-url-config], default: detected from repo)
+  — config on how hosted Git works;
+  `github.com`, `gitlab.com`, or `bitbucket.org` work automatically;
+  otherwise, pass `urlConfig` manually
 
 ### `UrlConfig`
 
@@ -188,19 +188,19 @@ Hosted Git info (TypeScript type).
 
 ###### Fields
 
-*   `headingPrefix` (`string`, optional, example: `'#'`, `'#markdown-header-'`)
-    — prefix of headings
-*   `hostname` (`string`, optional, example: `'github.com'`,
-    `'bitbucket.org'`)
-    — domain of URLs
-*   `lines` (`boolean`, default: `false`)
-    — whether lines in files can be linked
-*   `path` (`string`, optional, example:
-    `'/remarkjs/remark-validate-links/blob/'`,
-    `'/remarkjs/remark-validate-links/src/'`)
-    — path prefix before files
-*   `topAnchor` (`string`, optional, example: `#readme`)
-    — hash to top of readme
+* `headingPrefix` (`string`, optional, example: `'#'`, `'#markdown-header-'`)
+  — prefix of headings
+* `hostname` (`string`, optional, example: `'github.com'`,
+  `'bitbucket.org'`)
+  — domain of URLs
+* `lines` (`boolean`, default: `false`)
+  — whether lines in files can be linked
+* `path` (`string`, optional, example:
+  `'/remarkjs/remark-validate-links/blob/'`,
+  `'/remarkjs/remark-validate-links/src/'`)
+  — path prefix before files
+* `topAnchor` (`string`, optional, example: `#readme`)
+  — hash to top of readme
 
 ###### Notes
 
@@ -320,14 +320,14 @@ npm run format
 `remark-validate-links` can detect anchors on nodes through several properties
 on nodes:
 
-*   `node.data.hProperties.name` — Used by
-    [`mdast-util-to-hast`][mdast-util-to-hast]
-    to create a `name` attribute, which anchors can link to
-*   `node.data.hProperties.id` — Used by
-    [`mdast-util-to-hast`][mdast-util-to-hast]
-    to create an `id` attribute, which anchors can link to
-*   `node.data.id` — Used potentially in the future by other tools to signal
-    unique identifiers on nodes
+* `node.data.hProperties.name` — Used by
+  [`mdast-util-to-hast`][mdast-util-to-hast]
+  to create a `name` attribute, which anchors can link to
+* `node.data.hProperties.id` — Used by
+  [`mdast-util-to-hast`][mdast-util-to-hast]
+  to create an `id` attribute, which anchors can link to
+* `node.data.id` — Used potentially in the future by other tools to signal
+  unique identifiers on nodes
 
 ## Types
 
@@ -359,10 +359,10 @@ The tree is not modified, so there are no openings for
 
 ## Related
 
-*   [`remark-lint`][remark-lint]
-    — markdown code style linter
-*   [`remark-lint-no-dead-urls`][remark-lint-no-dead-urls]
-    — check that external links are alive
+* [`remark-lint`][remark-lint]
+  — markdown code style linter
+* [`remark-lint-no-dead-urls`][remark-lint-no-dead-urls]
+  — check that external links are alive
 
 ## Contribute
 
