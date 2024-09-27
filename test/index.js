@@ -1,6 +1,5 @@
 /**
- * @typedef {import('node:child_process').ExecException} ExecException
- *   Exec error.
+ * @import {ExecException} from 'node:child_process'
  */
 
 /**
