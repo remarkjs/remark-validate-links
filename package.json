@@ -1,55 +1,14 @@
 {
-  "name": "remark-validate-links",
-  "version": "13.0.1",
-  "description": "remark plugin to validate links to headings and files",
-  "license": "MIT",
-  "keywords": [
-    "file",
-    "heading",
-    "link",
-    "markdown",
-    "mdast",
-    "plugin",
-    "reference",
-    "remark",
-    "remark-plugin",
-    "unified",
-    "validate"
-  ],
-  "repository": "remarkjs/remark-validate-links",
-  "bugs": "https://github.com/remarkjs/remark-validate-links/issues",
-  "funding": {
-    "type": "opencollective",
-    "url": "https://opencollective.com/unified"
-  },
   "author": "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)",
+  "bugs": "https://github.com/remarkjs/remark-validate-links/issues",
   "contributors": [
-    "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)",
+    "Andrew Petro <andrew.w.petro@gmail.com>",
+    "Anton Rybochkin <anton.rybochkin@axibase.com>",
     "Diogo Nunes <dialex.nunes@gmail.com>",
     "Jonathan Haines <jonno.haines@gmail.com>",
     "Merlijn Vos <merlijn@soverin.net>",
-    "Andrew Petro <andrew.w.petro@gmail.com>",
-    "wangshijun <wangshijun2010@gmail.com>",
-    "Anton Rybochkin <anton.rybochkin@axibase.com>"
-  ],
-  "sideEffects": false,
-  "type": "module",
-  "exports": "./index.js",
-  "imports": {
-    "#check-files": {
-      "node": "./lib/check-files.node.js",
-      "default": "./lib/check-files.default.js"
-    },
-    "#find-repo": {
-      "node": "./lib/find-repo.node.js",
-      "default": "./lib/find-repo.default.js"
-    }
-  },
-  "files": [
-    "lib/",
-    "index.d.ts.map",
-    "index.d.ts",
-    "index.js"
+    "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)",
+    "wangshijun <wangshijun2010@gmail.com>"
   ],
   "dependencies": {
     "@types/hosted-git-info": "^3.0.0",
@@ -64,6 +23,7 @@
     "unist-util-visit": "^5.0.0",
     "vfile": "^6.0.0"
   },
+  "description": "remark plugin to validate links to headings and files",
   "devDependencies": {
     "@types/node": "^22.0.0",
     "c8": "^10.0.0",
@@ -78,14 +38,42 @@
     "vfile-sort": "^4.0.0",
     "xo": "^0.59.0"
   },
-  "scripts": {
-    "build": "tsc --build --clean && tsc --build && type-coverage",
-    "format": "remark --frail --output --quiet -- . && prettier --log-level warn --write -- . && xo --fix",
-    "prepack": "npm run build && npm run format",
-    "test": "npm run build && npm run format && npm run test-coverage",
-    "test-api": "node --conditions development test/index.js",
-    "test-coverage": "c8 --100 --reporter lcov npm run test-api"
+  "exports": "./index.js",
+  "files": [
+    "lib/",
+    "index.d.ts.map",
+    "index.d.ts",
+    "index.js"
+  ],
+  "funding": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/unified"
   },
+  "imports": {
+    "#check-files": {
+      "node": "./lib/check-files.node.js",
+      "default": "./lib/check-files.default.js"
+    },
+    "#find-repo": {
+      "node": "./lib/find-repo.node.js",
+      "default": "./lib/find-repo.default.js"
+    }
+  },
+  "keywords": [
+    "file",
+    "heading",
+    "link",
+    "markdown",
+    "mdast",
+    "plugin",
+    "reference",
+    "remark-plugin",
+    "remark",
+    "unified",
+    "validate"
+  ],
+  "license": "MIT",
+  "name": "remark-validate-links",
   "prettier": {
     "bracketSpacing": false,
     "singleQuote": true,
@@ -99,12 +87,21 @@
       "remark-preset-wooorm"
     ]
   },
+  "repository": "remarkjs/remark-validate-links",
+  "scripts": {
+    "build": "tsc --build --clean && tsc --build && type-coverage",
+    "format": "remark --frail --output --quiet -- . && prettier --log-level warn --write -- . && xo --fix",
+    "test-api": "node --conditions development test/index.js",
+    "test-coverage": "c8 --100 --reporter lcov npm run test-api",
+    "test": "npm run build && npm run format && npm run test-coverage"
+  },
+  "sideEffects": false,
   "typeCoverage": {
     "atLeast": 100,
-    "detail": true,
-    "ignoreCatch": true,
     "strict": true
   },
+  "type": "module",
+  "version": "13.0.1",
   "xo": {
     "overrides": [
       {
