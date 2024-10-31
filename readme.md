@@ -109,8 +109,8 @@ References w/o definitions are not checked: [delta]
 …and a module `example.js`:
 
 ```js
-import {remark} from 'remark'
 import remarkValidateLinks from 'remark-validate-links'
+import {remark} from 'remark'
 import {read} from 'to-vfile'
 import {reporter} from 'vfile-reporter'
 

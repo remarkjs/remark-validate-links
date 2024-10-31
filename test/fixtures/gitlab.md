@@ -12,6 +12,8 @@ So is this [link](https://gitlab.com/wooorm/test/blob/foo-bar/examples/gitlab.md
 
 And this [link](./examples/gitlab.md).
 
+How about this [link](/examples/gitlab.md).
+
 And this [link](examples/gitlab.md).
 
 This is a valid external [file](../index.js).

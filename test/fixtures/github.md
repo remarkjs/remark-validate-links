@@ -8,7 +8,7 @@ This is an invalid relative heading [link](#world).
 
 This is a valid relative file [link](https://github.com/wooorm/test/blob/main/examples/github.md).
 
-This is a valid absolute file [link](/wooorm/test/blob/main/examples/github.md).
+This is a valid absolute file [link](/examples/github.md).
 
 So is this [link](https://github.com/wooorm/test/blob/foo-bar/examples/github.md).
 
@@ -20,7 +20,7 @@ This is a valid external [file](../index.js).
 
 This is an invalid relative file [link](https://github.com/wooorm/test/blob/main/examples/world.md).
 
-This is an invalid absolute file [link](/wooorm/test/blob/main/examples/world.md).
+This is an invalid absolute file [link](/examples/world.md).
 
 So is this [link](https://github.com/wooorm/test/blob/foo-bar/examples/world.md).
 
