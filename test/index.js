@@ -9,10 +9,11 @@
 
 import assert from 'node:assert/strict'
 import {exec as execCallback} from 'node:child_process'
-import {createReadStream, promises as fs} from 'node:fs'
+import fs from 'node:fs/promises'
 import process from 'node:process'
-import {fileURLToPath} from 'node:url'
+import {PassThrough} from 'node:stream'
 import test from 'node:test'
+import {fileURLToPath} from 'node:url'
 import {promisify} from 'node:util'
 import {remark} from 'remark'
 import remarkValidateLinks from 'remark-validate-links'
@@ -244,9 +245,23 @@ test('remark-validate-links', async function (t) {
       ].join(' ')
     )
 
+    const stream = new PassThrough()
+
     if (promise.child.stdin) {
-      createReadStream('github.md').pipe(promise.child.stdin)
+      stream.pipe(promise.child.stdin)
     }
+
+    setTimeout(function () {
+      stream.write('# exists\n')
+      setTimeout(function () {
+        stream.write('[ok](#exists) and [also ok](./examples/github.md).\n')
+
+        // eslint-disable-next-line max-nested-callbacks
+        setTimeout(function () {
+          stream.end('[nok](#not-exist) and [not ok](./examples/missing.md)\n')
+        }, 4)
+      }, 4)
+    }, 4)
 
     const result = await promise
 
@@ -254,11 +269,9 @@ test('remark-validate-links', async function (t) {
       strip(result.stderr),
       [
         '<stdin>',
-        '5:37-5:51   warning Cannot find heading for `#world`                                                      missing-heading remark-validate-links:missing-heading',
-        '11:31-11:58 warning Cannot find file `/Users/tilde/Projects/oss/remark-validate-links/examples/github.md` missing-file    remark-validate-links:missing-file',
-        '23:34-23:60 warning Cannot find file `/Users/tilde/Projects/oss/remark-validate-links/examples/world.md`  missing-file    remark-validate-links:missing-file',
+        '3:1-3:18 warning Cannot find heading for `#not-exist` missing-heading remark-validate-links:missing-heading',
         '',
-        '⚠ 3 warnings',
+        '⚠ 1 warning',
         ''
       ].join('\n')
     )
