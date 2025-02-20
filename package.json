@@ -115,7 +115,6 @@
     ],
     "prettier": true,
     "rules": {
-      "unicorn/prefer-logical-operator-over-ternary": "off",
       "unicorn/prefer-string-replace-all": "off"
     }
   }
