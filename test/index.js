@@ -15,9 +15,9 @@ import {PassThrough} from 'node:stream'
 import test from 'node:test'
 import {fileURLToPath} from 'node:url'
 import {promisify} from 'node:util'
-import {remark} from 'remark'
 import remarkValidateLinks from 'remark-validate-links'
-import strip from 'strip-ansi'
+import {remark} from 'remark'
+import stripAnsi from 'strip-ansi'
 import {read} from 'to-vfile'
 import sort from './sort.js'
 
@@ -108,7 +108,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'small.md',
         '5:13-5:27 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
@@ -134,7 +134,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'small.md',
         '5:13-5:27 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
@@ -164,7 +164,7 @@ test('remark-validate-links', async function (t) {
       const cause = /** @type {ExecError} */ (error)
       assert.match(String(cause), /command failed/i)
       assert.equal(
-        cleanError(strip(cause.stderr)),
+        cleanError(stripAnsi(cause.stderr)),
         [
           'FOOOO',
           ' error No such file or folder',
@@ -198,7 +198,7 @@ test('remark-validate-links', async function (t) {
       const cause = /** @type {ExecError} */ (error)
       assert.match(String(cause), /command failed/i)
       assert.equal(
-        cleanError(strip(cause.stderr)),
+        cleanError(stripAnsi(cause.stderr)),
         [
           'definitions.md',
           '1:1-1:1 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
@@ -229,7 +229,7 @@ test('remark-validate-links', async function (t) {
       ].join(' ')
     )
 
-    assert.equal(strip(result.stderr), 'empty.md: no issues found\n')
+    assert.equal(stripAnsi(result.stderr), 'empty.md: no issues found\n')
   })
 
   await t.test('should work with stdin', async function () {
@@ -266,7 +266,7 @@ test('remark-validate-links', async function (t) {
     const result = await promise
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         '<stdin>',
         '3:1-3:18 warning Cannot find heading for `#not-exist` missing-heading remark-validate-links:missing-heading',
@@ -292,7 +292,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'github.md',
         '5:37-5:51   warning Cannot find heading for `#world`                                               missing-heading         remark-validate-links:missing-heading',
@@ -329,7 +329,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'examples/github.md',
         '5:37-5:51   warning Cannot find heading for `#world`                                               missing-heading         remark-validate-links:missing-heading',
@@ -372,7 +372,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'definitions.md',
         '10:1-10:18 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
@@ -401,7 +401,7 @@ test('remark-validate-links', async function (t) {
       )
 
       assert.equal(
-        strip(result.stderr),
+        stripAnsi(result.stderr),
         [
           'examples/github.md',
           '5:37-5:51    warning Cannot find heading for `#world`                         missing-heading         remark-validate-links:missing-heading',
@@ -463,7 +463,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'examples/github.md',
         '5:37-5:51    warning Cannot find heading for `#world`                         missing-heading         remark-validate-links:missing-heading',
@@ -576,7 +576,7 @@ test('remark-validate-links', async function (t) {
     await fs.rename(gitBakUrl, gitUrl)
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'small.md',
         '5:13-5:27 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
@@ -604,7 +604,7 @@ test('remark-validate-links', async function (t) {
     await fs.rename(gitBakUrl, gitUrl)
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'small.md',
         '5:13-5:27 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
@@ -634,7 +634,7 @@ test('remark-validate-links', async function (t) {
       await fs.rename(gitBakUrl, gitUrl)
 
       assert.equal(
-        strip(result.stderr),
+        stripAnsi(result.stderr),
         [
           'small.md',
           '5:13-5:27 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
@@ -666,7 +666,7 @@ test('remark-validate-links', async function (t) {
     await fs.rename(gitBakUrl, gitUrl)
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'examples/github.md',
         '5:37-5:51   warning Cannot find heading for `#world`                         missing-heading         remark-validate-links:missing-heading',
@@ -710,7 +710,7 @@ test('remark-validate-links', async function (t) {
       )
 
       assert.equal(
-        strip(result.stderr),
+        stripAnsi(result.stderr),
         [
           'small.md',
           '5:13-5:27 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
@@ -737,7 +737,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'gitlab.md',
         '5:37-5:51    warning Cannot find heading for `#world`                                        missing-heading         remark-validate-links:missing-heading',
@@ -779,7 +779,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'bitbucket.md',
         '5:37-5:67    warning Cannot find heading for `#world`                            missing-heading         remark-validate-links:missing-heading',
@@ -821,7 +821,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'suggestions.md',
         '3:22-3:37 warning Cannot find heading for `#helloo`; did you mean `hello`                 missing-heading         remark-validate-links:missing-heading',
@@ -848,7 +848,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'line-links.md',
         '5:9-5:61 warning Cannot find file `examples/missing.js` missing-file remark-validate-links:missing-file',
@@ -875,7 +875,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'weird-characters.md',
         '11:17-11:87  warning Cannot find file `examples/missing#characters.md`; did you mean `examples/weird#characters.md`             missing-file            remark-validate-links:missing-file',
@@ -904,7 +904,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'folder.md',
         '9:1-9:40   warning Cannot find heading for `#missing` in `folder/readme.markdown` missing-heading-in-file remark-validate-links:missing-heading-in-file',
@@ -934,7 +934,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'file-as-folder.md',
         '1:1-1:28 warning Cannot find file `file-as-folder.md/other`; did you mean `file-as-folder.md` missing-file remark-validate-links:missing-file',
@@ -960,7 +960,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'images.md',
         '21:10-21:50 warning Cannot find file `examples/missing.jpg`; did you mean `examples/image.jpg` missing-file remark-validate-links:missing-file',
@@ -989,7 +989,7 @@ test('remark-validate-links', async function (t) {
       ].join(' ')
     )
 
-    assert.equal(strip(result.stderr), 'image-alts.md: no issues found\n')
+    assert.equal(stripAnsi(result.stderr), 'image-alts.md: no issues found\n')
   })
 
   await t.test('should support query parameters', async function () {
@@ -1007,7 +1007,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'query-params.md',
         '11:33-11:55 warning Cannot find heading for `#query-params?`; did you mean `query-params` missing-heading remark-validate-links:missing-heading',
@@ -1033,7 +1033,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'case-insensitive-headings.md',
         '5:13-5:27 warning Cannot find heading for `#world`                         missing-heading         remark-validate-links:missing-heading',
@@ -1059,7 +1059,7 @@ test('remark-validate-links', async function (t) {
       ].join(' ')
     )
 
-    assert.equal(strip(result.stderr), 'external.md: no issues found\n')
+    assert.equal(stripAnsi(result.stderr), 'external.md: no issues found\n')
   })
 
   await t.test(
@@ -1078,7 +1078,7 @@ test('remark-validate-links', async function (t) {
         ].join(' ')
       )
 
-      assert.equal(strip(result.stderr), 'external.md: no issues found\n')
+      assert.equal(stripAnsi(result.stderr), 'external.md: no issues found\n')
     }
   )
 
@@ -1097,7 +1097,7 @@ test('remark-validate-links', async function (t) {
     )
 
     assert.equal(
-      strip(result.stderr),
+      stripAnsi(result.stderr),
       [
         'self-hosted.md',
         '5:1-5:80 warning Cannot find heading for `#world` missing-heading remark-validate-links:missing-heading',
