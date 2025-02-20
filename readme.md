@@ -10,7 +10,7 @@ point to existing local files and headings in a Git repo.
 
 For example,
 this document does not have a heading named `Hello`.
-So if we’d link to it (`[welcome](#hello)`),
+So if we’d link to that heading (`[welcome](#hello)`),
 we’d get a warning.
 Links to headings in other markdown documents (`examples/foo.md#hello`) and
 links to files (`license` or `index.js`) are also checked.
@@ -33,7 +33,6 @@ Not for say a website.
   * [Example: CLI](#example-cli)
   * [Example: CLI in npm scripts](#example-cli-in-npm-scripts)
 * [Integration](#integration)
-* [Types](#types)
 * [Compatibility](#compatibility)
 * [Security](#security)
 * [Related](#related)
@@ -53,7 +52,7 @@ with docs in markdown and links to headings and other files,
 and want to check whether they’re correct.
 Compared to other links checkers,
 this project can work offline
-(making it fast en prone to fewer false positives),
+(making this plugin fast en prone to fewer false positives),
 and is specifically made for local links in Git repos.
 This plugin does not check external URLs
 (see [`remark-lint-no-dead-urls`][github-remark-lint-no-dead-urls])
@@ -137,13 +136,17 @@ example.md
 
 > 👉 **Note**:
 > `readme.md#no-such-heading` is not warned about on the API,
-> as it does not check headings in other markdown files;
+> as the API does not check headings in other markdown files;
 > the remark CLI is able to do that.
 
 ## API
 
 This package exports no identifiers.
 The default export is [`remarkValidateLinks`][api-remark-validate-links].
+It exports the [TypeScript][] types
+[`Options`][api-options]
+and
+[`UrlConfig`][api-url-config].
 
 ### `unified().use(remarkValidateLinks[, options])`
 
@@ -243,7 +246,7 @@ looks as follows:
 ```
 
 If this project were hosted on Bitbucket,
-it would be:
+the config would be:
 
 ```js
 {
@@ -356,12 +359,6 @@ on nodes:
 * `node.data.id`
   — used potentially in the future by other tools to signal unique identifiers
   on nodes
-
-## Types
-
-This package is fully typed with [TypeScript][].
-It exports the additional types [`Options`][api-options] and
-[`UrlConfig`][api-url-config].
 
 ## Compatibility
 
