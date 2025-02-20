@@ -8,8 +8,10 @@
 **[remark][github-remark]** plugin to check that markdown links and images
 point to existing local files and headings in a Git repo.
 
-For example, this document does not have a heading named `Hello`.
-So if we’d link to it (`[welcome](#hello)`), we’d get a warning.
+For example,
+this document does not have a heading named `Hello`.
+So if we’d link to it (`[welcome](#hello)`),
+we’d get a warning.
 Links to headings in other markdown documents (`examples/foo.md#hello`) and
 links to files (`license` or `index.js`) are also checked.
 
@@ -45,21 +47,24 @@ plugin to check local links in a Git repo.
 
 ## When should I use this?
 
-This project is useful if you have a Git repo, such as this one, with docs in
-markdown and links to headings and other files, and want to check whether
-they’re correct.
-Compared to other links checkers, this project can work offline (making it fast
-en prone to fewer false positives), and is specifically made for local links in
-Git repos.
-This plugin does not check external URLs (see
-[`remark-lint-no-dead-urls`][github-remark-lint-no-dead-urls]) or undefined
-references (see
+This project is useful if you have a Git repo,
+such as this one,
+with docs in markdown and links to headings and other files,
+and want to check whether they’re correct.
+Compared to other links checkers,
+this project can work offline
+(making it fast en prone to fewer false positives),
+and is specifically made for local links in Git repos.
+This plugin does not check external URLs
+(see [`remark-lint-no-dead-urls`][github-remark-lint-no-dead-urls])
+or undefined references (see
 [`remark-lint-no-undefined-references`][github-remark-lint-undefined]).
 
 ## Install
 
 This package is [ESM only][github-gist-esm].
-In Node.js (version 16+), install with [npm][npmjs-install]:
+In Node.js (version 16+),
+install with [npm][npmjs-install]:
 
 ```sh
 npm install remark-validate-links
@@ -130,9 +135,10 @@ example.md
 ⚠ 3 warnings
 ```
 
-> 👉 **Note**: `readme.md#no-such-heading` is not warned about on the API, as it
-> does not check headings in other markdown files.
-> The remark CLI is able to do that.
+> 👉 **Note**:
+> `readme.md#no-such-heading` is not warned about on the API,
+> as it does not check headings in other markdown files;
+> the remark CLI is able to do that.
 
 ## API
 
@@ -144,10 +150,11 @@ The default export is [`remarkValidateLinks`][api-remark-validate-links].
 Check that markdown links and images point to existing local files and headings
 in a Git repo.
 
-> ⚠️ **Important**: The API in Node.js checks links to headings and files but
-> does not check whether headings in other files exist.
-> The API in browsers only checks links to headings in the same file.
-> The CLI can check everything.
+> ⚠️ **Important**:
+> the API in Node.js checks links to headings and files but does not check
+> whether headings in other files exist;
+> the API in browsers only checks links to headings in the same file;
+> the CLI can check everything.
 
 ###### Parameters
 
@@ -164,21 +171,31 @@ Configuration (TypeScript type).
 
 ###### Fields
 
-* `repository` (`string` or `false`, default: detected from Git remote)
+* `repository`
+  (`string` or `false`, default: detected from Git remote)
   — URL to hosted Git;
-  if you’re not in a Git repository, you must pass `false`;
+  if you’re not in a Git repository,
+  you must pass `false`;
   if the repository resolves to something npm understands as a Git host such
-  as GitHub, GitLab, or Bitbucket, full URLs to that host (say,
-  `https://github.com/remarkjs/remark-validate-links/readme.md#install`) are
-  checked
-* `root` (`string`, default: local Git folder)
+  as GitHub, GitLab, or Bitbucket,
+  then full URLs to that host
+  (say,
+  `https://github.com/remarkjs/remark-validate-links/readme.md#install`)
+  are checked
+* `root`
+  (`string`, default: local Git folder)
   — path to Git root folder;
-  if both `root` and `repository` are nullish, the Git root is detected;
-  if `root` is not given but `repository` is, `file.cwd` is used
-* `urlConfig` ([`UrlConfig`][api-url-config], default: detected from repo)
+  if both `root` and `repository` are nullish,
+  the Git root is detected;
+  if `root` is not given but `repository` is,
+  `file.cwd` is used
+* `urlConfig`
+  ([`UrlConfig`][api-url-config], default: detected from repo)
   — config on how hosted Git works;
-  `github.com`, `gitlab.com`, or `bitbucket.org` work automatically;
-  otherwise, pass `urlConfig` manually
+  `github.com`, `gitlab.com`, or `bitbucket.org`
+  work automatically;
+  otherwise,
+  pass `urlConfig` manually
 
 ### `UrlConfig`
 
@@ -186,18 +203,23 @@ Hosted Git info (TypeScript type).
 
 ###### Fields
 
-* `headingPrefix` (`string`, optional, example: `'#'`, `'#markdown-header-'`)
+* `headingPrefix`
+  (`string`, optional, example: `'#'`, `'#markdown-header-'`)
   — prefix of headings
-* `hostname` (`string`, optional, example: `'github.com'`,
+* `hostname`
+  (`string`, optional, example: `'github.com'`,
   `'bitbucket.org'`)
   — domain of URLs
-* `lines` (`boolean`, default: `false`)
+* `lines`
+  (`boolean`, default: `false`)
   — whether lines in files can be linked
-* `path` (`string`, optional, example:
+* `path`
+  (`string`, optional, example:
   `'/remarkjs/remark-validate-links/blob/'`,
   `'/remarkjs/remark-validate-links/src/'`)
   — path prefix before files
-* `topAnchor` (`string`, optional, example: `#readme`)
+* `topAnchor`
+  (`string`, optional, example: `#readme`)
   — hash to top of readme
 
 ###### Notes
@@ -207,27 +229,28 @@ looks as follows:
 
 ```js
 {
-  // Domain of URLs:
-  hostname: 'github.com',
-  // Path prefix before files:
-  prefix: '/remarkjs/remark-validate-links/blob/',
   // Prefix of headings:
   headingPrefix: '#',
-  // Hash to top of markdown documents:
-  topAnchor: '#readme',
+  // Domain of URLs:
+  hostname: 'github.com',
   // Whether lines in files can be linked:
-  lines: true
+  lines: true,
+  // Path prefix before files:
+  prefix: '/remarkjs/remark-validate-links/blob/',
+  // Hash to top of markdown documents:
+  topAnchor: '#readme'
 }
 ```
 
-If this project were hosted on Bitbucket, it would be:
+If this project were hosted on Bitbucket,
+it would be:
 
 ```js
 {
-  hostname: 'bitbucket.org',
-  prefix: '/remarkjs/remark-validate-links/src/',
   headingPrefix: '#markdown-header-',
-  lines: false
+  hostname: 'bitbucket.org',
+  lines: false,
+  prefix: '/remarkjs/remark-validate-links/src/'
 }
 ```
 
@@ -258,7 +281,8 @@ But this does exist: [license](license).
 So does this: [readme](readme.md#install).
 ```
 
-Now, running `./node_modules/.bin/remark --use remark-validate-links .` yields:
+Now,
+running `./node_modules/.bin/remark --use remark-validate-links .` yields:
 
 <!-- To do: regenerate. -->
 
@@ -282,7 +306,8 @@ Install both with [npm][npmjs-install]:
 npm install remark-cli remark-validate-links --save-dev
 ```
 
-Then, add a format script and configuration to `package.json`:
+Then,
+add a format script and configuration to `package.json`:
 
 ```js
 {
@@ -301,11 +326,11 @@ Then, add a format script and configuration to `package.json`:
 }
 ```
 
-> 💡 **Tip**: Add other tools such as prettier or ESLint to check and format
-> other files.
->
-> 💡 **Tip**: Run `./node_modules/.bin/remark --help` for help with
-> `remark-cli`.
+> 💡 **Tip**:
+> add other tools such as prettier or ESLint to check and format other files.
+
+> 💡 **Tip**:
+> run `./node_modules/.bin/remark --help` for help with `remark-cli`.
 
 Now you check and format markdown in your project with:
 
@@ -318,14 +343,19 @@ npm run format
 `remark-validate-links` can detect anchors on nodes through several properties
 on nodes:
 
-* `node.data.hProperties.name` — used by
+* `node.data.hProperties.name`
+  — used by
   [`mdast-util-to-hast`][github-mdast-util-to-hast-notes]
-  to create a `name` attribute, which anchors can link to
-* `node.data.hProperties.id` — used by
+  to create a `name` attribute,
+  which anchors can link to
+* `node.data.hProperties.id`
+  — used by
   [`mdast-util-to-hast`][github-mdast-util-to-hast-notes]
-  to create an `id` attribute, which anchors can link to
-* `node.data.id` — Used potentially in the future by other tools to signal
-  unique identifiers on nodes
+  to create an `id` attribute,
+  which anchors can link to
+* `node.data.id`
+  — used potentially in the future by other tools to signal unique identifiers
+  on nodes
 
 ## Types
 
@@ -338,22 +368,27 @@ It exports the additional types [`Options`][api-options] and
 Projects maintained by the unified collective are compatible with maintained
 versions of Node.js.
 
-When we cut a new major release, we drop support for unmaintained versions of
-Node.
+When we cut a new major release,
+we drop support for unmaintained versions of Node.
 This means we try to keep the current release line,
-`remark-validate-links@^13`, compatible with Node.js 16.
+`remark-validate-links@13`,
+compatible with Node.js 16.
 
-This plugin works with `unified` version 6+, `remark` version 7+, and
-`remark-cli` version 8+.
+This plugin works with `unified` version 6+,
+`remark` version 7+,
+and `remark-cli` version 8+.
 
 ## Security
 
-`remark-validate-links`, in Node, accesses the file system based on user
-content, and this may be dangerous.
+`remark-validate-links`,
+in Node,
+accesses the file system based on user content,
+and this may be dangerous.
 In Node `git remote` and `git rev-parse` also runs for processed files.
 
-The tree is not modified, so there are no openings for
-[cross-site scripting (XSS)][wikipedia-xss] attacks.
+The tree is not modified,
+so there are no openings for [cross-site scripting (XSS)][wikipedia-xss]
+attacks.
 
 ## Related
 
@@ -371,8 +406,9 @@ for ways to get started.
 See [`support.md`][health-support] for ways to get help.
 
 This project has a [code of conduct][health-coc].
-By interacting with this repository, organization, or community you agree to
-abide by its terms.
+By interacting with this repository,
+organization,
+or community you agree to abide by its terms.
 
 ## License
 
