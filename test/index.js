@@ -19,6 +19,7 @@ import remarkValidateLinks from 'remark-validate-links'
 import {remark} from 'remark'
 import stripAnsi from 'strip-ansi'
 import {read} from 'to-vfile'
+import {VFile} from 'vfile'
 import sort from './sort.js'
 
 const exec = promisify(execCallback)
@@ -89,6 +90,34 @@ test('remark-validate-links', async function (t) {
       .process(
         '# a <!-- b --> c\n# a <!-- b -->\n# a\n[](#a--c) [](#a-), [](#a)'
       )
+
+    assert.deepEqual(file.messages.map(String), [])
+  })
+
+  await t.test('should support `skipUrlPatterns` (1)', async function () {
+    const file = await remark()
+      .use(remarkValidateLinks, {skipPathPatterns: ['#e']})
+      .use(sort)
+      .process('a [b](#c) [d](#e) f')
+
+    assert.deepEqual(file.messages.map(String), [
+      '1:3-1:10: Cannot find heading for `#c`'
+    ])
+  })
+
+  await t.test('should support `skipUrlPatterns` (2)', async function () {
+    const file = new VFile({
+      cwd: fileURLToPath(fakeBaseUrl),
+      path: 'example.md',
+      value: 'a [b](../../new/main/?filename=skeets/<your-path>.tweet) c'
+    })
+
+    await remark()
+      .use(remarkValidateLinks, {
+        skipPathPatterns: [/remark-validate-links[/\\]new[/\\]/]
+      })
+      .use(sort)
+      .process(file)
 
     assert.deepEqual(file.messages.map(String), [])
   })
@@ -1128,7 +1157,7 @@ test('remark-validate-links', async function (t) {
  * @returns {string}
  *   Clean error.
  */
-export function cleanError(value, max) {
+function cleanError(value, max) {
   return (
     value
       // Clean syscal errors

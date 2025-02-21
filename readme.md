@@ -192,6 +192,12 @@ Configuration (TypeScript type).
   the Git root is detected;
   if `root` is not given but `repository` is,
   `file.cwd` is used
+* `skipPathPatterns`
+  (`Array<RegExp | string>`, optional)
+  — list of patterns for *paths* that should be skipped;
+  each absolute local path + hash will be tested against each pattern and
+  will be ignored if `new RegExp(pattern).test(value) === true`;
+  example value are then `/Users/tilde/path/to/repo/readme.md#some-heading`.
 * `urlConfig`
   ([`UrlConfig`][api-url-config], default: detected from repo)
   — config on how hosted Git works;
