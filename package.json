@@ -10,6 +10,7 @@
     "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)",
     "wangshijun <wangshijun2010@gmail.com>"
   ],
+  "dependencies#": "hosted-git-info@8 is Node 18",
   "dependencies": {
     "@types/hosted-git-info": "^3.0.0",
     "@types/mdast": "^4.0.0",
